@@ -56,7 +56,6 @@ public class SubscribeMessageActivity extends BaseActivity {
         if(m.find()){
          content = m.group(1);
         }
-        content = content.replaceAll("@抖音小助手","");
         miniProgramTitleEt.setText(title);
         miniProgramContentEt.setText(content);
 

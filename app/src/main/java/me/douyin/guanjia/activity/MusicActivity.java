@@ -251,9 +251,12 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
 
     private void shareWeixin(){
         Intent intent = new Intent(this, SubscribeMessageActivity.class);
-        intent.putExtra("title", WebviewFragment.currentMusic.getTitle());
+        String title =  WebviewFragment.currentMusic.getTitle();
+        if(null == title) title = "";
+        title = title.replaceAll("[@|#]([\\S]{1,10})","").trim();
+        intent.putExtra("title", title);
         intent.putExtra("url", mWebView.getUrl());
-        intent.putExtra("content", WebviewFragment.currentMusic.getTitle());
+        intent.putExtra("content", title);
         startActivity(intent);
     }
 
