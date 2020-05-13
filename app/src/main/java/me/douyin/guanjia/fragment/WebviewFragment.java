@@ -271,6 +271,7 @@ public class WebviewFragment extends BaseFragment {
                             loopCount = 3;
                             cancelProgress();
                             if(fileName.endsWith(".mp4")){
+                                currentMusic.setPath(path);
                                 return;
                             }
                             checkCounter(fileName,true);
@@ -278,6 +279,7 @@ public class WebviewFragment extends BaseFragment {
                     });
         }else {
             if(fileName.endsWith(".mp4")){
+                currentMusic.setPath(path);
                 return;
             }
             checkCounter(fileName,false);

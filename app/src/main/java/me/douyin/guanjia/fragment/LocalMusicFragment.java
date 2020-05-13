@@ -338,7 +338,12 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                 Intent intent =
                         new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://".concat(music.getPath())));
                 getContext().sendBroadcast(intent);
+                ToastUtils.show("删除成功");
+            }else {
+                ToastUtils.show("手机没有下载该文件");
             }
+            AppCache.get().getLocalMusicList().remove(music);
+            adapter.notifyDataSetChanged();
         });
         dialog.setNegativeButton(R.string.cancel, null);
         dialog.show();
