@@ -61,7 +61,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     @Bind(R.id.tv_online_music)
     private TextView tvOnlineMusic;
     @Bind(R.id.viewpager)
-    private ViewPager mViewPager;
+    public ViewPager mViewPager;
     @Bind(R.id.fl_play_bar)
     private FrameLayout flPlayBar;
 
