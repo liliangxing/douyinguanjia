@@ -91,7 +91,7 @@ public class WebviewFragment extends BaseFragment {
                     return;
                 }
                 if(!TextUtils.isEmpty(signc)){
-                    String ajaxData = "https://www.iesdouyin.com/web/api/v2/aweme/post/?user_id="+currentMusic.getSongId()+"&sec_uid=&count=30&max_cursor=0&app_id=1128&_signature="+signc;
+                    String ajaxData = "https://www.iesdouyin.com/web/api/v2/aweme/post/?user_id="+currentMusic.getSongId()+"&sec_uid=&count=300&max_cursor=0&app_id=1128&_signature="+signc;
                     currentMusic.setArtist(ajaxData);
                     mWebView.loadUrl(ajaxData);
                     return;
