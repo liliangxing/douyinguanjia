@@ -23,13 +23,14 @@ import me.douyin.guanjia.application.AppCache;
 public class FileUtils {
     private static final String MP3 = ".mp3";
     private static final String LRC = ".lrc";
+    public static final String DATA_DIR = "/Music/douyinguanjia/";
 
     public static String getAppDir() {
         return Environment.getExternalStorageDirectory() + "/douyinguanjia";
     }
 
     public static String getMusicDir() {
-        String dir = Environment.getExternalStorageDirectory() + "/Music/douyinguanjia/";
+        String dir = Environment.getExternalStorageDirectory() + DATA_DIR;
         return mkdirs(dir);
     }
 
@@ -54,7 +55,10 @@ public class FileUtils {
     }
 
     public static String getRelativeMusicDir() {
-        String dir = "Music/douyinguanjia/";
+        String dir = DATA_DIR;
+        if(dir.startsWith("/")){
+            dir = dir.substring(1);
+        }
         return mkdirs(dir);
     }
 

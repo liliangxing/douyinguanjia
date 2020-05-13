@@ -5,6 +5,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import me.douyin.guanjia.fragment.LocalMusicFragment;
+
 /**
  * Created by hzwangchenyan on 2017/2/8.
  */
@@ -43,7 +46,7 @@ public class MyWebViewClient extends WebViewClient {
         if(progressDialog!=null&&progressDialog.isShowing()){
             progressDialog.dismiss();
         }
-        if(url.endsWith("test.html")||url.startsWith("https://www.iesdouyin.com/web/api/v2/aweme/post/")) {
+        if(url.endsWith(LocalMusicFragment.FILE_NAME)||url.startsWith("https://www.iesdouyin.com/web/api/v2/aweme/post/")) {
             view.loadUrl("javascript:window.java_obj.getSource('<head>'+" +
                     "document.getElementsByTagName('html')[0].innerHTML+'</head>');");
         }

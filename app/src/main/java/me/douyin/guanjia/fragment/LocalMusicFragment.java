@@ -82,8 +82,8 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     private Loader<Cursor> loader;
     public PlaylistAdapter adapter;
     private Handler handler1;
-    private static final String DEFAULT_URL = "file:///android_asset/test.html";
-    private static final String FILE_NAME = "test.html";
+    public static final String FILE_NAME = "test.html";
+    private static final String DEFAULT_URL = "file:///android_asset/"+FILE_NAME;
 
     @Nullable
     @Override
@@ -185,7 +185,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                 modify("var tac=", "var tac='"+tac+"';");
                 modify("var user_id=","var user_id="+music.getSongId()+"");
                 mWebView = MusicActivity.instance.mWebView;
-                mWebView.loadUrl("file:///mnt/sdcard/Music/douyinguanjia/test.html");
+                mWebView.loadUrl("file:///mnt/sdcard"+FileUtils.DATA_DIR+FILE_NAME);
             }
             @Override
             public void onFailure(HttpException e, String s) {
