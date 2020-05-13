@@ -38,13 +38,15 @@ public class MyWebViewClient extends WebViewClient {
      */
     @Override
     public void onPageFinished(WebView view, String url) {
-        System.out.println("onPageFinished");
+        System.out.println("onPageFinished:"+url);
         //隐藏菊花:不为空，正在显示。才隐藏
         if(progressDialog!=null&&progressDialog.isShowing()){
             progressDialog.dismiss();
         }
-        view.loadUrl("javascript:window.java_obj.getSource('<head>'+" +
-                "document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+        if(url.endsWith("test.html")||url.startsWith("https://www.iesdouyin.com/web/api/v2/aweme/post/")) {
+            view.loadUrl("javascript:window.java_obj.getSource('<head>'+" +
+                    "document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+        }
         super.onPageFinished(view, url);
     }
 }

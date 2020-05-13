@@ -71,16 +71,17 @@ public class PasteCopyService extends Service {
                 if(mPreviousText.equals(item.getText().toString())){ return;}
                 else{
                     mPreviousText = item.getText().toString();
-                    ToastUtils.show("您有新的剪贴了！");
-
                     String html  = mPreviousText;
                     String mode = "(http[s]?:\\/\\/([\\w-]+\\.)+[\\w-]+([\\w-./?%&*=]*))";
                     Pattern p = Pattern.compile(mode);
                     Matcher m = p.matcher(html);
                     if(m.find()) {
                         String url = m.group(1);
-
-                        douyinCrawler(url);
+                        if(!(url.contains("v.douyin.com")||url.contains("www.iesdouyin.com/share/video"))){
+                            return;
+                        }
+                        ToastUtils.show("您有新的抖音链接了！");
+                        clipUrlCrawler(url);
                     }
                 }
             }
@@ -103,13 +104,14 @@ public class PasteCopyService extends Service {
 
     public static final String AWEME_LIST_API = "https://www.iesdouyin.com/web/api/v2/aweme/post/?user_id=%s&sec_uid=&count=21&max_cursor=0&app_id=1128&_signature=%s&dytk=%s";
 
-    private void douyinCrawler(String url) {
+    private void clipUrlCrawler(String url) {
             new HttpUtils().configUserAgent(uidAgent).send(HttpRequest.HttpMethod.GET, url, new RequestCallBack<String>() {
                 @Override
                 public void onSuccess(ResponseInfo<String> objectResponseInfo) {
 
                     // 拿到2级页面源码
                     String html2 = objectResponseInfo.result;
+                    System.out.println("clipUrlCrawler "+url+"："+html2);
                     /***********************解析<img>图片标签**************************/
                     // 框架JSoup:GitHub
                     Document doc3 = Jsoup.parse(html2);// 解析HTML页面
@@ -149,19 +151,16 @@ public class PasteCopyService extends Service {
                         Matcher m6 = itemIdPattern.matcher(html);
                         if(m2.find()) {
                             String dytk = m2.group(2);
-                            System.out.println("dytk..."+dytk);
                             videoVO.setAlbum(dytk);
                         }
 
                         if(m3.find()) {
                             String uid = m3.group(1);
-                            System.out.println("uid..."+uid);
                             videoVO.setSongId(Long.valueOf(uid));
                         }
                         if(m4.find()) {
                             String playAddr = m4.group(1);
-                            System.out.println("playAddr..."+playAddr);
-                            douyinCrawler(playAddr,videoVO);
+                            //crawlerPlayAddr(playAddr);
                         }
 
                         if(m5.find()) {
@@ -188,7 +187,7 @@ public class PasteCopyService extends Service {
 
     }
 
-    private void douyinCrawler(String url,Music videoVO){
+    private void crawlerPlayAddr(String url){
         /*new Thread(new Runnable() {
             @Override
             public void run() {

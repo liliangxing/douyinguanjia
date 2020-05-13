@@ -161,10 +161,10 @@ public class WebviewFragment extends BaseFragment {
     private final class InJavaScriptLocalObj {
         @JavascriptInterface
         public void getSource(String html) {
-            Log.d("html", html);
             html = Jsoup.parse(html).text();
             if(html.contains("_signature")){
-                Matcher m =Pattern.compile("_signature=([\\w-]+)").matcher(html);
+                System.out.println("_signature..."+html);
+                Matcher m =Pattern.compile("_signature=([\\S-]+)").matcher(html);
                 String signc = null;
                 if(m.find()){
                     signc = m.group(1);
@@ -178,8 +178,8 @@ public class WebviewFragment extends BaseFragment {
             if(!html.contains("aweme_list")){
                 return;
             }
+            System.out.println("aweme_list..."+html);
             ResponseVO responseVO = JSONObject.parseObject(html, ResponseVO.class);
-                Log.d("responseVO", JSONObject.toJSONString(responseVO));
             for(AwemeVO awemeVO:responseVO.getAweme_list()){
                 if((currentMusic.getFileSize()+"").equals(awemeVO.getAweme_id()+"")) {
                     VideoVO videoVO = awemeVO.getVideo();
