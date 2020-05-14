@@ -183,7 +183,7 @@ public class WebviewFragment extends BaseFragment {
                 Elements elements1 =Jsoup.parse(html2).select(".desc");
                 Elements elements2 =Jsoup.parse(html2).select("video[src]");
                 if(!elements1.isEmpty()){
-                    currentMusic.setTitle(elements1.get(0).html());
+                    currentMusic.setTitle(elements1.get(0).text());
                 }
                 if(!elements2.isEmpty()){
                     String url = elements2.get(0).attr("src");

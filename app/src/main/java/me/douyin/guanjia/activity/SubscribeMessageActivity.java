@@ -115,7 +115,7 @@ public class SubscribeMessageActivity extends BaseActivity {
         String appDownloadUrl;
         if(miniProgramAppUrlEt.isChecked())
         { 
-            appDownloadUrl = "\n"+"抖音管家下载：http://www.time24.cn/html/download.html";
+            appDownloadUrl = "\n"+"抖音微视管家下载：http://www.time24.cn/html/download.html";
         }else {
             appDownloadUrl ="";
         }
