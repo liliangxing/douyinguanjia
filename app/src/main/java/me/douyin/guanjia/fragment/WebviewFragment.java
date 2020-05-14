@@ -2,6 +2,7 @@ package me.douyin.guanjia.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,6 +44,7 @@ import me.douyin.guanjia.model.ResponseVO;
 import me.douyin.guanjia.model.UriVO;
 import me.douyin.guanjia.model.VideoVO;
 import me.douyin.guanjia.service.AudioPlayer;
+import me.douyin.guanjia.service.PasteCopyService;
 import me.douyin.guanjia.utils.FileUtils;
 import me.douyin.guanjia.utils.MusicUtils;
 import me.douyin.guanjia.utils.ToastUtils;
@@ -123,7 +125,6 @@ public class WebviewFragment extends BaseFragment {
         webSettings.setMediaPlaybackRequiresUserGesture(false);
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
-        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         mWebView.setVerticalScrollBarEnabled(true);
         mWebView.setWebViewClient(new MyWebViewClient(this.getContext(),progressDialog){
             /**
@@ -271,7 +272,7 @@ public class WebviewFragment extends BaseFragment {
                             loopCount = 3;
                             cancelProgress();
                             if(fileName.endsWith(".mp4")){
-                                currentMusic.setPath(path);
+                                addPathAndPaste(path);
                                 return;
                             }
                             checkCounter(fileName,true);
@@ -279,12 +280,21 @@ public class WebviewFragment extends BaseFragment {
                     });
         }else {
             if(fileName.endsWith(".mp4")){
-                currentMusic.setPath(path);
+                addPathAndPaste(path);
                 return;
             }
             checkCounter(fileName,false);
         }
 
+    }
+
+    private void addPathAndPaste(String path){
+        currentMusic.setPath(path);
+        if(!TextUtils.isEmpty(currentMusic.getTitle())) {
+            PasteCopyService.clipboardManager.setPrimaryClip(ClipData.newPlainText("Label",
+                    currentMusic.getTitle().replaceAll("[@|#]([\\S]{1,10})", "").trim()));
+        }
+        MusicActivity.instance.mViewPager.setCurrentItem(1);
     }
 
     private void  checkCounter(String fileName,boolean loop){

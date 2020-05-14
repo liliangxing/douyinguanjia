@@ -65,7 +65,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     @Bind(R.id.fl_play_bar)
     private FrameLayout flPlayBar;
 
-    private ClipboardManager cm;
+    public ClipboardManager cm;
 
     private View vNavigationHeader;
     private LocalMusicFragment mLocalMusicFragment;

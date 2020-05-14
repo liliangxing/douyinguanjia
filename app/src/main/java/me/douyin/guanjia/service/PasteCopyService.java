@@ -44,7 +44,7 @@ public class PasteCopyService extends Service {
     private static final String TAG = "Service";
     private static  LocalMusicFragment adapter;
 
-    ClipboardManager clipboardManager;
+    public  static ClipboardManager clipboardManager;
 
     private String mPreviousText = "";
     private static Handler handler1;
