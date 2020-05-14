@@ -253,7 +253,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         Intent intent = new Intent(this, SubscribeMessageActivity.class);
         String title =  WebviewFragment.currentMusic.getTitle();
         if(null == title) title = "";
-        title = title.replaceAll("[@|#][ |]([\\S]{1,10})","").trim();
+        title = title.replaceAll("[@|#]([\\S]{1,10})","").trim();
         intent.putExtra("title", title);
         intent.putExtra("url", mWebView.getUrl());
         intent.putExtra("content", title);

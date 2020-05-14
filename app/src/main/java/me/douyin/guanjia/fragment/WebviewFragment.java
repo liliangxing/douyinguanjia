@@ -292,7 +292,7 @@ public class WebviewFragment extends BaseFragment {
         currentMusic.setPath(path);
         if(!TextUtils.isEmpty(currentMusic.getTitle())) {
             PasteCopyService.clipboardManager.setPrimaryClip(ClipData.newPlainText("Label",
-                    currentMusic.getTitle().replaceAll("[@|#][ |]([\\S]{1,10})", "").trim()));
+                    currentMusic.getTitle().replaceAll("[@|#]([\\S]{1,10})", "").trim()));
         }
         MusicActivity.instance.mViewPager.setCurrentItem(1);
     }
