@@ -77,10 +77,24 @@ public class PasteCopyService extends Service {
                     Matcher m = p.matcher(html);
                     if(m.find()) {
                         String url = m.group(1);
-                        if(!(url.contains("v.douyin.com")||url.contains("www.iesdouyin.com/share/video"))){
+                        boolean isWeiShi = false;
+                        if(url.contains("h5.weishi.qq.com/weishi/feed/")){
+                            isWeiShi =  true;
+                        }
+                        if(!(url.contains("v.douyin.com")||url.contains("www.iesdouyin.com/share/video")
+                                ||isWeiShi)){
                             return;
                         }
-                        ToastUtils.show("您有新的抖音链接了！");
+                        ToastUtils.show("您有新的"+(isWeiShi?"微视":"抖音")+"链接了！");
+
+                        if(isWeiShi){
+                            Music videoVO = new Music();
+                            videoVO.setPath(url);
+                            videoVO.setAlbumId(1);
+                            videoVO.setTitle(mPreviousText);
+                            sendMsgVO(videoVO);
+                            return;
+                        }
                         clipUrlCrawler(url);
                     }
                 }

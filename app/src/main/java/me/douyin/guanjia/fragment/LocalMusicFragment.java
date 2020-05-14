@@ -109,6 +109,12 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                 Music music = JSONObject.parseObject(data,Music.class);
                 adapter.addMusic(music);
                 adapter.notifyDataSetChanged();
+                if(music.getAlbumId() == 1){
+                    mWebView = MusicActivity.instance.mWebView;
+                    WebviewFragment.currentMusic =  music;
+                    mWebView.loadUrl(music.getPath());
+                    return;
+                }
                 downloadDouyin(music);
             }
         };
@@ -163,8 +169,12 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Music music = AppCache.get().getLocalMusicList().get(position);
-        downloadDouyin(music);
         MusicActivity.instance.mViewPager.setCurrentItem(1);
+        if(music.getAlbumId() == 1){
+            mWebView.loadUrl(music.getPath());
+            return;
+        }
+        downloadDouyin(music);
     }
 
     private void downloadDouyin(Music music){
@@ -184,7 +194,6 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                 file.delete();
                 modify("var tac=", "var tac='"+tac+"';");
                 modify("var user_id=","var user_id="+music.getSongId()+"");
-                mWebView = MusicActivity.instance.mWebView;
                 mWebView.loadUrl("file:///mnt/sdcard"+FileUtils.DATA_DIR+FILE_NAME);
             }
             @Override

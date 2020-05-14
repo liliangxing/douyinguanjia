@@ -25,6 +25,8 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.FileCallBack;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.util.List;
@@ -161,8 +163,9 @@ public class WebviewFragment extends BaseFragment {
      */
     private final class InJavaScriptLocalObj {
         @JavascriptInterface
-        public void getSource(String html) {
-            html = Jsoup.parse(html).text();
+        public void getSource(String html2) {
+            Document document = Jsoup.parse(html2);
+            String html = document.text();
             if(html.contains("_signature")){
                 System.out.println("_signature..."+html);
                 Matcher m =Pattern.compile("_signature=([\\S-]+)").matcher(html);
@@ -175,6 +178,22 @@ public class WebviewFragment extends BaseFragment {
                 bundle.putString("signc", signc);
                 message.setData(bundle);
                 handler1.sendMessage(message);
+            }
+            if(html2.contains("v.weishi.qq.com")){
+                Elements elements1 =Jsoup.parse(html2).select(".desc");
+                Elements elements2 =Jsoup.parse(html2).select("video[src]");
+                if(!elements1.isEmpty()){
+                    currentMusic.setTitle(elements1.get(0).html());
+                }
+                if(!elements2.isEmpty()){
+                    String url = elements2.get(0).attr("src");
+                    Message message = new Message();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("data", url);
+                    message.setData(bundle);
+                    handler1.sendMessage(message);
+                }
+                return;
             }
             if(!html.contains("aweme_list")){
                 return;
@@ -231,6 +250,11 @@ public class WebviewFragment extends BaseFragment {
             Matcher m =Pattern.compile("video_id=([\\w-]+)").matcher(url);
             if(m.find()){
                 fileName1 = m.group(1)+".mp4";
+            }else {
+                 m = Pattern.compile(".*\\/(.*\\.mp4).*").matcher(url);
+                if(m.find()){
+                    fileName1 = m.group(1);
+                }
             }
         }
         String fileName = fileName1;

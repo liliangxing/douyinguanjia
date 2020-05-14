@@ -46,9 +46,14 @@ public class MyWebViewClient extends WebViewClient {
         if(progressDialog!=null&&progressDialog.isShowing()){
             progressDialog.dismiss();
         }
-        if(url.endsWith(LocalMusicFragment.FILE_NAME)||url.startsWith("https://www.iesdouyin.com/web/api/v2/aweme/post/")) {
+        if(url.endsWith(LocalMusicFragment.FILE_NAME)||url.startsWith("https://www.iesdouyin.com/web/api/v2/aweme/post/")
+        ) {
             view.loadUrl("javascript:window.java_obj.getSource('<head>'+" +
                     "document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+        }
+        if(url.startsWith("https://h5.weishi.qq.com/weishi/feed/")){
+            view.loadUrl("javascript:setTimeout(function () {window.java_obj.getSource('<head>'+" +
+                    "document.getElementsByTagName('html')[0].innerHTML+'</head>');},2000);");
         }
         super.onPageFinished(view, url);
     }

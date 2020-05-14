@@ -8,8 +8,8 @@
     <string name="save">保存</string>
     <string name="loading">努力加载中…</string>
     <string name="load_fail">加载失败，请检查网络后重试</string>
-    <string name="local_music">抖音链接</string>
-    <string name="online_music">在线抖音</string>
+    <string name="local_music">抖音微视链接</string>
+    <string name="online_music">mp4链接地址</string>
     <string name="unknown">未知</string>
     <string name="delete_music">删除%s？</string>
     <string name="play_music">播放%s？</string>
