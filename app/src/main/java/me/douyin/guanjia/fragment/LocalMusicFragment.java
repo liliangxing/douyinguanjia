@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -60,6 +61,7 @@ import me.douyin.guanjia.utils.DownFile;
 import me.douyin.guanjia.utils.FileUtils;
 import me.douyin.guanjia.utils.Modify;
 import me.douyin.guanjia.utils.PermissionReq;
+import me.douyin.guanjia.utils.ScreenUtils;
 import me.douyin.guanjia.utils.ToastUtils;
 import me.douyin.guanjia.utils.binding.Bind;
 import me.douyin.guanjia.R;
@@ -78,7 +80,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     @Bind(R.id.v_searching)
     private TextView vSearching;
     public static WebView mWebView;
-
+    private View vHeader;
     private Loader<Cursor> loader;
     public PlaylistAdapter adapter;
     private Handler handler1;
@@ -118,6 +120,11 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
             }
         };
         PasteCopyService.startCommand(getActivity(), handler1);
+
+        vHeader = LayoutInflater.from(getActivity()).inflate(R.layout.activity_local_music_list_header, null);
+        AbsListView.LayoutParams params = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ScreenUtils.dp2px(120));
+        vHeader.setLayoutParams(params);
+        lvLocalMusic.addHeaderView(vHeader, null, false);
     }
 
     private void loadMusic() {
