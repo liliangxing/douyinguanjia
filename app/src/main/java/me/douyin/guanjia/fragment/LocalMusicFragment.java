@@ -77,7 +77,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     private ListView lvLocalMusic;
     @Bind(R.id.v_searching)
     private TextView vSearching;
-    public WebView mWebView;
+    public static WebView mWebView;
 
     private Loader<Cursor> loader;
     public PlaylistAdapter adapter;
@@ -110,7 +110,6 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                 adapter.addMusic(music);
                 adapter.notifyDataSetChanged();
                 if(music.getAlbumId() == 1){
-                    mWebView = MusicActivity.instance.mWebView;
                     WebviewFragment.currentMusic =  music;
                     mWebView.loadUrl(music.getPath());
                     return;
