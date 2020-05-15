@@ -31,7 +31,7 @@
                 android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="温馨提示："
+                android:text="使前必读："
                 android:textColor="@color/white"
                 android:textSize="16sp" />
 
@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:lineSpacingMultiplier="1"
-                android:text="前往抖音或腾讯微视复制视频链接过来啦，管家帮你自动下载，然后您可以发送给朋友，或分享播放链接到朋友。（抖音微视管家仅用于学习交流，禁止任何人通过本app非法牟利！）"
+                android:text="        前往抖音或腾讯微视复制视频链接过来啦，管家帮你自动下载，然后您可以发送给朋友，或分享播放链接到朋友。（抖音微视管家仅用于学习交流，禁止任何人通过本app非法牟利！）"
                 android:textColor="@color/white"
                 android:textSize="16sp" />
         </LinearLayout>
