@@ -35,6 +35,7 @@ import me.douyin.guanjia.service.QuitTimer;
 import me.douyin.guanjia.utils.PermissionReq;
 import me.douyin.guanjia.utils.SystemUtils;
 import me.douyin.guanjia.utils.ToastUtils;
+import me.douyin.guanjia.utils.Utils;
 import me.douyin.guanjia.utils.binding.Bind;
 import me.douyin.guanjia.R;
 import me.douyin.guanjia.constants.Extras;
@@ -90,6 +91,8 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
         instance = this;
+        //设置全局上下文
+        Utils.setContext(this);
     }
 
     /**

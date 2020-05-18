@@ -98,7 +98,6 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         adapter = new PlaylistAdapter(new ArrayList<>());
         adapter.setOnMoreClickListener(this);
         lvLocalMusic.setAdapter(adapter);

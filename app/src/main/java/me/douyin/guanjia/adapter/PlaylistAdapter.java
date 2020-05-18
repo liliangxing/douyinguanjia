@@ -13,6 +13,7 @@ import java.util.List;
 import me.douyin.guanjia.model.Music;
 import me.douyin.guanjia.utils.CoverLoader;
 import me.douyin.guanjia.utils.FileUtils;
+import me.douyin.guanjia.utils.Utils;
 import me.douyin.guanjia.utils.binding.Bind;
 import me.douyin.guanjia.utils.binding.ViewBinder;
 import me.douyin.guanjia.R;
@@ -69,8 +70,9 @@ public class PlaylistAdapter extends BaseAdapter {
         }
         holder.vPlaying.setVisibility((isPlaylist && position == AudioPlayer.get().getPlayPosition()) ? View.VISIBLE : View.INVISIBLE);
         Music music = musicList.get(position);
-        Bitmap cover = CoverLoader.get().loadCoverFromFile(music.getCoverPath());
-        holder.ivCover.setImageBitmap(cover);
+        Utils.getBitmapUtils().display(holder.ivCover,music.getCoverPath());
+        /*Bitmap cover = CoverLoader.get().loadCoverFromFile(music.getCoverPath());
+        holder.ivCover.setImageBitmap(cover)*/;
         holder.tvTitle.setText(music.getTitle());
         String artist = FileUtils.getArtistAndAlbum(music.getArtist(), music.getAlbum());
         holder.tvArtist.setText(artist);
