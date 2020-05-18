@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -86,7 +87,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     private View xCustomView;
     public static MusicActivity instance;
     public static Boolean autoDownload;
-    public static final String PREFERENCES_FILE = "share_data";
+    public static final String PREFERENCES_FILE = "share_data1";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +96,12 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         instance = this;
         //设置全局上下文
         Utils.setContext(this);
-        autoDownload = Boolean.valueOf(Utils.readData(PREFERENCES_FILE,"autoDownload"));
+        String autoDown = Utils.readData(PREFERENCES_FILE,"autoDownload");
+        if(TextUtils.isEmpty(autoDown)){
+            autoDownload = true;
+        }else {
+            autoDownload = Boolean.valueOf(autoDown);
+        }
         if(!autoDownload){
             iv_settings.setBackgroundColor(Color.LTGRAY);
         }
