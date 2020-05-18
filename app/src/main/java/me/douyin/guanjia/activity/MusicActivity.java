@@ -85,6 +85,8 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     private ProgressDialog progressDialog;//加载界面的菊花
     private View xCustomView;
     public static MusicActivity instance;
+    public static Boolean autoDownload;
+    public static final String PREFERENCES_FILE = "share_data";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +95,10 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         instance = this;
         //设置全局上下文
         Utils.setContext(this);
+        autoDownload = Boolean.valueOf(Utils.readData(PREFERENCES_FILE,"autoDownload"));
+        if(!autoDownload){
+            iv_settings.setBackgroundColor(Color.LTGRAY);
+        }
     }
 
     /**
@@ -246,13 +252,15 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
                 startActivity(Intent.createChooser(intent, getString(R.string.share)));*/
                 break;
             case R.id.iv_settings:
-                LocalMusicFragment.autoDownload = !LocalMusicFragment.autoDownload;
-                if(LocalMusicFragment.autoDownload){
+                autoDownload = !autoDownload;
+                if(autoDownload){
                     iv_settings.setBackgroundColor(Color.TRANSPARENT);
                 }else {
                     iv_settings.setBackgroundColor(Color.LTGRAY);
                 }
-                ToastUtils.show("自动下载状态更新为："+(LocalMusicFragment.autoDownload?"开":"关"));
+                Utils.writeData(PREFERENCES_FILE,"autoDownload"
+                        ,Boolean.toString(autoDownload));
+                ToastUtils.show("自动下载改为："+(autoDownload?"开":"关"));
                 break;
             case R.id.tv_local_music:
                 mViewPager.setCurrentItem(0);
