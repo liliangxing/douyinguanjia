@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -243,6 +244,11 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
                 break;
             case R.id.iv_settings:
                 LocalMusicFragment.autoDownload = !LocalMusicFragment.autoDownload;
+                if(LocalMusicFragment.autoDownload){
+                    iv_settings.setBackgroundColor(Color.TRANSPARENT);
+                }else {
+                    iv_settings.setBackgroundColor(Color.LTGRAY);
+                }
                 ToastUtils.show("自动下载状态更新为："+(LocalMusicFragment.autoDownload?"开":"关"));
                 break;
             case R.id.tv_local_music:
@@ -259,12 +265,12 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
 
     private void shareWeixin(){
         Intent intent = new Intent(this, SubscribeMessageActivity.class);
-        if(null == WebviewFragment.currentMusic){
-            ToastUtils.show("当前无内容分享，请点击列表");
-            mViewPager.setCurrentItem(0);
-            return;
+        String title;
+        if(null != WebviewFragment.currentMusic){
+            title = WebviewFragment.currentMusic.getTitle();
+        }else {
+            title = mWebView.getTitle();
         }
-        String title =  WebviewFragment.currentMusic.getTitle();
         if(null == title) title = "";
         title = title.replaceAll("[@|#]([\\S]{1,10})","").trim();
         intent.putExtra("title", title);
