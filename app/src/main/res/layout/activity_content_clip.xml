@@ -80,10 +80,10 @@
                 android:text="@string/share_all_message" />
 
             <Button
-                android:id="@+id/share_part_message_btn"
+                android:id="@+id/choose_app_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:text="@string/share_part_message" />
+                android:text="@string/choose_app" />
     </LinearLayout>
 </LinearLayout>

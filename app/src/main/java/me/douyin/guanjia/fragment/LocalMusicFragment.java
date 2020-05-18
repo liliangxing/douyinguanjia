@@ -86,6 +86,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     private Handler handler1;
     public static final String FILE_NAME = "test.html";
     private static final String DEFAULT_URL = "file:///android_asset/"+FILE_NAME;
+    public static boolean autoDownload = true;
 
     @Nullable
     @Override
@@ -111,12 +112,14 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                 Music music = JSONObject.parseObject(data,Music.class);
                 adapter.addMusic(music);
                 adapter.notifyDataSetChanged();
-                if(music.getAlbumId() == 1){
-                    WebviewFragment.currentMusic =  music;
-                    mWebView.loadUrl(music.getPath());
-                    return;
+                if(autoDownload){
+                    if(music.getAlbumId() == 1){
+                        WebviewFragment.currentMusic =  music;
+                        mWebView.loadUrl(music.getPath());
+                        return;
+                    }
+                    downloadDouyin(music);
                 }
-                downloadDouyin(music);
             }
         };
         PasteCopyService.startCommand(getActivity(), handler1);
@@ -177,6 +180,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         Music music = AppCache.get().getLocalMusicList().get(position-1);
         MusicActivity.instance.mViewPager.setCurrentItem(1);
         if(music.getAlbumId() == 1){
+            WebviewFragment.currentMusic =  music;
             mWebView.loadUrl(music.getPath());
             return;
         }

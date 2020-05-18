@@ -42,6 +42,16 @@
     </LinearLayout>
 
     <ImageView
+        android:id="@+id/iv_settings"
+        android:layout_width="?attr/actionBarSize"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="end"
+        android:background="@drawable/btn_action_bg_selector"
+        android:contentDescription="@null"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_menu_settings" />
+
+    <ImageView
         android:id="@+id/iv_share"
         android:layout_width="?attr/actionBarSize"
         android:layout_height="?attr/actionBarSize"

@@ -6,6 +6,7 @@ import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.view.View;
@@ -65,7 +66,7 @@ public class SubscribeMessageActivity extends BaseActivity {
         shareAllMsgBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shareWeixin(contentText,title);
+                shareWeixin(contentText,title,false);
             }
         });
 
@@ -76,11 +77,11 @@ public class SubscribeMessageActivity extends BaseActivity {
             }
         });
 
-        Button sharePartMsgBtn = (Button)findViewById(R.id.share_part_message_btn);
-        sharePartMsgBtn.setOnClickListener(new View.OnClickListener() {
+        Button choose_app_btn = (Button)findViewById(R.id.choose_app_btn);
+        choose_app_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shareWeixin(null,title);
+                shareWeixin(null,title,true);
             }
         });
     }
@@ -109,7 +110,7 @@ public class SubscribeMessageActivity extends BaseActivity {
         miniProgramUrlEt.setText(url);
     }
 
-    private void shareWeixin(String content,String title){
+    private void shareWeixin(String content,String title ,boolean openUrl){
         generateUrl();
         String url;
         String appDownloadUrl;
@@ -130,6 +131,14 @@ public class SubscribeMessageActivity extends BaseActivity {
                 copyText);
         // 将ClipData内容放到系统剪贴板里。
         cm.setPrimaryClip(mClipData);
+
+        if(openUrl){
+            Intent intent = new Intent("android.intent.action.VIEW");
+            intent.putExtra("FiiNote", true);
+            intent.setData(Uri.parse(url));
+            startActivity(Intent.createChooser(intent, getString(R.string.choose_app)));
+            return;
+        }
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT, copyText);

@@ -56,6 +56,8 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     private ImageView ivMenu;
     @Bind(R.id.iv_share)
     private ImageView iv_share;
+    @Bind(R.id.iv_settings)
+    private ImageView iv_settings;
     @Bind(R.id.tv_local_music)
     private TextView tvLocalMusic;
     @Bind(R.id.tv_online_music)
@@ -184,6 +186,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
 
         ivMenu.setOnClickListener(this);
         iv_share.setOnClickListener(this);
+        iv_settings.setOnClickListener(this);
         tvLocalMusic.setOnClickListener(this);
         flPlayBar.setOnClickListener(this);
         mViewPager.addOnPageChangeListener(this);
@@ -238,6 +241,10 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
                 intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app, getString(R.string.app_name)));
                 startActivity(Intent.createChooser(intent, getString(R.string.share)));*/
                 break;
+            case R.id.iv_settings:
+                LocalMusicFragment.autoDownload = !LocalMusicFragment.autoDownload;
+                ToastUtils.show("自动下载状态更新为："+(LocalMusicFragment.autoDownload?"开":"关"));
+                break;
             case R.id.tv_local_music:
                 mViewPager.setCurrentItem(0);
                 break;
@@ -252,6 +259,11 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
 
     private void shareWeixin(){
         Intent intent = new Intent(this, SubscribeMessageActivity.class);
+        if(null == WebviewFragment.currentMusic){
+            ToastUtils.show("当前无内容分享，请点击列表");
+            mViewPager.setCurrentItem(0);
+            return;
+        }
         String title =  WebviewFragment.currentMusic.getTitle();
         if(null == title) title = "";
         title = title.replaceAll("[@|#]([\\S]{1,10})","").trim();
@@ -278,6 +290,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         if (position == 0) {
             tvLocalMusic.setSelected(true);
             tvOnlineMusic.setSelected(false);
+            iv_settings.setVisibility(View.VISIBLE);
             iv_share.setVisibility(View.GONE);
             flPlayBar.setVisibility(View.VISIBLE);
             layoutParams.bottomMargin =getResources().getDimensionPixelOffset(R.dimen.play_bar_height);
@@ -285,6 +298,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         } else {
             tvLocalMusic.setSelected(false);
             tvOnlineMusic.setSelected(true);
+            iv_settings.setVisibility(View.GONE);
             iv_share.setVisibility(View.VISIBLE);
             flPlayBar.setVisibility(View.GONE);
             layoutParams.bottomMargin=0;
