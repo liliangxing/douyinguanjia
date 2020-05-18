@@ -89,6 +89,10 @@ public class WebviewFragment extends BaseFragment {
             public void handleMessage(Message msg) {
                 String data =  msg.getData().getString("data");
                 String signc =  msg.getData().getString("signc");
+                String coverPath =  msg.getData().getString("coverPath");
+                if(!TextUtils.isEmpty(coverPath)){
+                    LocalMusicFragment.adapter.notifyDataSetChanged();
+                }
                 if(!TextUtils.isEmpty(data)){
                     mWebView.loadUrl(data);
                     downloadAndPlay(data);
@@ -186,6 +190,8 @@ public class WebviewFragment extends BaseFragment {
                 if(!elements1.isEmpty()){
                     currentMusic.setTitle(elements1.get(0).text());
                 }
+                Message message = new Message();
+                Bundle bundle = new Bundle();
                 Matcher m =Pattern.compile("background:url\\(([\\S-]+)\\)").matcher(html2);
                 if(m.find()){
                     String coverUrl = m.group(1);
@@ -193,13 +199,13 @@ public class WebviewFragment extends BaseFragment {
                         coverUrl = coverUrl.replace("//","https://");
                     }
                     currentMusic.setCoverPath(coverUrl);
+                    bundle.putString("coverPath", coverUrl);
                 }
                 if(!elements2.isEmpty()){
                     String url = elements2.get(0).attr("src");
-                    Message message = new Message();
-                    Bundle bundle = new Bundle();
                     bundle.putString("data", url);
                     message.setData(bundle);
+                    //LocalMusicFragment.adapter.notifyDataSetChanged();
                     handler1.sendMessage(message);
                 }
                 return;

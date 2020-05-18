@@ -82,7 +82,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     public static WebView mWebView;
     private View vHeader;
     private Loader<Cursor> loader;
-    public PlaylistAdapter adapter;
+    public static PlaylistAdapter adapter;
     private Handler handler1;
     public static final String FILE_NAME = "test.html";
     private static final String DEFAULT_URL = "file:///android_asset/"+FILE_NAME;
