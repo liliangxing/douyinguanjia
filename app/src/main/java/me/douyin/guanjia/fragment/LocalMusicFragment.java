@@ -179,7 +179,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         MusicActivity.instance.mViewPager.setCurrentItem(1);
         if(music.getAlbumId() == 1){
             WebviewFragment.currentMusic =  music;
-            mWebView.loadUrl(music.getPath());
+            mWebView.loadUrl(music.getArtist());
             return;
         }
         downloadDouyin(music);

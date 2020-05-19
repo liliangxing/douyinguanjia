@@ -87,15 +87,16 @@ public class PasteCopyService extends Service {
                         }
                         ToastUtils.show("您有新的"+(isWeiShi?"微视":"抖音")+"链接了！");
 
-                        if(isWeiShi){
+                        //if(isWeiShi){
                             Music videoVO = new Music();
                             videoVO.setPath(url);
+                            videoVO.setArtist(url);
                             videoVO.setAlbumId(1);
                             videoVO.setTitle(mPreviousText);
                             sendMsgVO(videoVO);
                             return;
-                        }
-                        clipUrlCrawler(url);
+                        //}
+                        //clipUrlCrawler(url);
                     }
                 }
             }

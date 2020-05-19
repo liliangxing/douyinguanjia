@@ -26,6 +26,7 @@ import com.zhy.http.okhttp.callback.FileCallBack;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.File;
@@ -207,6 +208,36 @@ public class WebviewFragment extends BaseFragment {
                     message.setData(bundle);
                     //LocalMusicFragment.adapter.notifyDataSetChanged();
                     handler1.sendMessage(message);
+                }
+                return;
+            }
+            if(html2.contains("aweme.snssdk.com")){
+                Elements elements2 =Jsoup.parse(html2).select("video[src]");
+                Elements list2 = Jsoup.parse(html2).getElementsByTag("input");
+                Message message = new Message();
+                Bundle bundle = new Bundle();
+                for(Element element2:list2) {
+                    String tagName =  element2.attr("name").toLowerCase();
+                    if(tagName.equals("shareAppDesc".toLowerCase())){
+                        currentMusic.setTitle(element2.val());
+
+                    }else if(tagName.equals("shareImage".toLowerCase())){
+                        String coverUrl = element2.val();
+                        currentMusic.setCoverPath(coverUrl);
+                        bundle.putString("coverPath", coverUrl);
+                    }
+                }
+                if(!elements2.isEmpty()){
+                    String url = elements2.get(0).attr("src");
+                    Matcher m =Pattern.compile("video_id=([\\S-]+)&").matcher(url);
+                    if(m.find()){
+                        url = url.replaceAll("playwm\\/\\?video_id=([\\S-][^&]+)&","play/?video_id=$1&media_type=4&");
+                        currentMusic.setArtist(url);
+                        bundle.putString("data", url);
+                        message.setData(bundle);
+                        //LocalMusicFragment.adapter.notifyDataSetChanged();
+                        handler1.sendMessage(message);
+                    }
                 }
                 return;
             }
