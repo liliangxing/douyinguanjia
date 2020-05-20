@@ -47,10 +47,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import me.douyin.guanjia.activity.MusicActivity;
 import me.douyin.guanjia.activity.MusicInfoActivity;
+import me.douyin.guanjia.activity.SubscribeMessageActivity;
 import me.douyin.guanjia.adapter.OnMoreClickListener;
 import me.douyin.guanjia.adapter.PlaylistAdapter;
 import me.douyin.guanjia.loader.MusicLoaderCallback;
@@ -86,6 +88,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     private Handler handler1;
     public static final String FILE_NAME = "test.html";
     private static final String DEFAULT_URL = "file:///android_asset/"+FILE_NAME;
+    public static LocalMusicFragment downloadFirst;
 
     @Nullable
     @Override
@@ -275,8 +278,17 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                 case 1:// 查看歌曲信息
                     MusicInfoActivity.start(getContext(), music);
                     break;
-                case 2:// 设为铃声
-                    requestSetRingtone(music);
+                case 2:// 用浏览器打开
+                    if(null != music.getCoverPath()) {
+                        openWithBrowser(music);
+                    }else {
+                        downloadFirst = this;
+                        if(music.getAlbumId() == 1){
+                            WebviewFragment.currentMusic =  music;
+                            mWebView.loadUrl(music.getArtist());
+                        }
+                    }
+                    //requestSetRingtone(music);
                     break;
                 case 3:// 删除
                     deleteMusic(music);
@@ -286,6 +298,17 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         dialog.show();
     }
 
+    public void openWithBrowser(Music music){
+        String title = music.getTitle().replaceAll("[@|#]([\\S]{1,10})","").trim();
+        String url = "http://www.time24.cn/test/index_douyin.php?video="+ URLEncoder.encode(music.getArtist())
+                +"&title="+URLEncoder.encode(title);
+        if(null!=music.getCoverPath()){
+            url += "&cover_path="+URLEncoder.encode(music.getCoverPath());
+        }else {
+            url = music.getPath();
+        }
+        SubscribeMessageActivity.createChooser(url,getContext());
+    }
     /**
      * 分享音乐
      */

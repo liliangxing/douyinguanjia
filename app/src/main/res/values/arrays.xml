@@ -3,7 +3,7 @@
     <string-array name="local_music_dialog">
         <item>分享</item>
         <item>@string/music_info</item>
-        <item>设为铃声</item>
+        <item>用浏览器打开</item>
         <item>从手机删除</item>
     </string-array>
 

@@ -133,16 +133,20 @@ public class SubscribeMessageActivity extends BaseActivity {
         cm.setPrimaryClip(mClipData);
 
         if(openUrl){
-            Intent intent = new Intent("android.intent.action.VIEW");
-            intent.putExtra("FiiNote", true);
-            intent.setData(Uri.parse(url));
-            startActivity(Intent.createChooser(intent, getString(R.string.choose_app)));
+            createChooser(url,this);
             return;
         }
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT, copyText);
         startActivity(Intent.createChooser(intent, getString(R.string.share)));
+    }
+
+    public static void createChooser(String url,Context context){
+        Intent intent = new Intent("android.intent.action.VIEW");
+        intent.putExtra("FiiNote", true);
+        intent.setData(Uri.parse(url));
+        context.startActivity(Intent.createChooser(intent, context.getString(R.string.choose_app)));
     }
 
     private void gotoWXApp(){

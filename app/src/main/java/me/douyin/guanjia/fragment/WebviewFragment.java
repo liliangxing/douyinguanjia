@@ -96,6 +96,10 @@ public class WebviewFragment extends BaseFragment {
                 }
                 if(!TextUtils.isEmpty(data)){
                     mWebView.loadUrl(data);
+                    if(LocalMusicFragment.downloadFirst != null){
+                        LocalMusicFragment.downloadFirst.openWithBrowser(currentMusic);
+                        LocalMusicFragment.downloadFirst = null;
+                    }
                     downloadAndPlay(data);
                     return;
                 }
@@ -293,7 +297,7 @@ public class WebviewFragment extends BaseFragment {
     public void downloadAndPlay(String url){
         String fileName1 = HttpUtils.getFileName(url);
         if(TextUtils.isEmpty(fileName1)){
-            Matcher m =Pattern.compile("video_id=([\\w-]+)").matcher(url);
+            Matcher m =Pattern.compile("video_id=([\\w-][^&]+)").matcher(url);
             if(m.find()){
                 fileName1 = m.group(1)+".mp4";
             }else {
