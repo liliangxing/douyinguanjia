@@ -49,6 +49,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
 import me.douyin.guanjia.activity.MusicActivity;
 import me.douyin.guanjia.activity.MusicInfoActivity;
@@ -59,6 +60,8 @@ import me.douyin.guanjia.loader.MusicLoaderCallback;
 import me.douyin.guanjia.model.Music;
 import me.douyin.guanjia.service.AudioPlayer;
 import me.douyin.guanjia.service.PasteCopyService;
+import me.douyin.guanjia.storage.db.DBManager;
+import me.douyin.guanjia.storage.db.greendao.MusicDao;
 import me.douyin.guanjia.utils.DownFile;
 import me.douyin.guanjia.utils.FileUtils;
 import me.douyin.guanjia.utils.Modify;
@@ -100,7 +103,8 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        adapter = new PlaylistAdapter(new ArrayList<>());
+        List<Music> musicList = DBManager.get().getMusicDao().queryBuilder().orderDesc(MusicDao.Properties.Id).build().list();
+        adapter = new PlaylistAdapter(musicList);
         adapter.setOnMoreClickListener(this);
         lvLocalMusic.setAdapter(adapter);
         loadMusic();
@@ -384,6 +388,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                 ToastUtils.show("手机没有下载该文件");
             }
             AppCache.get().getLocalMusicList().remove(music);
+            DBManager.get().getMusicDao().delete(music);
             adapter.notifyDataSetChanged();
         });
         dialog.setNegativeButton(R.string.cancel, null);

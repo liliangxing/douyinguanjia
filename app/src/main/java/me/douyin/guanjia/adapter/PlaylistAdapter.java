@@ -36,7 +36,7 @@ public class PlaylistAdapter extends BaseAdapter {
         this.isPlaylist = isPlaylist;
     }
     public void addMusic(Music isPlaylist) {
-        musicList.add(isPlaylist);
+        musicList.add(0,isPlaylist);
     }
 
     public void setOnMoreClickListener(OnMoreClickListener listener) {

@@ -48,6 +48,7 @@ import me.douyin.guanjia.model.UriVO;
 import me.douyin.guanjia.model.VideoVO;
 import me.douyin.guanjia.service.AudioPlayer;
 import me.douyin.guanjia.service.PasteCopyService;
+import me.douyin.guanjia.storage.db.DBManager;
 import me.douyin.guanjia.utils.FileUtils;
 import me.douyin.guanjia.utils.MusicUtils;
 import me.douyin.guanjia.utils.ToastUtils;
@@ -100,6 +101,7 @@ public class WebviewFragment extends BaseFragment {
                         LocalMusicFragment.downloadFirst.openWithBrowser(currentMusic);
                         LocalMusicFragment.downloadFirst = null;
                     }
+                    DBManager.get().getMusicDao().insert(currentMusic);
                     downloadAndPlay(data);
                     return;
                 }

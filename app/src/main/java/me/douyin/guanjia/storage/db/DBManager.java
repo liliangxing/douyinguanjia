@@ -1,8 +1,11 @@
 package me.douyin.guanjia.storage.db;
 
 import android.content.Context;
+import android.os.Environment;
 
 import org.greenrobot.greendao.database.Database;
+
+import java.io.File;
 
 import me.douyin.guanjia.storage.db.greendao.DaoMaster;
 import me.douyin.guanjia.storage.db.greendao.DaoSession;
@@ -22,9 +25,17 @@ public class DBManager {
     private static class SingletonHolder {
         private static DBManager instance = new DBManager();
     }
+    /**
+     * 获取db文件在sd卡的路径
+     * @return
+     */
+    private static String getDirPath(){
+        //TODO 这里返回存放db的文件夹的绝对路径
+        return new File(Environment.getExternalStorageDirectory()+"").getAbsolutePath();
+    }
 
     public void init(Context context) {
-        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, DB_NAME);
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(new CustomPathDatabaseContext(context, getDirPath()), DB_NAME);
         Database db = helper.getWritableDb();
         DaoSession daoSession = new DaoMaster(db).newSession();
         musicDao = daoSession.getMusicDao();
