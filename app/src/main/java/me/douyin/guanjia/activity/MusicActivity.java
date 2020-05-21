@@ -87,6 +87,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     private View xCustomView;
     public static MusicActivity instance;
     public static Boolean autoDownload;
+    public static Boolean fromClicked = false;
     public static final String PREFERENCES_FILE = "share_data1";
 
     @Override

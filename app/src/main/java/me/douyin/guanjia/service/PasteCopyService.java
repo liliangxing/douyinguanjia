@@ -1,5 +1,7 @@
 package me.douyin.guanjia.service;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -12,6 +14,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.BaseAdapter;
@@ -31,6 +34,10 @@ import org.jsoup.select.Elements;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import me.douyin.guanjia.R;
+import me.douyin.guanjia.activity.MusicActivity;
+import me.douyin.guanjia.application.Notifier;
+import me.douyin.guanjia.constants.Extras;
 import me.douyin.guanjia.fragment.LocalMusicFragment;
 import me.douyin.guanjia.model.Music;
 import me.douyin.guanjia.utils.DownFile;
@@ -59,7 +66,6 @@ public class PasteCopyService extends Service {
         super.onCreate();
         Log.i(TAG, "onCreate: " + getClass().getSimpleName());
         clipboardManager =(ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
-
         clipboardManager.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
             @Override
             public void onPrimaryClipChanged() {
@@ -101,6 +107,21 @@ public class PasteCopyService extends Service {
                 }
             }
         });
+        startForeground( 0x111, buildNotification(this));
+    }
+
+    private Notification buildNotification(Context context) {
+        Intent intent = new Intent(context, MusicActivity.class);
+        intent.putExtra(Extras.EXTRA_NOTIFICATION, true);
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+                .setContentIntent(pendingIntent)
+                .setSmallIcon(R.drawable.ic_notification);
+        return builder.build();
     }
 
 

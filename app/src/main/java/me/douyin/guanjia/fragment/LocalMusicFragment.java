@@ -10,6 +10,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -117,14 +118,12 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                 Music music = JSONObject.parseObject(data,Music.class);
                 adapter.addMusic(music);
                 adapter.notifyDataSetChanged();
-                if(MusicActivity.autoDownload){
-                    if(music.getAlbumId() == 1){
-                        WebviewFragment.currentMusic =  music;
-                        mWebView.loadUrl(music.getPath());
-                        return;
-                    }
-                    downloadDouyin(music);
+                if(music.getAlbumId() == 1){
+                    WebviewFragment.currentMusic =  music;
+                    mWebView.loadUrl(music.getPath());
+                    return;
                 }
+                downloadDouyin(music);
             }
         };
         //PasteCopyService.startCommand(getActivity(), handler1);
@@ -182,11 +181,16 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     private final static String userAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36";
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        MusicActivity.fromClicked = true;
         Music music = AppCache.get().getLocalMusicList().get(position-1);
         MusicActivity.instance.mViewPager.setCurrentItem(1);
         if(music.getAlbumId() == 1){
             WebviewFragment.currentMusic =  music;
-            mWebView.loadUrl(music.getArtist());
+            String url =  music.getPath();
+            if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())){
+                url =  music.getArtist();
+            }
+            mWebView.loadUrl(url);
             return;
         }
         downloadDouyin(music);

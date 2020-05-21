@@ -1,6 +1,8 @@
 package me.douyin.guanjia.adapter;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,6 +78,10 @@ public class PlaylistAdapter extends BaseAdapter {
         holder.tvTitle.setText(music.getTitle());
         String artist = FileUtils.getArtistAndAlbum(music.getArtist(), music.getAlbum());
         holder.tvArtist.setText(artist);
+        if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())){
+            holder.tvArtist.setText(music.getPath());
+            holder.tvTitle.setTextColor(0xFF666666);
+        }
         holder.ivMore.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onMoreClick(position);

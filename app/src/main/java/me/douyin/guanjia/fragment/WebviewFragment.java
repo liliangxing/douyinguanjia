@@ -101,8 +101,11 @@ public class WebviewFragment extends BaseFragment {
                         LocalMusicFragment.downloadFirst.openWithBrowser(currentMusic);
                         LocalMusicFragment.downloadFirst = null;
                     }
-                    DBManager.get().getMusicDao().insert(currentMusic);
-                    downloadAndPlay(data);
+                    DBManager.get().getMusicDao().save(currentMusic);
+                    if(MusicActivity.autoDownload || MusicActivity.fromClicked) {
+                        MusicActivity.fromClicked = false;
+                        downloadAndPlay(data);
+                    }
                     return;
                 }
                 if(!TextUtils.isEmpty(signc)){
