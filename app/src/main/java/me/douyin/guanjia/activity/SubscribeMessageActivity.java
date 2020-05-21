@@ -20,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import me.douyin.guanjia.R;
+import me.douyin.guanjia.fragment.WebviewFragment;
 
 
 /**
@@ -122,6 +123,11 @@ public class SubscribeMessageActivity extends BaseActivity {
         }
         url = miniProgramUrlEt.getText().toString();
         url = "http://www.time24.cn/test/index_douyin.php?video="+URLEncoder.encode(url)+"&title="+URLEncoder.encode(title);
+        if(url.contains("aweme.snssdk.com")||url.contains("v.weishi.qq.com")){
+            if(null!= WebviewFragment.currentMusic.getCoverPath()){
+                url += "&cover_path="+URLEncoder.encode(WebviewFragment.currentMusic.getCoverPath());
+            }
+        }
         cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         // 创建普通字符型ClipData
         content= content==null?"":content+"\n";
