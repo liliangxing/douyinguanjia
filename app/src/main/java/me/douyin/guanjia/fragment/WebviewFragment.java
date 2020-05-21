@@ -369,6 +369,7 @@ public class WebviewFragment extends BaseFragment {
 
     private void addPathAndPaste(String path){
         currentMusic.setPath(path);
+        DBManager.get().getMusicDao().save(currentMusic);
         if(!TextUtils.isEmpty(currentMusic.getTitle())) {
             PasteCopyService.clipboardManager.setPrimaryClip(ClipData.newPlainText("Label",
                     currentMusic.getTitle().replaceAll("[@|#]([\\S]{1,10})", "").trim()));
