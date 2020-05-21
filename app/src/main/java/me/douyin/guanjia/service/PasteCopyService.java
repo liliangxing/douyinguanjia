@@ -47,7 +47,7 @@ public class PasteCopyService extends Service {
     public  static ClipboardManager clipboardManager;
 
     private String mPreviousText = "";
-    private static Handler handler1;
+    public static Handler handler1;
     public class PlayBinder extends Binder {
         public PasteCopyService getService() {
             return PasteCopyService.this;

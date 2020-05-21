@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
+import me.douyin.guanjia.service.PasteCopyService;
 import me.douyin.guanjia.service.PlayService;
 import me.douyin.guanjia.storage.preference.Preferences;
 import me.douyin.guanjia.utils.PermissionReq;
@@ -37,7 +38,9 @@ import me.douyin.guanjia.R;
 public abstract class BaseActivity extends AppCompatActivity {
     protected Handler handler;
     protected PlayService playService;
+    protected PasteCopyService playService2;
     private ServiceConnection serviceConnection;
+    private ServiceConnection serviceConnection2;
     private ProgressDialog progressDialog;
 
     @Override
@@ -52,6 +55,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         handler = new Handler(Looper.getMainLooper());
         bindService();
+        bindService2();
     }
 
     @StyleRes
@@ -96,7 +100,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         serviceConnection = new PlayServiceConnection();
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
-
+    private void bindService2() {
+        Intent intent = new Intent();
+        intent.setClass(this, PasteCopyService.class);
+        serviceConnection2 = new PlayServiceConnection2();
+        bindService(intent, serviceConnection2, Context.BIND_AUTO_CREATE);
+    }
     private class PlayServiceConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -110,7 +119,23 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    private class PlayServiceConnection2 implements ServiceConnection {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            playService2 = ((PasteCopyService.PlayBinder) service).getService();
+            onServiceBound2();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.e(getClass().getSimpleName(), "service disconnected");
+        }
+    }
+
     protected void onServiceBound() {
+    }
+
+    protected void onServiceBound2() {
     }
 
     private void setSystemBarTransparent() {
@@ -165,6 +190,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         if (serviceConnection != null) {
             unbindService(serviceConnection);
+        }
+        if (serviceConnection2 != null) {
+            unbindService(serviceConnection2);
         }
         super.onDestroy();
     }

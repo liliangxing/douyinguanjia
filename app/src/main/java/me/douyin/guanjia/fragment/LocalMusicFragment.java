@@ -123,8 +123,8 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                 }
             }
         };
-        PasteCopyService.startCommand(getActivity(), handler1);
-
+        //PasteCopyService.startCommand(getActivity(), handler1);
+        PasteCopyService.handler1 = handler1;
         vHeader = LayoutInflater.from(getActivity()).inflate(R.layout.activity_local_music_list_header, null);
         AbsListView.LayoutParams params = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ScreenUtils.dp2px(150));
         vHeader.setLayoutParams(params);
