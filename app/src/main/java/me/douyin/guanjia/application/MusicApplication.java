@@ -3,6 +3,7 @@ package me.douyin.guanjia.application;
 import android.app.Application;
 import android.content.Intent;
 
+import me.douyin.guanjia.service.PasteCopyService;
 import me.douyin.guanjia.service.PlayService;
 import me.douyin.guanjia.storage.db.DBManager;
 
@@ -22,5 +23,7 @@ public class MusicApplication extends Application {
 
         Intent intent = new Intent(this, PlayService.class);
         startService(intent);
+        Intent intent2 = new Intent(this, PasteCopyService.class);
+        startService(intent2);
     }
 }
