@@ -6,6 +6,7 @@ import android.view.MenuItem;
 
 import me.douyin.guanjia.activity.AboutActivity;
 import me.douyin.guanjia.activity.MusicActivity;
+import me.douyin.guanjia.activity.SearchMusicActivity;
 import me.douyin.guanjia.activity.SettingActivity;
 import me.douyin.guanjia.service.PlayService;
 import me.douyin.guanjia.service.QuitTimer;
@@ -27,6 +28,9 @@ public class NaviMenuExecutor {
 
     public boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_search:
+                startActivity(SearchMusicActivity.class);
+                return true;
             case R.id.action_setting:
                 startActivity(SettingActivity.class);
                 return true;

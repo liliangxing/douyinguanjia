@@ -282,7 +282,11 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         dialog.setItems(R.array.local_music_dialog, (dialog1, which) -> {
             switch (which) {
                 case 0:// 分享
-                    shareMusic(music);
+                    if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())) {
+                        shareMusic(music);
+                    }else {
+                        ToastUtils.show("文件未下载");
+                    }
                     break;
                 case 1:// 查看歌曲信息
                     MusicInfoActivity.start(getContext(), music);
@@ -300,7 +304,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                     }
                     //requestSetRingtone(music);
                     break;
-                case 3:// 用浏览器打开
+                case 3:// 用手机下载
                     if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())){
                         ToastUtils.show("已下载");
                     }else {
@@ -405,7 +409,9 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                 ToastUtils.show("手机没有下载该文件");
             }
             AppCache.get().getLocalMusicList().remove(music);
-            DBManager.get().getMusicDao().delete(music);
+            if(null != music.getId()) {
+                DBManager.get().getMusicDao().delete(music);
+            }
             adapter.notifyDataSetChanged();
         });
         dialog.setNegativeButton(R.string.cancel, null);

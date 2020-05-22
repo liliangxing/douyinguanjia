@@ -128,7 +128,6 @@
                     android:id="@+id/tv_music_info_file_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:editable="false"
                     android:hint="文件名称"
                     android:textSize="16sp" />
             </android.support.design.widget.TextInputLayout>
@@ -145,7 +144,6 @@
                     android:id="@+id/tv_music_info_file_size"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:editable="false"
                     android:hint="文件大小"
                     android:textSize="16sp" />
             </android.support.design.widget.TextInputLayout>
@@ -162,7 +160,6 @@
                     android:id="@+id/tv_music_info_file_path"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:editable="false"
                     android:hint="文件路径"
                     android:textSize="16sp" />
             </android.support.design.widget.TextInputLayout>

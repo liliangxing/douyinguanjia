@@ -1,6 +1,7 @@
 package me.douyin.guanjia.activity;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
@@ -11,6 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.greenrobot.greendao.query.WhereCondition;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -19,11 +22,15 @@ import java.util.List;
 import me.douyin.guanjia.adapter.OnMoreClickListener;
 import me.douyin.guanjia.adapter.SearchMusicAdapter;
 import me.douyin.guanjia.enums.LoadStateEnum;
+import me.douyin.guanjia.fragment.LocalMusicFragment;
+import me.douyin.guanjia.fragment.WebviewFragment;
 import me.douyin.guanjia.http.HttpCallback;
 import me.douyin.guanjia.http.HttpClient;
 import me.douyin.guanjia.model.Music;
 import me.douyin.guanjia.model.SearchMusic;
 import me.douyin.guanjia.service.AudioPlayer;
+import me.douyin.guanjia.storage.db.DBManager;
+import me.douyin.guanjia.storage.db.greendao.MusicDao;
 import me.douyin.guanjia.utils.FileUtils;
 import me.douyin.guanjia.utils.ToastUtils;
 import me.douyin.guanjia.utils.ViewUtils;
@@ -98,31 +105,45 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
     }
 
     private void searchMusic(String keyword) {
-        HttpClient.searchMusic(keyword, new HttpCallback<SearchMusic>() {
+     /*   HttpClient.searchMusic(keyword, new HttpCallback<SearchMusic>() {
             @Override
-            public void onSuccess(SearchMusic response) {
-                if (response == null || response.getSong() == null) {
+            public void onSuccess(SearchMusic response) {*/
+                /*if (response == null || response.getSong() == null) {
                     ViewUtils.changeViewState(lvSearchMusic, llLoading, llLoadFail, LoadStateEnum.LOAD_FAIL);
                     return;
-                }
+                }*/
+                List<Music> musicList = DBManager.get().getMusicDao().queryBuilder().where(
+                        MusicDao.Properties.Title.like("%"+ keyword + "%")
+                ).build().list();
+                 List<SearchMusic.Song> songList = new ArrayList<>();
+                 for(Music music:musicList){
+                     SearchMusic.Song song = new SearchMusic.Song();
+                     song.setSongname(music.getTitle());
+                     song.setSongid(music.getPath());
+                     song.setArtistname(music.getFileName());
+                     songList.add(song);
+                 }
                 ViewUtils.changeViewState(lvSearchMusic, llLoading, llLoadFail, LoadStateEnum.LOAD_SUCCESS);
                 searchMusicList.clear();
-                searchMusicList.addAll(response.getSong());
+                searchMusicList.addAll(songList);
                 mAdapter.notifyDataSetChanged();
                 lvSearchMusic.requestFocus();
                 handler.post(() -> lvSearchMusic.setSelection(0));
-            }
+            /*}
 
             @Override
             public void onFail(Exception e) {
                 ViewUtils.changeViewState(lvSearchMusic, llLoading, llLoadFail, LoadStateEnum.LOAD_FAIL);
             }
-        });
+        });*/
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        new PlaySearchedMusic(this, searchMusicList.get(position)) {
+        SearchMusic.Song song = searchMusicList.get(position);
+        String url  = song.getArtistname()==null?song.getSongid():song.getArtistname();
+        SubscribeMessageActivity.createChooser(url,this);
+        /*new PlaySearchedMusic(this, searchMusicList.get(position)) {
             @Override
             public void onPrepare() {
                 showProgress();
@@ -140,12 +161,12 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
                 cancelProgress();
                 ToastUtils.show(R.string.unable_to_play);
             }
-        }.execute();
+        }.execute();*/
     }
 
     @Override
     public void onMoreClick(int position) {
-        final SearchMusic.Song song = searchMusicList.get(position);
+       /* final SearchMusic.Song song = searchMusicList.get(position);
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle(song.getSongname());
         String path = FileUtils.getMusicDir() + FileUtils.getMp3FileName(song.getArtistname(), song.getSongname());
@@ -161,7 +182,7 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
                     break;
             }
         });
-        dialog.show();
+        dialog.show();*/
     }
 
     private void share(SearchMusic.Song song) {
