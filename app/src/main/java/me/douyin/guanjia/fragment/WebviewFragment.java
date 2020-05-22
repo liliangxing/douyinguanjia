@@ -11,6 +11,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -374,9 +375,10 @@ public class WebviewFragment extends BaseFragment {
     private void addPathAndPaste(String path){
         currentMusic.setPath(path);
         DBManager.get().getMusicDao().save(currentMusic);
-        if(!TextUtils.isEmpty(currentMusic.getTitle())) {
+        String title =  currentMusic.getTitle();
+        if(!TextUtils.isEmpty(title) && !Patterns.WEB_URL.matcher(title).matches()) {
             PasteCopyService.clipboardManager.setPrimaryClip(ClipData.newPlainText("Label",
-                    currentMusic.getTitle().replaceAll("[@|#]([\\S]{1,10})", "").trim()));
+                    title.replaceAll("[@|#]([\\S]{1,10})", "").trim()));
         }
         MusicActivity.instance.mViewPager.setCurrentItem(1);
         LocalMusicFragment.adapter.notifyDataSetChanged();
