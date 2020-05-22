@@ -282,7 +282,16 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         dialog.setItems(R.array.local_music_dialog, (dialog1, which) -> {
             switch (which) {
                 case 0:// 分享
-                    shareMusic(music);
+                    if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())) {
+                        shareMusic(music);
+                    }else {
+                        downloadFirst = this;
+                        if(music.getAlbumId() == 1){
+                            WebviewFragment.currentMusic =  music;
+                            //分析并下载
+                            mWebView.loadUrl(music.getArtist());
+                        }
+                    }
                     break;
                 case 1:// 查看歌曲信息
                     MusicInfoActivity.start(getContext(), music);
