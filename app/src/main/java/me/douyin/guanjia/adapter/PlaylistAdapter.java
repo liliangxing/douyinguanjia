@@ -30,8 +30,8 @@ public class PlaylistAdapter extends BaseAdapter {
     private OnMoreClickListener listener;
     private boolean isPlaylist;
 
-    public PlaylistAdapter(List<Music> musicList) {
-        this.musicList = musicList;
+    public PlaylistAdapter(List<Music> musicList2) {
+        musicList = musicList2;
     }
 
     public void setIsPlaylist(boolean isPlaylist) {

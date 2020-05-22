@@ -289,6 +289,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                     }
                     break;
                 case 1:// 查看歌曲信息
+                    WebviewFragment.currentMusic =  music;
                     MusicInfoActivity.start(getContext(), music);
                     break;
                 case 2:// 用浏览器打开

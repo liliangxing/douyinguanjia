@@ -17,7 +17,10 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.Locale;
 
+import me.douyin.guanjia.fragment.LocalMusicFragment;
+import me.douyin.guanjia.fragment.WebviewFragment;
 import me.douyin.guanjia.model.Music;
+import me.douyin.guanjia.storage.db.DBManager;
 import me.douyin.guanjia.utils.CoverLoader;
 import me.douyin.guanjia.utils.FileUtils;
 import me.douyin.guanjia.utils.ImageUtils;
@@ -67,7 +70,8 @@ public class MusicInfoActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     protected void onServiceBound() {
-        mMusic = (Music) getIntent().getSerializableExtra(Extras.MUSIC);
+        //mMusic = (Music) getIntent().getSerializableExtra(Extras.MUSIC);
+        mMusic = WebviewFragment.currentMusic;
         if (mMusic == null || mMusic.getType() != Music.Type.LOCAL) {
             finish();
         }
@@ -155,7 +159,7 @@ public class MusicInfoActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void save() {
-        if (!mMusicFile.exists()) {
+       /* if (!mMusicFile.exists()) {
             ToastUtils.show("歌曲文件不存在");
             return;
         }
@@ -169,8 +173,17 @@ public class MusicInfoActivity extends BaseActivity implements View.OnClickListe
 
         // 刷新媒体库
         Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(mMusicFile));
-        sendBroadcast(intent);
+        sendBroadcast(intent);*/
 
+
+        mMusic.setTitle(etTitle.getText().toString());
+        mMusic.setArtist(etArtist.getText().toString());
+        mMusic.setAlbum(etAlbum.getText().toString());
+        mMusic.setFileName(tvFileName.getText().toString());
+        mMusic.setPath(tvFilePath.getText().toString());
+        DBManager.get().getMusicDao().save(mMusic);
+        //这个不生效
+        LocalMusicFragment.adapter.notifyDataSetChanged();
         ToastUtils.show("保存成功");
     }
 }
