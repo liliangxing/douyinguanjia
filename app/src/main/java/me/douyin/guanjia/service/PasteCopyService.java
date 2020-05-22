@@ -99,6 +99,7 @@ public class PasteCopyService extends Service {
                             videoVO.setArtist(url);
                             videoVO.setAlbumId(1);
                             videoVO.setTitle(mPreviousText);
+                            videoVO.setFileName(url);
                             sendMsgVO(videoVO);
                             return;
                         //}

@@ -118,6 +118,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                 Music music = JSONObject.parseObject(data,Music.class);
                 adapter.addMusic(music);
                 adapter.notifyDataSetChanged();
+                MusicActivity.fromClicked = false;
                 if(music.getAlbumId() == 1){
                     WebviewFragment.currentMusic =  music;
                     mWebView.loadUrl(music.getPath());
@@ -293,12 +294,24 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                         downloadFirst = this;
                         if(music.getAlbumId() == 1){
                             WebviewFragment.currentMusic =  music;
+                            //分析并下载
                             mWebView.loadUrl(music.getArtist());
                         }
                     }
                     //requestSetRingtone(music);
                     break;
-                case 3:// 删除
+                case 3:// 用浏览器打开
+                    if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())){
+                        ToastUtils.show("已下载");
+                    }else {
+                        MusicActivity.forceDownload = true;
+                        if (music.getAlbumId() == 1) {
+                            WebviewFragment.currentMusic = music;
+                            mWebView.loadUrl(music.getPath());
+                        }
+                    }
+                    break;
+                case 4:// 删除
                     deleteMusic(music);
                     break;
             }

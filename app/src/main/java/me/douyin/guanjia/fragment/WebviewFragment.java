@@ -96,14 +96,16 @@ public class WebviewFragment extends BaseFragment {
                     LocalMusicFragment.adapter.notifyDataSetChanged();
                 }
                 if(!TextUtils.isEmpty(data)){
-                    mWebView.loadUrl(data);
+                    if(MusicActivity.fromClicked) {
+                        mWebView.loadUrl(data);
+                    }
                     if(LocalMusicFragment.downloadFirst != null){
                         LocalMusicFragment.downloadFirst.openWithBrowser(currentMusic);
                         LocalMusicFragment.downloadFirst = null;
                     }
                     DBManager.get().getMusicDao().save(currentMusic);
-                    if(MusicActivity.autoDownload || MusicActivity.fromClicked) {
-                        MusicActivity.fromClicked = false;
+                    if(MusicActivity.autoDownload || MusicActivity.forceDownload) {
+                        MusicActivity.forceDownload = false;
                         downloadAndPlay(data);
                     }
                     return;
@@ -213,6 +215,7 @@ public class WebviewFragment extends BaseFragment {
                 }
                 if(!elements2.isEmpty()){
                     String url = elements2.get(0).attr("src");
+                    currentMusic.setArtist(url);
                     bundle.putString("data", url);
                     message.setData(bundle);
                     //LocalMusicFragment.adapter.notifyDataSetChanged();
@@ -375,6 +378,7 @@ public class WebviewFragment extends BaseFragment {
                     currentMusic.getTitle().replaceAll("[@|#]([\\S]{1,10})", "").trim()));
         }
         MusicActivity.instance.mViewPager.setCurrentItem(1);
+        LocalMusicFragment.adapter.notifyDataSetChanged();
     }
 
     private void  checkCounter(String fileName,boolean loop){

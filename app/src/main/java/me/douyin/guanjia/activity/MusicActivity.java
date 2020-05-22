@@ -86,8 +86,9 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     private ProgressDialog progressDialog;//加载界面的菊花
     private View xCustomView;
     public static MusicActivity instance;
-    public static Boolean autoDownload;
-    public static Boolean fromClicked = false;
+    public static boolean autoDownload;
+    public static boolean fromClicked;
+    public static boolean forceDownload ;
     public static final String PREFERENCES_FILE = "share_data1";
 
     @Override

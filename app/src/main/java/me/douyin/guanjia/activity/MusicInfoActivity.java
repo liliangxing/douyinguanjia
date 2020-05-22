@@ -96,7 +96,7 @@ public class MusicInfoActivity extends BaseActivity implements View.OnClickListe
 
         tvFileSize.setText(String.format(Locale.getDefault(), "%.2fMB", FileUtils.b2mb((int) mMusic.getFileSize())));
 
-        tvFilePath.setText(mMusicFile.getParent());
+        tvFilePath.setText(mMusicFile.getPath());
     }
 
     @Override
