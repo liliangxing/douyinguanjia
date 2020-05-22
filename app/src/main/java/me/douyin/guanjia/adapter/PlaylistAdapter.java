@@ -81,6 +81,8 @@ public class PlaylistAdapter extends BaseAdapter {
         if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())){
             holder.tvArtist.setText(music.getPath());
             holder.tvTitle.setTextColor(0xFF666666);
+        }else {
+            holder.tvTitle.setTextColor(Color.BLACK);
         }
         holder.ivMore.setOnClickListener(v -> {
             if (listener != null) {
