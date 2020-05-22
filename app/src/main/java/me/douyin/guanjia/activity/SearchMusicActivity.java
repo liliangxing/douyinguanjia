@@ -48,7 +48,7 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
     private LinearLayout llLoading;
     @Bind(R.id.ll_load_fail)
     private LinearLayout llLoadFail;
-    private List<SearchMusic.Song> searchMusicList = new ArrayList<>();
+    private List<Music> searchMusicList = new ArrayList<>();
     private SearchMusicAdapter mAdapter = new SearchMusicAdapter(searchMusicList);
 
     @Override
@@ -115,17 +115,21 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
                 List<Music> musicList = DBManager.get().getMusicDao().queryBuilder().where(
                         MusicDao.Properties.Title.like("%"+ keyword + "%")
                 ).build().list();
-                 List<SearchMusic.Song> songList = new ArrayList<>();
+                if(musicList.isEmpty()){
+                    ViewUtils.changeViewState(lvSearchMusic, llLoading, llLoadFail, LoadStateEnum.LOAD_FAIL);
+                    return;
+                }
+                /* List<SearchMusic.Song> songList = new ArrayList<>();
                  for(Music music:musicList){
                      SearchMusic.Song song = new SearchMusic.Song();
                      song.setSongname(music.getTitle());
                      song.setSongid(music.getPath());
                      song.setArtistname(music.getFileName());
                      songList.add(song);
-                 }
+                 }*/
                 ViewUtils.changeViewState(lvSearchMusic, llLoading, llLoadFail, LoadStateEnum.LOAD_SUCCESS);
                 searchMusicList.clear();
-                searchMusicList.addAll(songList);
+                searchMusicList.addAll(musicList);
                 mAdapter.notifyDataSetChanged();
                 lvSearchMusic.requestFocus();
                 handler.post(() -> lvSearchMusic.setSelection(0));
@@ -140,8 +144,8 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        SearchMusic.Song song = searchMusicList.get(position);
-        String url  = song.getArtistname()==null?song.getSongid():song.getArtistname();
+        Music music = searchMusicList.get(position);
+        String url  = music.getFileName()==null?music.getPath():music.getFileName();
         SubscribeMessageActivity.createChooser(url,this);
         /*new PlaySearchedMusic(this, searchMusicList.get(position)) {
             @Override
@@ -166,23 +170,28 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
 
     @Override
     public void onMoreClick(int position) {
-       /* final SearchMusic.Song song = searchMusicList.get(position);
+        final Music music = searchMusicList.get(position);
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(song.getSongname());
-        String path = FileUtils.getMusicDir() + FileUtils.getMp3FileName(song.getArtistname(), song.getSongname());
-        File file = new File(path);
-        int itemsId = file.exists() ? R.array.search_music_dialog_no_download : R.array.search_music_dialog;
+        dialog.setTitle(music.getTitle());
+        int itemsId =  R.array.search_music_dialog;
         dialog.setItems(itemsId, (dialog1, which) -> {
             switch (which) {
                 case 0:// 分享
-                    share(song);
+                    MusicActivity.instance.mViewPager.setCurrentItem(1);
+                    if(music.getAlbumId() == 1){
+                        WebviewFragment.currentMusic =  music;
+                        String url =  music.getPath();
+                        if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())){
+                            url =  music.getArtist();
+                        }
+                        LocalMusicFragment.mWebView.loadUrl(url);
+                        return;
+                    }
                     break;
-                case 1:// 下载
-                    download(song);
-                    break;
+
             }
         });
-        dialog.show();*/
+        dialog.show();
     }
 
     private void share(SearchMusic.Song song) {

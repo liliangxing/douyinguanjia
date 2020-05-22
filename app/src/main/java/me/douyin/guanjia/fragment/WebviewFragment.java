@@ -231,7 +231,8 @@ public class WebviewFragment extends BaseFragment {
                 for(Element element2:list2) {
                     String tagName =  element2.attr("name").toLowerCase();
                     if(tagName.equals("shareAppDesc".toLowerCase())){
-                        currentMusic.setTitle(element2.val());
+                        currentMusic.setTitle(element2.val().equals("[]")?
+                                currentMusic.getFileName():element2.val());
 
                     }else if(tagName.equals("shareImage".toLowerCase())){
                         String coverUrl = element2.val();

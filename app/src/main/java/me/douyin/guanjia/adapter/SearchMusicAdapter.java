@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import me.douyin.guanjia.model.Music;
 import me.douyin.guanjia.model.SearchMusic;
 import me.douyin.guanjia.utils.binding.Bind;
 import me.douyin.guanjia.utils.binding.ViewBinder;
@@ -19,10 +20,10 @@ import me.douyin.guanjia.R;
  * Created by hzwangchenyan on 2016/1/13.
  */
 public class SearchMusicAdapter extends BaseAdapter {
-    private List<SearchMusic.Song> mData;
+    private List<Music> mData;
     private OnMoreClickListener mListener;
 
-    public SearchMusicAdapter(List<SearchMusic.Song> data) {
+    public SearchMusicAdapter(List<Music> data) {
         mData = data;
     }
 
@@ -51,8 +52,8 @@ public class SearchMusicAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.tvTitle.setText(mData.get(position).getSongname());
-        holder.tvArtist.setText(mData.get(position).getArtistname());
+        holder.tvTitle.setText(mData.get(position).getTitle());
+        holder.tvArtist.setText(mData.get(position).getArtist());
         holder.ivMore.setOnClickListener(v -> mListener.onMoreClick(position));
         holder.vDivider.setVisibility(isShowDivider(position) ? View.VISIBLE : View.GONE);
         return convertView;
