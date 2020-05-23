@@ -115,12 +115,12 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
                 List<Music> musicList = DBManager.get().getMusicDao().queryBuilder().where(
                         MusicDao.Properties.Title.like("%"+ keyword + "%")
                 ).build().list();
-      /*        MusicDao jbxxDao = DBManager.get().getMusicDao();
+                MusicDao jbxxDao = DBManager.get().getMusicDao();
                 jbxxDao.queryBuilder().where(jbxxDao.queryBuilder()
                         .and(MusicDao.Properties.AlbumId.eq(1),
                                 jbxxDao.queryBuilder().or(MusicDao.Properties.Title.like("%" + keyword + "%"),
                                         MusicDao.Properties.FileName.like("%" + keyword + "%"),
-                                        MusicDao.Properties.Artist.like("%" + keyword + "%"))));*/
+                                        MusicDao.Properties.Artist.like("%" + keyword + "%"))));
                 if(musicList.isEmpty()){
                     ViewUtils.changeViewState(lvSearchMusic, llLoading, llLoadFail, LoadStateEnum.LOAD_FAIL);
                     return;
