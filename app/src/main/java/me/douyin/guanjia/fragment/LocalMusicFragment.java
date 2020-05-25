@@ -18,6 +18,7 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,6 +119,9 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                 Music music = JSONObject.parseObject(data,Music.class);
                 adapter.addMusic(music);
                 adapter.notifyDataSetChanged();
+                if(MusicActivity.moreUrl){
+                    return;
+                }
                 MusicActivity.fromClicked = false;
                 if(music.getAlbumId() == 1){
                     WebviewFragment.currentMusic =  music;
@@ -282,17 +286,24 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         dialog.setItems(R.array.local_music_dialog, (dialog1, which) -> {
             switch (which) {
                 case 0:// 分享
+                    if(!TextUtils.isEmpty(music.getFileName())) {
+                        SubscribeMessageActivity.createChooser(music.getFileName(),getContext());
+                    }else {
+                        ToastUtils.show("无抖音链接："+JSONObject.toJSONString(music));
+                    }
+                    break;
+                case 1:// 分享
                     if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())) {
                         shareMusic(music);
                     }else {
                         ToastUtils.show("文件未下载");
                     }
                     break;
-                case 1:// 查看歌曲信息
+                case 2:// 查看歌曲信息
                     WebviewFragment.currentMusic =  music;
                     MusicInfoActivity.start(getContext(), music);
                     break;
-                case 2:// 用浏览器打开
+                case 3:// 用浏览器打开
                     if(null != music.getCoverPath()) {
                         openWithBrowser(music);
                     }else {
@@ -305,7 +316,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                     }
                     //requestSetRingtone(music);
                     break;
-                case 3:// 用手机下载
+                case 4:// 用手机下载
                     if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())){
                         ToastUtils.show("已下载");
                     }else {
@@ -316,7 +327,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                         }
                     }
                     break;
-                case 4:// 删除
+                case 5:// 删除
                     deleteMusic(music);
                     break;
             }

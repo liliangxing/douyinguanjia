@@ -76,10 +76,10 @@ public class PlaylistAdapter extends BaseAdapter {
         /*Bitmap cover = CoverLoader.get().loadCoverFromFile(music.getCoverPath());
         holder.ivCover.setImageBitmap(cover)*/;
         holder.tvTitle.setText(music.getTitle());
-        String artist = FileUtils.getArtistAndAlbum(music.getArtist(), music.getAlbum());
-        holder.tvArtist.setText(artist);
+        //String artist = FileUtils.getArtistAndAlbum(music.getArtist(), music.getAlbum());
+        //holder.tvArtist.setText(artist);
+        holder.tvArtist.setText(music.getPath());
         if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())){
-            holder.tvArtist.setText(music.getPath());
             holder.tvTitle.setTextColor(0xFF666666);
         }else {
             holder.tvTitle.setTextColor(Color.BLACK);

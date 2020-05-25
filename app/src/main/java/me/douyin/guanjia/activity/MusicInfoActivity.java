@@ -75,7 +75,7 @@ public class MusicInfoActivity extends BaseActivity implements View.OnClickListe
         if (mMusic == null || mMusic.getType() != Music.Type.LOCAL) {
             finish();
         }
-        mMusicFile = new File(mMusic.getPath());
+        //mMusicFile = new File(mMusic.getPath());
         mCoverBitmap = CoverLoader.get().loadThumb(mMusic);
 
         initView();
@@ -100,7 +100,7 @@ public class MusicInfoActivity extends BaseActivity implements View.OnClickListe
 
         tvFileSize.setText(String.format(Locale.getDefault(), "%.2fMB", FileUtils.b2mb((int) mMusic.getFileSize())));
 
-        tvFilePath.setText(mMusicFile.getPath());
+        tvFilePath.setText(mMusic.getPath());
     }
 
     @Override

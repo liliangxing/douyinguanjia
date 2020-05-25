@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
+    android:layout_height="120dp"
     android:gravity="center_vertical"
     android:orientation="horizontal">
 
     <View
         android:id="@+id/v_playing"
         android:layout_width="3dp"
-        android:layout_height="50dp"
+        android:layout_height="100dp"
         android:layout_marginRight="3dp"
         android:background="@color/red"
         android:contentDescription="@null"
@@ -16,16 +16,16 @@
 
     <ImageView
         android:id="@+id/iv_cover"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginLeft="0dp"
         android:scaleType="centerCrop"
         android:src="@drawable/default_cover" />
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_marginLeft="10dp">
+        android:layout_height="120dp"
+        android:layout_marginLeft="6dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -44,8 +44,7 @@
                     style="@style/AppTheme.Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"
+                    android:singleLine="false"
                     android:text="歌曲"
                     android:textSize="@dimen/text_size_common" />
 
@@ -63,7 +62,7 @@
 
             <ImageView
                 android:id="@+id/iv_more"
-                android:layout_width="50dp"
+                android:layout_width="40dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/music_list_more_bg_selector"
                 android:contentDescription="@null"

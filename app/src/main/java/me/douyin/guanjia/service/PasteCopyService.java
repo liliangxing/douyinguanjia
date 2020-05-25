@@ -31,6 +31,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,6 +42,7 @@ import me.douyin.guanjia.application.Notifier;
 import me.douyin.guanjia.constants.Extras;
 import me.douyin.guanjia.fragment.LocalMusicFragment;
 import me.douyin.guanjia.model.Music;
+import me.douyin.guanjia.storage.db.DBManager;
 import me.douyin.guanjia.utils.DownFile;
 import me.douyin.guanjia.utils.ToastUtils;
 
@@ -81,34 +84,73 @@ public class PasteCopyService extends Service {
                     String mode = "(http[s]?:\\/\\/([\\w-]+\\.)+[\\w-]+([\\w-./?%&*=]*))";
                     Pattern p = Pattern.compile(mode);
                     Matcher m = p.matcher(html);
-                    if(m.find()) {
-                        String url = m.group(1);
-                        boolean isWeiShi = false;
-                        if(url.contains("h5.weishi.qq.com/weishi/feed/")){
-                            isWeiShi =  true;
-                        }
-                        if(!(url.contains("v.douyin.com")||url.contains("www.iesdouyin.com/share/video")
-                                ||isWeiShi)){
-                            return;
-                        }
-                        ToastUtils.show("您有新的"+(isWeiShi?"微视":"抖音")+"链接了！");
 
-                        //if(isWeiShi){
-                            Music videoVO = new Music();
-                            videoVO.setPath(url);
-                            videoVO.setArtist(url);
-                            videoVO.setAlbumId(1);
-                            videoVO.setTitle(mPreviousText);
-                            videoVO.setFileName(url);
-                            sendMsgVO(videoVO);
-                            return;
-                        //}
-                        //clipUrlCrawler(url);
+                    boolean isWeiShi = false;
+                    if(html.contains("h5.weishi.qq.com/weishi/feed/")){
+                        isWeiShi =  true;
+                    }
+                    if(!checkUrl(html)){
+                        return;
+                    }
+                    ToastUtils.show("您有新的"+(isWeiShi?"微视":"抖音")+"链接了！");
+                    HashSet<String> hashSet = new HashSet<>();
+                    List<Music> musicList = DBManager.get().getMusicDao().queryBuilder().build().list();
+                    MusicActivity.moreUrl = false;
+                    while(m.find()){
+                        String url = m.group();
+                        System.out.println("url：" + url);
+                        if(!checkUrl(url)){
+                            continue;
+                        }
+                        boolean addFlag = true;
+                        for(Music music:musicList){
+                            if(url.equals(music.getFileName())){
+                                addFlag = false;
+                                break;
+                            }
+                        }
+                        if(addFlag) {
+                            hashSet.add(url);
+                        }
+                    }
+                    if(hashSet.size()>1){
+                        MusicActivity.moreUrl = true;
+                    } else if(hashSet.isEmpty()){
+                        Matcher m2 = p.matcher(html);
+                        if(m2.find()){
+                            ToastUtils.show("存在重复链接");
+                            dealWithUrl(m2.group(1));
+                        }
+                    }
+                    for(String url:hashSet) {
+                        dealWithUrl(url);
                     }
                 }
             }
         });
         startForeground( 0x111, buildNotification(this));
+    }
+
+    private boolean checkUrl(String url){
+        if(!(url.contains("v.douyin.com")||url.contains("www.iesdouyin.com/share/video")
+                ||url.contains("h5.weishi.qq.com/weishi/feed/"))){
+            return false;
+        }
+        return true;
+    }
+
+    private void dealWithUrl(String url){
+        //if(isWeiShi){
+        Music videoVO = new Music();
+        videoVO.setPath(url);
+        videoVO.setArtist(url);
+        videoVO.setAlbumId(1);
+        //videoVO.setTitle(mPreviousText);
+        videoVO.setFileName(url);
+        sendMsgVO(videoVO);
+        return;
+        //}
+        //clipUrlCrawler(url);
     }
 
     private Notification buildNotification(Context context) {
