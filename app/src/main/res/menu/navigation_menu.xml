@@ -10,6 +10,10 @@
             android:icon="@drawable/ic_menu_settings"
             android:title="@string/menu_setting" />
         <item
+            android:id="@+id/action_clear_cache"
+            android:icon="@drawable/ic_menu_timer"
+            android:title="@string/menu_clear_cache" />
+        <item
             android:id="@+id/action_night"
             android:icon="@drawable/ic_menu_night"
             android:title="@string/menu_night" />

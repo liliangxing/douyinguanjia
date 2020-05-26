@@ -8,6 +8,8 @@ import me.douyin.guanjia.activity.AboutActivity;
 import me.douyin.guanjia.activity.MusicActivity;
 import me.douyin.guanjia.activity.SearchMusicActivity;
 import me.douyin.guanjia.activity.SettingActivity;
+import me.douyin.guanjia.constants.Keys;
+import me.douyin.guanjia.fragment.LocalMusicFragment;
 import me.douyin.guanjia.service.PlayService;
 import me.douyin.guanjia.service.QuitTimer;
 import me.douyin.guanjia.storage.preference.Preferences;
@@ -34,6 +36,9 @@ public class NaviMenuExecutor {
             case R.id.action_setting:
                 startActivity(SettingActivity.class);
                 return true;
+            case R.id.action_clear_cache:
+                clearCache();
+                return true;
             case R.id.action_night:
                 nightMode();
                 break;
@@ -49,6 +54,14 @@ public class NaviMenuExecutor {
                 return true;
         }
         return false;
+    }
+
+    private void clearCache(){
+        if(null != LocalMusicFragment.mWebView){
+            LocalMusicFragment.mWebView.clearHistory();
+            LocalMusicFragment.mWebView.clearCache(true);
+            LocalMusicFragment.mWebView.loadUrl(Keys.HOME_PAGE);
+        }
     }
 
     private void startActivity(Class<?> cls) {

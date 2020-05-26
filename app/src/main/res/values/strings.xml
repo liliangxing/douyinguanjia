@@ -39,7 +39,7 @@
     <string name="artist_info_intro">简介：%s</string>
     <string name="artist_info_empty">暂无歌手信息</string>
     <string name="share_music">我用%1$s分享了歌曲《%2$s》%3$s</string>
-    <string name="search_tips">歌曲名、歌手名</string>
+    <string name="search_tips">标题、链接地址</string>
     <string name="search_empty">未找到相关结果</string>
     <string name="menu_setting">功能设置</string>
     <string name="menu_share">推荐给朋友</string>
@@ -83,4 +83,5 @@
     <string name="action_settings">Settings</string>
     <string name="share_app_download_message">带app下载地址</string>
     <string name="choose_app">选择应用程序打开链接</string>
+    <string name="menu_clear_cache">清理缓存</string>
 </resources>

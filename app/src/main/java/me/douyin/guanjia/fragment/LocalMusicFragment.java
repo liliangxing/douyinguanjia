@@ -285,23 +285,23 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         dialog.setTitle(music.getTitle());
         dialog.setItems(R.array.local_music_dialog, (dialog1, which) -> {
             switch (which) {
-                case 0:// 分享
+                case 0:// 抖音打开
                     if(!TextUtils.isEmpty(music.getFileName())) {
                         SubscribeMessageActivity.createChooser(music.getFileName(),getContext());
                     }else {
                         ToastUtils.show("无抖音链接："+JSONObject.toJSONString(music));
                     }
                     break;
-                case 1:// 分享
+                case 1:// 查看歌曲信息
+                    WebviewFragment.currentMusic =  music;
+                    MusicInfoActivity.start(getContext(), music);
+                    break;
+                case 2:// 发送文件到
                     if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())) {
                         shareMusic(music);
                     }else {
                         ToastUtils.show("文件未下载");
                     }
-                    break;
-                case 2:// 查看歌曲信息
-                    WebviewFragment.currentMusic =  music;
-                    MusicInfoActivity.start(getContext(), music);
                     break;
                 case 3:// 用浏览器打开
                     if(null != music.getCoverPath()) {

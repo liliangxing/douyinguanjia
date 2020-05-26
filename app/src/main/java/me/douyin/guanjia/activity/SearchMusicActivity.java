@@ -1,5 +1,7 @@
 package me.douyin.guanjia.activity;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
@@ -21,6 +23,7 @@ import java.util.List;
 
 import me.douyin.guanjia.adapter.OnMoreClickListener;
 import me.douyin.guanjia.adapter.SearchMusicAdapter;
+import me.douyin.guanjia.application.AppCache;
 import me.douyin.guanjia.enums.LoadStateEnum;
 import me.douyin.guanjia.fragment.LocalMusicFragment;
 import me.douyin.guanjia.fragment.WebviewFragment;
@@ -50,6 +53,7 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
     private LinearLayout llLoadFail;
     private List<Music> searchMusicList = new ArrayList<>();
     private SearchMusicAdapter mAdapter = new SearchMusicAdapter(searchMusicList);
+    public static String keywords;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +85,7 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
         searchView.setQueryHint(getString(R.string.search_tips));
         searchView.setOnQueryTextListener(this);
         searchView.setSubmitButtonEnabled(true);
+        searchView.setQuery(keywords,true);
         try {
             Field field = searchView.getClass().getDeclaredField("mGoButton");
             field.setAccessible(true);
@@ -112,10 +117,15 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
                     ViewUtils.changeViewState(lvSearchMusic, llLoading, llLoadFail, LoadStateEnum.LOAD_FAIL);
                     return;
                 }*/
-                List<Music> musicList = DBManager.get().getMusicDao().queryBuilder().where(
-                        MusicDao.Properties.Title.like("%"+ keyword + "%")
-                ).build().list();
+                keywords = keyword;
                 MusicDao jbxxDao = DBManager.get().getMusicDao();
+                List<Music> musicList = jbxxDao.queryBuilder().where(
+                        jbxxDao.queryBuilder().or(
+                        MusicDao.Properties.FileName.like("%"+ keyword + "%"),
+                        MusicDao.Properties.Title.like("%"+ keyword + "%")
+                        )
+                ).orderDesc(MusicDao.Properties.Id).build().list();
+
                 jbxxDao.queryBuilder().where(jbxxDao.queryBuilder()
                         .and(MusicDao.Properties.AlbumId.eq(1),
                                 jbxxDao.queryBuilder().or(MusicDao.Properties.Title.like("%" + keyword + "%"),
@@ -194,10 +204,30 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
                         return;
                     }
                     break;
-
+                case 1:// 查看歌曲信息
+                    WebviewFragment.currentMusic =  music;
+                    MusicInfoActivity.start(this, music);
+                    break;
+                case 2:// 删除
+                    deleteMusic(music);
+                    break;
             }
         });
         dialog.show();
+    }
+
+    private void deleteMusic(Music music){
+        File file = new File(music.getPath());
+        if (file.delete()) {
+            ToastUtils.show("删除成功");
+        }else {
+            ToastUtils.show("手机没有下载该文件");
+        }
+        searchMusicList.remove(music);
+        if(null != music.getId()) {
+            DBManager.get().getMusicDao().delete(music);
+        }
+        mAdapter.notifyDataSetChanged();
     }
 
     private void share(SearchMusic.Song song) {
