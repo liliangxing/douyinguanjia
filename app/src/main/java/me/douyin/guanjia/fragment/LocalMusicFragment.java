@@ -296,12 +296,15 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                     WebviewFragment.currentMusic =  music;
                     MusicInfoActivity.start(getContext(), music);
                     break;
-                case 2:// 发送文件到
-                    if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())) {
-                        shareMusic(music);
-                    }else {
-                        ToastUtils.show("文件未下载");
+                case 2:// 置顶
+                    AppCache.get().getLocalMusicList().remove(music);
+                    if(null != music.getId()) {
+                        DBManager.get().getMusicDao().delete(music);
                     }
+                    music.setId(null);
+                    DBManager.get().getMusicDao().save(music);
+                    adapter.addMusic(music);
+                    adapter.notifyDataSetChanged();
                     break;
                 case 3:// 用浏览器打开
                     if(null != music.getCoverPath()) {
