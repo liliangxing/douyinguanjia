@@ -92,7 +92,6 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     public static PlaylistAdapter adapter;
     private Handler handler1;
     public static final String FILE_NAME = "test.html";
-    private static final String DEFAULT_URL = "file:///android_asset/"+FILE_NAME;
     public static LocalMusicFragment downloadFirst;
 
     @Nullable
@@ -216,8 +215,8 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                         .replace("'</script>", "");
                 File file = new File(FileUtils.getMusicDir() + FILE_NAME);
                 file.delete();
-                modify("var tac=", "var tac='"+tac+"';");
-                modify("var user_id=","var user_id="+music.getSongId()+"");
+                Modify.modify("var tac=", "var tac='"+tac+"';",getContext(),FILE_NAME);
+                Modify.modify("var user_id=","var user_id="+music.getSongId()+"",getContext(),FILE_NAME);
                 mWebView.loadUrl("file:///mnt/sdcard"+FileUtils.DATA_DIR+FILE_NAME);
             }
             @Override
@@ -227,56 +226,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         });
     }
 
-    public void modify(String target,String  newContent){
-        try {
-            File file = new File(FileUtils.getMusicDir() + FILE_NAME);
-            InputStream is;
-            if(file.exists()){
-                is = new FileInputStream(file);
-            }else {
-                 is = getContext().getAssets().open(FILE_NAME);
-            }
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(is));
 
-
-            // tmpfile为缓存文件，代码运行完毕后此文件将重命名为源文件名字。
-            String filename = file.getName();
-            // tmpfile为缓存文件，代码运行完毕后此文件将重命名为源文件名字。
-            File tmpfile = new File(file.getParentFile().getAbsolutePath()
-                    + "\\" + filename + ".tmp");
-            BufferedWriter writer = new BufferedWriter(new FileWriter(tmpfile));
-
-            boolean flag = false;
-            String str = null;
-            while (true) {
-                str = reader.readLine();
-
-                if (str == null)
-                    break;
-
-                if (str.contains(target)) {
-                    writer.write(newContent + "\n");
-
-                    flag = true;
-                } else
-                    writer.write(str + "\n");
-            }
-
-            is.close();
-
-            writer.flush();
-            writer.close();
-            if (flag) {
-                file.delete();
-                tmpfile.renameTo(new File(file.getAbsolutePath()));
-            } else
-                tmpfile.delete();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void onMoreClick(final int position) {

@@ -138,7 +138,6 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         //mViewPager.setCurrentItem(1); 放在这里不行
         mWebView = mSheetListFragment.mWebView;
         LocalMusicFragment.mWebView = mWebView;
-        LocalMusicFragment.mWebView.clearHistory();
         LocalMusicFragment.mWebView.clearCache(true);
         mWebView.setHorizontalFadingEdgeEnabled(true);
         mWebView.setScrollbarFadingEnabled(true);
