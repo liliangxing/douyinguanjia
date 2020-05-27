@@ -252,7 +252,6 @@ public class WebviewFragment extends BaseFragment {
                         bundle.putString("data", url);
                         message.setData(bundle);
                         //LocalMusicFragment.adapter.notifyDataSetChanged();
-                        sendMsg = true;
                         handler1.sendMessage(message);
                     }
                 }
