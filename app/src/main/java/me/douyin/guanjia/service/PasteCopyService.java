@@ -32,6 +32,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,6 +56,8 @@ public class PasteCopyService extends Service {
     private static  LocalMusicFragment adapter;
 
     public  static ClipboardManager clipboardManager;
+
+    public static Iterator<String> hashSetIterator;
 
     private String mPreviousText = "";
     public static Handler handler1;
@@ -122,8 +125,9 @@ public class PasteCopyService extends Service {
                             dealWithUrl(m2.group(1));
                         }
                     }
-                    for(String url:hashSet) {
-                        dealWithUrl(url);
+                    hashSetIterator = hashSet.iterator();
+                    if(hashSetIterator.hasNext()) {
+                        dealWithUrl(hashSetIterator.next());
                     }
                 }
             }
@@ -139,7 +143,7 @@ public class PasteCopyService extends Service {
         return true;
     }
 
-    private void dealWithUrl(String url){
+    public void dealWithUrl(String url){
         //if(isWeiShi){
         Music videoVO = new Music();
         videoVO.setPath(url);

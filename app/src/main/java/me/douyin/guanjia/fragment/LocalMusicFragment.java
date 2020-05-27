@@ -118,9 +118,6 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                 Music music = JSONObject.parseObject(data,Music.class);
                 adapter.addMusic(music);
                 adapter.notifyDataSetChanged();
-                if(MusicActivity.moreUrl){
-                    return;
-                }
                 MusicActivity.fromClicked = false;
                 if(music.getAlbumId() == 1){
                     WebviewFragment.currentMusic =  music;

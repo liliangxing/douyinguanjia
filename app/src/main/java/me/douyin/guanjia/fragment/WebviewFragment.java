@@ -107,6 +107,10 @@ public class WebviewFragment extends BaseFragment {
                         MusicActivity.forceDownload = false;
                         downloadAndPlay(data);
                     }
+                    if(PasteCopyService.hashSetIterator.hasNext()){
+                        String url = PasteCopyService.hashSetIterator.next();
+                        MusicActivity.instance.playService2.dealWithUrl(url);
+                    }
                     return;
                 }
                 if(!TextUtils.isEmpty(signc)){

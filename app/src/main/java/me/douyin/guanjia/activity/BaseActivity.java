@@ -38,7 +38,7 @@ import me.douyin.guanjia.R;
 public abstract class BaseActivity extends AppCompatActivity {
     protected Handler handler;
     protected PlayService playService;
-    protected PasteCopyService playService2;
+    public PasteCopyService playService2;
     private ServiceConnection serviceConnection;
     private ServiceConnection serviceConnection2;
     private ProgressDialog progressDialog;
