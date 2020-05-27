@@ -252,10 +252,23 @@ public class WebviewFragment extends BaseFragment {
                         bundle.putString("data", url);
                         message.setData(bundle);
                         //LocalMusicFragment.adapter.notifyDataSetChanged();
+                        sendMsg = true;
                         handler1.sendMessage(message);
                     }
                 }
                 return;
+            }else {
+                Elements list2 = Jsoup.parse(html2).getElementsByTag("input");
+                for(Element element2:list2) {
+                    String tagName =  element2.attr("name").toLowerCase();
+                    if(tagName.equals("shareAppDesc".toLowerCase())){
+                        if(PasteCopyService.hashSetIterator.hasNext()){
+                            String url = PasteCopyService.hashSetIterator.next();
+                            MusicActivity.instance.playService2.dealWithUrl(url);
+                        }
+                        return;
+                    }
+                }
             }
             if(!html.contains("aweme_list")){
                 return;
