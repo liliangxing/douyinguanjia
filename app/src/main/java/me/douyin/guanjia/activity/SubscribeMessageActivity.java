@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 
 import me.douyin.guanjia.R;
 import me.douyin.guanjia.fragment.WebviewFragment;
+import me.douyin.guanjia.service.PasteCopyService;
 
 
 /**
@@ -122,7 +123,10 @@ public class SubscribeMessageActivity extends BaseActivity {
             appDownloadUrl ="";
         }
         url = miniProgramUrlEt.getText().toString();
-        url = "http://www.time24.cn/test/index_douyin.php?video="+URLEncoder.encode(url)+"&title="+URLEncoder.encode(title);
+        url = "http://www.time24.cn/test/index_douyin.php?video="+URLEncoder.encode(url);
+        if(!PasteCopyService.checkUrl(title)){
+            url += "&title="+URLEncoder.encode(title);
+        }
         if(url.contains("aweme.snssdk.com")||url.contains("v.weishi.qq.com")){
             if(null!= WebviewFragment.currentMusic.getCoverPath()){
                 url += "&cover_path="+URLEncoder.encode(WebviewFragment.currentMusic.getCoverPath());

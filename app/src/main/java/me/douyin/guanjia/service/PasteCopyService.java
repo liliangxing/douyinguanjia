@@ -131,7 +131,7 @@ public class PasteCopyService extends Service {
         startForeground( 0x111, buildNotification(this));
     }
 
-    private boolean checkUrl(String url){
+    public static boolean checkUrl(String url){
         if(!(url.contains("v.douyin.com")||url.contains("www.iesdouyin.com/share/video")
                 ||url.contains("h5.weishi.qq.com/weishi/feed/"))){
             return false;
