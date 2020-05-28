@@ -57,7 +57,17 @@ public class PasteCopyService extends Service {
 
     public  static ClipboardManager clipboardManager;
 
-    public static Iterator<String> hashSetIterator;
+    public static Iterator<String> hashSetIterator = new Iterator<String>() {
+        @Override
+        public boolean hasNext() {
+            return false;
+        }
+
+        @Override
+        public String next() {
+            return null;
+        }
+    };
 
     private String mPreviousText = "";
     public static Handler handler1;
