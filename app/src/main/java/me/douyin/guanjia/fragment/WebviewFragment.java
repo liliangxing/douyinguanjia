@@ -245,7 +245,7 @@ public class WebviewFragment extends BaseFragment {
                 }
                 if(!elements2.isEmpty()){
                     String url = elements2.get(0).attr("src");
-                    Matcher m =Pattern.compile("video_id=([\\S-]+)&").matcher(url);
+                    Matcher m =Pattern.compile("video_id=([\\S-][^&]+)").matcher(url);
                     if(m.find()){
                         url = url.replaceAll("playwm\\/\\?video_id=([\\S-][^&]+)","play/?video_id=$1&media_type=4");
                         currentMusic.setArtist(url);
