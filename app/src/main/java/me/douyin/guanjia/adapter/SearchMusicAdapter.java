@@ -53,7 +53,7 @@ public class SearchMusicAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         holder.tvTitle.setText(mData.get(position).getTitle());
-        holder.tvArtist.setText(mData.get(position).getFileName());
+        holder.tvArtist.setText(mData.get(position).getPath());
         holder.ivMore.setOnClickListener(v -> mListener.onMoreClick(position));
         holder.vDivider.setVisibility(isShowDivider(position) ? View.VISIBLE : View.GONE);
         return convertView;
