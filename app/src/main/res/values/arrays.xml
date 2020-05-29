@@ -21,7 +21,9 @@
     </string-array>
 
     <string-array name="search_music_dialog">
+        <item>置顶(抖音链接列表)</item>
         <item>在MP4链接打开</item>
+        <item>用手机下载</item>
         <item>歌曲信息</item>
         <item>从手机中删除</item>
     </string-array>

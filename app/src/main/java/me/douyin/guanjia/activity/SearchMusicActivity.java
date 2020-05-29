@@ -192,7 +192,18 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
         int itemsId =  R.array.search_music_dialog;
         dialog.setItems(itemsId, (dialog1, which) -> {
             switch (which) {
-                case 0:// 分享
+                case 0:// 置顶
+                    AppCache.get().getLocalMusicList().remove(music);
+                    if(null != music.getId()) {
+                        DBManager.get().getMusicDao().delete(music);
+                    }
+                    music.setId(null);
+                    DBManager.get().getMusicDao().save(music);
+                    LocalMusicFragment.adapter.addMusic(music);
+                    LocalMusicFragment.adapter.notifyDataSetChanged();
+                    ToastUtils.show("操作成功");
+                    break;
+                case 1:// 在MP4链接打开
                     MusicActivity.instance.mViewPager.setCurrentItem(1);
                     if(music.getAlbumId() == 1){
                         WebviewFragment.currentMusic =  music;
@@ -201,14 +212,27 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
                             url =  music.getArtist();
                         }
                         LocalMusicFragment.mWebView.loadUrl(url);
+                        ToastUtils.show("操作成功");
                         return;
                     }
                     break;
-                case 1:// 查看歌曲信息
+                case 2:// 用手机下载
+                    if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())){
+                        ToastUtils.show("已下载");
+                    }else {
+                        MusicActivity.forceDownload = true;
+                        if (music.getAlbumId() == 1) {
+                            WebviewFragment.currentMusic = music;
+                            LocalMusicFragment.mWebView.loadUrl(music.getPath());
+                            ToastUtils.show("操作成功");
+                        }
+                    }
+                    break;
+                case 3:// 查看歌曲信息
                     WebviewFragment.currentMusic =  music;
                     MusicInfoActivity.start(this, music);
                     break;
-                case 2:// 删除
+                case 4:// 删除
                     deleteMusic(music);
                     break;
             }
