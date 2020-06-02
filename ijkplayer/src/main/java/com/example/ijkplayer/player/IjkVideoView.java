@@ -47,7 +47,7 @@ public class IjkVideoView extends BaseIjkVideoView {
     public static final int SCREEN_SCALE_ORIGINAL = 4;
     public static final int SCREEN_SCALE_CENTER_CROP = 5;
 
-    protected int mCurrentScreenScale = SCREEN_SCALE_DEFAULT;
+    protected int mCurrentScreenScale = SCREEN_SCALE_CENTER_CROP;
 
     public IjkVideoView(@NonNull Context context) {
         this(context, null);
@@ -115,7 +115,7 @@ public class IjkVideoView extends BaseIjkVideoView {
             VideoViewManager.instance().releaseVideoPlayer();
             VideoViewManager.instance().setCurrentVideoPlayer(this);
         }
-        if (checkNetwork()) return;
+        //if (checkNetwork()) return;
         super.startPlay();
     }
 
