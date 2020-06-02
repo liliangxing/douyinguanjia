@@ -78,7 +78,8 @@ dependencies {
     implementation 'me.wcy:lrcview:2.0.1'
     implementation 'com.hwangjr.rxbus:rxbus:2.0.0'
     implementation 'org.greenrobot:greendao:3.2.2'
-    compile files('libs/jsoup.jar')
-    compile files('libs/xUtils-2.6.14.jar')
-    compile files('libs/fastjson-1.0.4.jar')
+    implementation files('libs/jsoup.jar')
+    implementation files('libs/xUtils-2.6.14.jar')
+    implementation files('libs/fastjson-1.0.4.jar')
+    implementation project(':ijkplayer')
 }

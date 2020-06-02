@@ -8,12 +8,15 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -32,7 +35,9 @@ import android.widget.TextView;
 
 import me.douyin.guanjia.adapter.FragmentAdapter;
 import me.douyin.guanjia.service.AudioPlayer;
+import me.douyin.guanjia.service.PlayService;
 import me.douyin.guanjia.service.QuitTimer;
+import me.douyin.guanjia.storage.db.DBManager;
 import me.douyin.guanjia.utils.PermissionReq;
 import me.douyin.guanjia.utils.SystemUtils;
 import me.douyin.guanjia.utils.ToastUtils;
@@ -91,10 +96,12 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     public static boolean forceDownload ;
     public static boolean moreUrl ;
     public static final String PREFERENCES_FILE = "share_data1";
+    public static int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkPermission();
         setContentView(R.layout.activity_music);
         instance = this;
         //设置全局上下文
@@ -107,6 +114,19 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         }
         if(!autoDownload){
             iv_settings.setBackgroundColor(Color.LTGRAY);
+        }
+    }
+
+    private void checkPermission() {
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    1);
+        }else {
+            DBManager.get().init(this);
+            Intent intent = new Intent(this, PlayService.class);
+            startService(intent);
         }
     }
 

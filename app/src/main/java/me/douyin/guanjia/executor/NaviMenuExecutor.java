@@ -5,6 +5,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 
 import me.douyin.guanjia.activity.AboutActivity;
+import me.douyin.guanjia.activity.MainActivity;
 import me.douyin.guanjia.activity.MusicActivity;
 import me.douyin.guanjia.activity.SearchMusicActivity;
 import me.douyin.guanjia.activity.SettingActivity;
@@ -33,11 +34,14 @@ public class NaviMenuExecutor {
             case R.id.action_search:
                 startActivity(SearchMusicActivity.class);
                 return true;
-            case R.id.action_setting:
-                startActivity(SettingActivity.class);
+            case R.id.action_full_screen:
+                startActivity(MainActivity.class);
                 return true;
             case R.id.action_clear_cache:
                 clearCache();
+                return true;
+            case R.id.action_setting:
+                startActivity(SettingActivity.class);
                 return true;
             case R.id.action_night:
                 nightMode();

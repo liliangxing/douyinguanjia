@@ -16,13 +16,8 @@ public class MusicApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         AppCache.get().init(this);
         ForegroundObserver.init(this);
-        DBManager.get().init(this);
-
-        Intent intent = new Intent(this, PlayService.class);
-        startService(intent);
         Intent intent2 = new Intent(this, PasteCopyService.class);
         startService(intent2);
     }

@@ -53,6 +53,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.douyin.guanjia.activity.MainActivity;
 import me.douyin.guanjia.activity.MusicActivity;
 import me.douyin.guanjia.activity.MusicInfoActivity;
 import me.douyin.guanjia.activity.SubscribeMessageActivity;
@@ -182,19 +183,10 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     private final static String userAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36";
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        MusicActivity.fromClicked = true;
-        Music music = AppCache.get().getLocalMusicList().get(position-1);
-        MusicActivity.instance.mViewPager.setCurrentItem(1);
-        if(music.getAlbumId() == 1){
-            WebviewFragment.currentMusic =  music;
-            String url =  music.getPath();
-            if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())){
-                url =  music.getArtist();
-            }
-            mWebView.loadUrl(url);
-            return;
-        }
-        downloadDouyin(music);
+
+        Intent intent = new Intent(getContext(), MainActivity.class);
+        MusicActivity.position = position-1;
+        startActivity(intent);
     }
 
     private void downloadDouyin(Music music){
@@ -239,11 +231,23 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                         ToastUtils.show("无抖音链接："+JSONObject.toJSONString(music));
                     }
                     break;
-                case 1:// 查看歌曲信息
+                case 1:// 新标签页打开
+                    MusicActivity.fromClicked = true;
+                    MusicActivity.instance.mViewPager.setCurrentItem(1);
+                    if(music.getAlbumId() == 1){
+                        WebviewFragment.currentMusic =  music;
+                        String url =  music.getPath();
+                        if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())){
+                            url =  music.getArtist();
+                        }
+                        mWebView.loadUrl(url);
+                    }
+                    break;
+                case 2:// 查看歌曲信息
                     WebviewFragment.currentMusic =  music;
                     MusicInfoActivity.start(getContext(), music);
                     break;
-                case 2:// 置顶
+                case 3:// 置顶
                     AppCache.get().getLocalMusicList().remove(music);
                     if(null != music.getId()) {
                         DBManager.get().getMusicDao().delete(music);
@@ -253,7 +257,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                     adapter.addMusic(music);
                     adapter.notifyDataSetChanged();
                     break;
-                case 3:// 用浏览器打开
+                case 4:// 用浏览器打开
                     if(null != music.getCoverPath()) {
                         openWithBrowser(music);
                     }else {
@@ -266,7 +270,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                     }
                     //requestSetRingtone(music);
                     break;
-                case 4:// 用手机下载
+                case 5:// 用手机下载
                     if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())){
                         ToastUtils.show("已下载");
                     }else {
@@ -277,7 +281,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                         }
                     }
                     break;
-                case 5:// 删除
+                case 6:// 删除
                     deleteMusic(music);
                     break;
             }
