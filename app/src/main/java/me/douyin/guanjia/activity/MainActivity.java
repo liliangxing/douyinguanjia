@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                     case SCROLL_STATE_IDLE: //滚动停止
                          ijkVideoView = snapHelper.findSnapView(layoutManager).findViewById(R.id.video_view);
                         if (ijkVideoView != null) {
-                            ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_CENTER_CROP);
+                            ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_DEFAULT);
                             ijkVideoView.start();
                         }
                         break;

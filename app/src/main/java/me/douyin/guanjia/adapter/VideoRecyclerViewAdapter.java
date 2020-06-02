@@ -45,7 +45,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
         Glide.with(context)
                 .load(videoBean.getThumb())
                 .into(holder.controller.getThumb());
-        holder.ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_CENTER_CROP);
+        holder.ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_DEFAULT);
         holder.ijkVideoView.setUrl(videoBean.getUrl());
         holder.ijkVideoView.setTitle(videoBean.getTitle());
        // holder.title.setText(videoBean.getTitle());
@@ -66,7 +66,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
         VideoHolder(View itemView) {
             super(itemView);
             ijkVideoView = itemView.findViewById(R.id.video_view);
-            ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_CENTER_CROP);
+            ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_DEFAULT);
             controller = new VideoController(context);
             ijkVideoView.setVideoController(controller);
             title = itemView.findViewById(R.id.tv_title);
