@@ -10,6 +10,10 @@
             android:icon="@drawable/ic_menu_timer"
             android:title="@string/menu_full_screen" />
         <item
+            android:id="@+id/action_send_links"
+            android:icon="@drawable/ic_menu_timer"
+            android:title="@string/menu_send_links" />
+        <item
             android:id="@+id/action_clear_cache"
             android:icon="@drawable/ic_menu_timer"
             android:title="@string/menu_clear_cache" />

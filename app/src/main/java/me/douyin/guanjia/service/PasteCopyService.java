@@ -157,7 +157,6 @@ public class PasteCopyService extends Service {
         //if(isWeiShi){
         Music videoVO = new Music();
         videoVO.setPath(url);
-        videoVO.setArtist(url);
         videoVO.setAlbumId(1);
         //videoVO.setTitle(mPreviousText);
         videoVO.setFileName(url);

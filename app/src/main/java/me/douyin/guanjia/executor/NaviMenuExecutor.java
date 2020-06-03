@@ -1,8 +1,17 @@
 package me.douyin.guanjia.executor;
 
+import android.content.ClipData;
 import android.content.Intent;
+import android.net.Uri;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.MenuItem;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.List;
 
 import me.douyin.guanjia.activity.AboutActivity;
 import me.douyin.guanjia.activity.MainActivity;
@@ -11,9 +20,15 @@ import me.douyin.guanjia.activity.SearchMusicActivity;
 import me.douyin.guanjia.activity.SettingActivity;
 import me.douyin.guanjia.constants.Keys;
 import me.douyin.guanjia.fragment.LocalMusicFragment;
+import me.douyin.guanjia.model.Music;
+import me.douyin.guanjia.service.PasteCopyService;
 import me.douyin.guanjia.service.PlayService;
 import me.douyin.guanjia.service.QuitTimer;
+import me.douyin.guanjia.storage.db.DBManager;
+import me.douyin.guanjia.storage.db.greendao.MusicDao;
 import me.douyin.guanjia.storage.preference.Preferences;
+import me.douyin.guanjia.utils.FileUtils;
+import me.douyin.guanjia.utils.Modify;
 import me.douyin.guanjia.utils.ToastUtils;
 import me.douyin.guanjia.R;
 import me.douyin.guanjia.constants.Actions;
@@ -37,6 +52,9 @@ public class NaviMenuExecutor {
             case R.id.action_full_screen:
                 startActivity(MainActivity.class);
                 return true;
+            case R.id.action_send_links:
+                sendLinks();
+                return true;
             case R.id.action_clear_cache:
                 clearCache();
                 return true;
@@ -58,6 +76,38 @@ public class NaviMenuExecutor {
                 return true;
         }
         return false;
+    }
+
+    private void sendLinks(){
+        List<Music> musicList = DBManager.get().getMusicDao().queryBuilder().orderDesc(MusicDao.Properties.Id).build().list();
+        StringBuffer content = new StringBuffer();
+        for(Music music:musicList){
+            if(TextUtils.isEmpty(music.getArtist())){ continue;}
+            content.append(music.getArtist()+"\n");
+            //if(content.length()> 5000) break;
+        }
+       /* PasteCopyService.clipboardManager.setPrimaryClip(ClipData.newPlainText("Label",
+                content.toString()));*/
+        File file = new File(FileUtils.getMusicDir() + "test.txt");
+        Modify.createNewContent(content.toString(),file);
+        shareMusic(file);
+    }
+
+    /**
+     * 分享音乐
+     */
+    private void shareMusic(File file ) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/*");
+        Uri data;
+        // Android  7.0
+        if (android.os.Build.VERSION.SDK_INT >= 23) {
+            data = FileProvider.getUriForFile(this.activity, "me.douyin.guanjia.fileProvider",file);
+        }else {
+            data = Uri.fromFile(file);
+        }
+        intent.putExtra(Intent.EXTRA_STREAM, data);
+        this.activity.startActivity(Intent.createChooser(intent, this.activity.getString(R.string.share)));
     }
 
     private void clearCache(){

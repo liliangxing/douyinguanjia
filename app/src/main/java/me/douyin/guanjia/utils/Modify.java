@@ -168,4 +168,20 @@ public class Modify {
             e.printStackTrace();
         }
     }
+
+
+    public static void createNewContent(String  newContent,File file){
+        try {
+            if(!file.exists()){
+                file.mkdirs();
+            }
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            writer.write(newContent );
+            writer.flush();
+            writer.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

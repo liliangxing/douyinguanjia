@@ -186,6 +186,13 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
 
         Intent intent = new Intent(getContext(), MainActivity.class);
         MusicActivity.position = position-1;
+        Music music = AppCache.get().getLocalMusicList().get(position-1);
+        for(Music music2:AppCache.get().getLocalMusicList()){
+            if(TextUtils.isEmpty(music2.getArtist())){ -- MusicActivity.position;}
+            if(music2.equals(music)){
+                break;
+            }
+        }
         startActivity(intent);
     }
 
@@ -231,7 +238,17 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                         ToastUtils.show("无抖音链接："+JSONObject.toJSONString(music));
                     }
                     break;
-                case 1:// 新标签页打开
+                case 1:// 置顶
+                    AppCache.get().getLocalMusicList().remove(music);
+                    if(null != music.getId()) {
+                        DBManager.get().getMusicDao().delete(music);
+                    }
+                    music.setId(null);
+                    DBManager.get().getMusicDao().save(music);
+                    adapter.addMusic(music);
+                    adapter.notifyDataSetChanged();
+                    break;
+                case 2:// 新标签页打开
                     MusicActivity.fromClicked = true;
                     MusicActivity.instance.mViewPager.setCurrentItem(1);
                     if(music.getAlbumId() == 1){
@@ -243,20 +260,11 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                         mWebView.loadUrl(url);
                     }
                     break;
-                case 2:// 查看歌曲信息
+                case 3:// 查看歌曲信息
                     WebviewFragment.currentMusic =  music;
                     MusicInfoActivity.start(getContext(), music);
                     break;
-                case 3:// 置顶
-                    AppCache.get().getLocalMusicList().remove(music);
-                    if(null != music.getId()) {
-                        DBManager.get().getMusicDao().delete(music);
-                    }
-                    music.setId(null);
-                    DBManager.get().getMusicDao().save(music);
-                    adapter.addMusic(music);
-                    adapter.notifyDataSetChanged();
-                    break;
+
                 case 4:// 用浏览器打开
                     if(null != music.getCoverPath()) {
                         openWithBrowser(music);
