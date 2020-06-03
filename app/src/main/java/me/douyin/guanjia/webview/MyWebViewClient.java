@@ -52,7 +52,8 @@ public class MyWebViewClient extends WebViewClient {
                     "document.getElementsByTagName('html')[0].innerHTML+'</head>');");
         }
         if(url.startsWith("https://h5.weishi.qq.com/weishi/feed/")
-        ||url.startsWith("https://www.iesdouyin.com/share/video/")){
+        ||url.startsWith("https://www.iesdouyin.com/share/video/")
+        ||url.contains("https://www.douyin.com/share/forward/")){
             view.loadUrl("javascript:setTimeout(function () {window.java_obj.getSource('<head>'+" +
                     "document.getElementsByTagName('html')[0].innerHTML+'</head>');},2000);");
         }
