@@ -8,6 +8,8 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
+import com.example.ijkplayer.player.VideoCacheManager;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -116,6 +118,7 @@ public class NaviMenuExecutor {
             LocalMusicFragment.mWebView.clearCache(true);
             LocalMusicFragment.mWebView.loadUrl(Keys.HOME_PAGE);
         }
+        VideoCacheManager.clearAllCache(this.activity);
     }
 
     private void startActivity(Class<?> cls) {
