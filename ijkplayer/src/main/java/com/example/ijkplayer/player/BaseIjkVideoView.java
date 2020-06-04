@@ -43,11 +43,11 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
     protected int bufferPercentage;//缓冲百分比
     protected boolean isMute;//是否静音
 
-    protected String mCurrentUrl;//当前播放视频的地址
+    public String mCurrentUrl;//当前播放视频的地址
     protected Map<String, String> mHeaders;//当前视频地址的请求头
     protected AssetFileDescriptor mAssetFileDescriptor;//assets文件
     protected long mCurrentPosition;//当前正在播放视频的位置
-    protected String mCurrentTitle = "";//当前正在播放视频的标题
+    public String mCurrentTitle = "";//当前正在播放视频的标题
 
     //播放器的各种状态
     public static final int STATE_ERROR = -1;

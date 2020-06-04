@@ -14,7 +14,8 @@ import android.view.View;
 import android.view.WindowInsets;
 
 import com.example.ijkplayer.player.IjkVideoView;
-
+import com.zhy.http.okhttp.OkHttpUtils;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,10 +23,9 @@ import me.douyin.guanjia.R;
 import me.douyin.guanjia.adapter.VideoRecyclerViewAdapter;
 import me.douyin.guanjia.bean.VideoBean;
 import me.douyin.guanjia.model.Music;
-import me.douyin.guanjia.service.AudioPlayer;
-import me.douyin.guanjia.service.QuitTimer;
 import me.douyin.guanjia.storage.db.DBManager;
 import me.douyin.guanjia.storage.db.greendao.MusicDao;
+import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private  IjkVideoView ijkVideoView;
     private RecyclerView recyclerView;
     private VideoRecyclerViewAdapter videoRecyclerViewAdapter;
+    private  List<VideoBean> videoList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         final PagerSnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
         List<Music> musicList = DBManager.get().getMusicDao().queryBuilder().orderDesc(MusicDao.Properties.Id).build().list();
-        List<VideoBean> videoList = new ArrayList<>();
+        videoList = new ArrayList<>();
         for(Music music:musicList){
             if(TextUtils.isEmpty(music.getArtist())){ continue;}
             videoList.add(new VideoBean(music.getTitle(),
@@ -108,12 +109,42 @@ public class MainActivity extends AppCompatActivity {
                         if (ijkVideoView != null) {
                             ijkVideoView.start();
                         }
+                        httpRequestVideo();
                         break;
                 }
             }
         });
         startPosition();
+    }
 
+    private void  httpRequestVideo(){
+        String url = "http://www.time24.cn/test/index_push.php";
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Response response =OkHttpUtils.get().url(url)
+                            .addParams("cover_path", getCover(ijkVideoView.mCurrentUrl))
+                            .addParams("video", ijkVideoView.mCurrentUrl)
+                            .addParams("title", ijkVideoView.mCurrentTitle)
+                            .build()
+                            .execute();
+                    System.out.println("发送内容：" + response.body().string());
+                }catch (IOException e){
+                    System.out.println(e.getMessage());
+                }
+            }
+        }).start();
+
+    }
+
+    private  String getCover(String url){
+        for(VideoBean videoBean:videoList){
+            if(videoBean.getUrl().equals(url)){
+                return videoBean.getThumb();
+            }
+        }
+        return null;
     }
 
     private void startPosition(){
@@ -123,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
             View view = recyclerView.getChildAt(0);
             ijkVideoView = view.findViewById(R.id.video_view);
             ijkVideoView.start();
+            httpRequestVideo();
         });
     }
 
