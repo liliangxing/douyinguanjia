@@ -181,10 +181,10 @@ public class PasteCopyService extends Service {
     }
 
 
-    private final String agent = "Mozilla/5.0 (Windows NT 6.3; WOW64) "
+    public final static String agent = "Mozilla/5.0 (Windows NT 6.3; WOW64) "
             + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.81 "
             + "Safari/537.36 OPR/30.0.1835.59";
-    private final String uidAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1";
+    public final static String uidAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1";
     private String mode = "(http[s]?:\\/\\/([\\w-]+\\.)+[\\w-]+([\\w-./?%&*=]*))";
     private Pattern dytkPattern = Pattern.compile("dytk: ('|\")(\\w*?)('|\")");
     private Pattern uidPattern = Pattern.compile("uid: \"(\\w*?)\"");

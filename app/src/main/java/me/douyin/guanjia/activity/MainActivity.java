@@ -14,7 +14,18 @@ import android.view.View;
 import android.view.WindowInsets;
 
 import com.example.ijkplayer.player.IjkVideoView;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
 import com.zhy.http.okhttp.OkHttpUtils;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +33,13 @@ import java.util.List;
 import me.douyin.guanjia.R;
 import me.douyin.guanjia.adapter.VideoRecyclerViewAdapter;
 import me.douyin.guanjia.bean.VideoBean;
+import me.douyin.guanjia.fragment.LocalMusicFragment;
 import me.douyin.guanjia.model.Music;
+import me.douyin.guanjia.service.PasteCopyService;
 import me.douyin.guanjia.storage.db.DBManager;
 import me.douyin.guanjia.storage.db.greendao.MusicDao;
+import me.douyin.guanjia.utils.FileUtils;
+import me.douyin.guanjia.utils.Modify;
 import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
@@ -35,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private VideoRecyclerViewAdapter videoRecyclerViewAdapter;
     private  List<VideoBean> videoList;
+    private String pushURL = "http://www.time24.cn/test/index_push.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,12 +134,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void  httpRequestVideo(){
-        String url = "http://www.time24.cn/test/index_push.php";
+        //getRedirect(ijkVideoView.mCurrentUrl);
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Response response =OkHttpUtils.get().url(url)
+                    Response response =OkHttpUtils.get().url(pushURL)
                             .addParams("cover_path", getCover(ijkVideoView.mCurrentUrl))
                             .addParams("video", ijkVideoView.mCurrentUrl)
                             .addParams("title", ijkVideoView.mCurrentTitle)
@@ -135,7 +151,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }).start();
-
     }
 
     private  String getCover(String url){
@@ -145,6 +160,23 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return null;
+    }
+
+    private  void getRedirect(String url){
+        new HttpUtils().configUserAgent("Mozilla/5.0 (Windows NT 6.3; WOW64) "
+                + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.81 "
+                + "Safari/537.36 OPR/30.0.1835.59").send(HttpRequest.HttpMethod.GET, url, new RequestCallBack<String>() {
+            @Override
+            public void onSuccess(ResponseInfo<String> objectResponseInfo) {
+                String html = objectResponseInfo.result;
+                Document document = Jsoup.parse(html);
+                System.out.println("html：" + html);
+            }
+            @Override
+            public void onFailure(HttpException e, String s) {
+
+            }
+        });
     }
 
     private void startPosition(){
