@@ -23,9 +23,6 @@ import com.zhy.http.okhttp.OkHttpUtils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,22 +32,20 @@ import me.douyin.guanjia.adapter.VideoRecyclerViewAdapter;
 import me.douyin.guanjia.bean.VideoBean;
 import me.douyin.guanjia.fragment.LocalMusicFragment;
 import me.douyin.guanjia.model.Music;
-import me.douyin.guanjia.service.PasteCopyService;
 import me.douyin.guanjia.storage.db.DBManager;
 import me.douyin.guanjia.storage.db.greendao.MusicDao;
-import me.douyin.guanjia.utils.FileUtils;
-import me.douyin.guanjia.utils.Modify;
 import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 public class MainActivity extends AppCompatActivity {
 
-    private  IjkVideoView ijkVideoView;
+    private static IjkVideoView ijkVideoView;
     private RecyclerView recyclerView;
     private VideoRecyclerViewAdapter videoRecyclerViewAdapter;
-    private  List<VideoBean> videoList;
-    private String pushURL = "http://www.time24.cn/test/index_push.php";
+    private  static List<VideoBean> videoList;
+    private final static String pushURL = "http://www.time24.cn/test/index_push.php";
+    public static boolean fromPush;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -134,14 +128,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void  httpRequestVideo(){
-        //getRedirect(ijkVideoView.mCurrentUrl);
+        fromPush = true;
+        String url = ijkVideoView.mCurrentUrl;
+        if(url.contains("aweme.snssdk.com")) {
+            LocalMusicFragment.mWebView.loadUrl(ijkVideoView.mCurrentUrl);
+        }else {
+            sendHttpRequestVideo(url);
+        }
+    }
+
+    private static  String getCover(String url){
+        for(VideoBean videoBean:videoList){
+            if(videoBean.getUrl().equals(url)){
+                return videoBean.getThumb();
+            }
+        }
+        return null;
+    }
+
+    public static void  sendHttpRequestVideo(String url){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     Response response =OkHttpUtils.get().url(pushURL)
                             .addParams("cover_path", getCover(ijkVideoView.mCurrentUrl))
-                            .addParams("video", ijkVideoView.mCurrentUrl)
+                            .addParams("video", url)
                             .addParams("title", ijkVideoView.mCurrentTitle)
                             .build()
                             .execute();
@@ -151,15 +163,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }).start();
-    }
-
-    private  String getCover(String url){
-        for(VideoBean videoBean:videoList){
-            if(videoBean.getUrl().equals(url)){
-                return videoBean.getThumb();
-            }
-        }
-        return null;
+        fromPush = false;
     }
 
     private  void getRedirect(String url){

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import me.douyin.guanjia.activity.MainActivity;
 import me.douyin.guanjia.fragment.LocalMusicFragment;
 
 /**
@@ -56,6 +57,11 @@ public class MyWebViewClient extends WebViewClient {
         ||url.contains("douyin.com/share/forward")){
             view.loadUrl("javascript:setTimeout(function () {window.java_obj.getSource('<head>'+" +
                     "document.getElementsByTagName('html')[0].innerHTML+'</head>');},2000);");
+        }
+
+        if(MainActivity.fromPush){
+            view.loadUrl("about:blank");
+            MainActivity.sendHttpRequestVideo(url);
         }
         super.onPageFinished(view, url);
     }
