@@ -173,7 +173,7 @@ public class Modify {
     public static void createNewContent(String  newContent,File file){
         try {
             if(!file.exists()){
-                file.mkdirs();
+                file.getParentFile().mkdirs();
             }
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             writer.write(newContent );

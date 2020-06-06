@@ -30,6 +30,7 @@ import me.douyin.guanjia.storage.db.DBManager;
 import me.douyin.guanjia.storage.db.greendao.MusicDao;
 import me.douyin.guanjia.storage.preference.Preferences;
 import me.douyin.guanjia.utils.FileUtils;
+import me.douyin.guanjia.utils.HttpPostUtils;
 import me.douyin.guanjia.utils.Modify;
 import me.douyin.guanjia.utils.ToastUtils;
 import me.douyin.guanjia.R;
@@ -93,6 +94,13 @@ public class NaviMenuExecutor {
         File file = new File(FileUtils.getMusicDir() + "test.txt");
         Modify.createNewContent(content.toString(),file);
         shareMusic(file);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                    HttpPostUtils.httpPost(activity,"http://www.time24.cn/test/index_upload.php"
+                    ,file,"test.txt");
+                        }
+        }).start();
     }
 
     /**
