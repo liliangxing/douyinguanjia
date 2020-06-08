@@ -327,7 +327,8 @@ public class WebviewFragment extends BaseFragment {
 
     public void downloadAndPlay(String url){
         String fileName1 = HttpUtils.getFileName(url);
-        if(TextUtils.isEmpty(fileName1)){
+        if(TextUtils.isEmpty(fileName1) ||
+                url.contains("weishi.qq.com")){
             Matcher m =Pattern.compile("video_id=([\\w-][^&]+)").matcher(url);
             if(m.find()){
                 fileName1 = m.group(1)+".mp4";
