@@ -54,6 +54,7 @@ import me.douyin.guanjia.utils.ToastUtils;
 public class PasteCopyService extends Service {
     private static final String TAG = "Service";
     private static  LocalMusicFragment adapter;
+    public static boolean fromClip;
 
     public  static ClipboardManager clipboardManager;
 
@@ -316,6 +317,7 @@ public class PasteCopyService extends Service {
         bundle.putString("data", JSON.toJSONString(videoVO));
         message.setData(bundle);
         handler1.sendMessage(message);
+        fromClip = true;
     }
 
     @Nullable

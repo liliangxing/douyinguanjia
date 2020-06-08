@@ -61,7 +61,7 @@ public class MyWebViewClient extends WebViewClient {
 
         if(MainActivity.fromPush){
             view.loadUrl("about:blank");
-            MainActivity.sendHttpRequestVideo(url);
+            MainActivity.sendHttpRequest(url);
         }
         super.onPageFinished(view, url);
     }

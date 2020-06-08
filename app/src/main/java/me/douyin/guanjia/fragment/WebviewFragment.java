@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 
 import me.douyin.guanjia.R;
 import me.douyin.guanjia.activity.FullScreenActivity;
+import me.douyin.guanjia.activity.MainActivity;
 import me.douyin.guanjia.activity.MusicActivity;
 import me.douyin.guanjia.adapter.PlaylistAdapter;
 import me.douyin.guanjia.application.AppCache;
@@ -91,12 +92,18 @@ public class WebviewFragment extends BaseFragment {
                 String data =  msg.getData().getString("data");
                 String signc =  msg.getData().getString("signc");
                 String coverPath =  msg.getData().getString("coverPath");
-                if(!TextUtils.isEmpty(coverPath)){
+                if(!TextUtils.isEmpty(coverPath) && TextUtils.isEmpty(currentMusic.getCoverPath())){
                     LocalMusicFragment.adapter.notifyDataSetChanged();
+                    currentMusic.setCoverPath(coverPath);
+                }
+                if(PasteCopyService.fromClip){
+                    //发送到http请求
+                    MainActivity.httpRequestVideo(data);
+                    PasteCopyService.fromClip = false;
                 }
                 if(!TextUtils.isEmpty(data)){
                     if(MusicActivity.fromClicked) {
-                        mWebView.loadUrl(data);
+                        mWebView.loadUrl(currentMusic.getArtist());
                     }
                     if(LocalMusicFragment.downloadFirst != null){
                         LocalMusicFragment.downloadFirst.openWithBrowser(currentMusic);
@@ -214,7 +221,6 @@ public class WebviewFragment extends BaseFragment {
                     if(coverUrl.startsWith("//")){
                         coverUrl = coverUrl.replace("//","https://");
                     }
-                    currentMusic.setCoverPath(coverUrl);
                     bundle.putString("coverPath", coverUrl);
                 }
                 if(!elements2.isEmpty()){

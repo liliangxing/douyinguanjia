@@ -31,6 +31,7 @@ import me.douyin.guanjia.R;
 import me.douyin.guanjia.adapter.VideoRecyclerViewAdapter;
 import me.douyin.guanjia.bean.VideoBean;
 import me.douyin.guanjia.fragment.LocalMusicFragment;
+import me.douyin.guanjia.fragment.WebviewFragment;
 import me.douyin.guanjia.model.Music;
 import me.douyin.guanjia.storage.db.DBManager;
 import me.douyin.guanjia.storage.db.greendao.MusicDao;
@@ -40,7 +41,7 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static IjkVideoView ijkVideoView;
+    public static IjkVideoView ijkVideoView;
     private RecyclerView recyclerView;
     private VideoRecyclerViewAdapter videoRecyclerViewAdapter;
     private  static List<VideoBean> videoList;
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                         if (ijkVideoView != null) {
                             ijkVideoView.start();
                         }
-                        httpRequestVideo();
+                        httpRequestVideo(ijkVideoView.mCurrentUrl);
                         break;
                 }
             }
@@ -127,34 +128,45 @@ public class MainActivity extends AppCompatActivity {
         startPosition();
     }
 
-    private void  httpRequestVideo(){
+    public static void httpRequestVideo(String url){
         fromPush = true;
-        String url = ijkVideoView.mCurrentUrl;
         if(url.contains("aweme.snssdk.com")) {
-            LocalMusicFragment.mWebView.loadUrl(ijkVideoView.mCurrentUrl);
+            LocalMusicFragment.mWebView.loadUrl(url);
         }else {
-            sendHttpRequestVideo(url);
+            sendHttpRequest(url);
         }
     }
 
-    private static  String getCover(String url){
-        for(VideoBean videoBean:videoList){
-            if(videoBean.getUrl().equals(url)){
-                return videoBean.getThumb();
+    private static  String getCover(){
+        if(null !=ijkVideoView ) {
+            for (VideoBean videoBean : videoList) {
+                if (videoBean.getUrl().equals(ijkVideoView.mCurrentUrl)) {
+                    return videoBean.getThumb();
+                }
             }
+        }else {
+            return WebviewFragment.currentMusic.getCoverPath();
         }
         return null;
     }
 
-    public static void  sendHttpRequestVideo(String url){
+    private static String getVideoTitle(){
+        if(null !=ijkVideoView ) {
+            return ijkVideoView.mCurrentTitle;
+        }else {
+            return WebviewFragment.currentMusic.getTitle();
+        }
+    }
+
+    public static void  sendHttpRequest(String url){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     Response response =OkHttpUtils.get().url(pushURL)
-                            .addParams("cover_path", getCover(ijkVideoView.mCurrentUrl))
+                            .addParams("cover_path", getCover())
                             .addParams("video", url)
-                            .addParams("title", ijkVideoView.mCurrentTitle)
+                            .addParams("title", getVideoTitle())
                             .build()
                             .execute();
                     System.out.println("发送内容：" + response.body().string());
@@ -190,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
             View view = recyclerView.getChildAt(0);
             ijkVideoView = view.findViewById(R.id.video_view);
             ijkVideoView.start();
-            httpRequestVideo();
+            httpRequestVideo(ijkVideoView.mCurrentUrl);
         });
     }
 
