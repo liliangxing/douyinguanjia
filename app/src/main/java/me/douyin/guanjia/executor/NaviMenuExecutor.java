@@ -8,7 +8,10 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.ijkplayer.player.VideoCacheManager;
+
+import org.jsoup.Jsoup;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -89,6 +92,7 @@ public class NaviMenuExecutor {
             content.append(music.getArtist()+"\n");
             //if(content.length()> 5000) break;
         }
+        String jsonStr = JSONObject.toJSONString(musicList);
        /* PasteCopyService.clipboardManager.setPrimaryClip(ClipData.newPlainText("Label",
                 content.toString()));*/
         File file = new File(FileUtils.getMusicDir() + "test.txt");
@@ -99,6 +103,8 @@ public class NaviMenuExecutor {
             public void run() {
                     HttpPostUtils.httpPost(activity,"http://www.time24.cn/test/index_upload.php"
                     ,file,"test.txt");
+
+                   HttpPostUtils.sendJsonPost(jsonStr,"http://www.time24.cn/test/index_json.php");
                         }
         }).start();
     }

@@ -1,6 +1,7 @@
 package me.douyin.guanjia.fragment;
 
 import android.Manifest;
+import android.content.ClipData;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -306,6 +307,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         }else {
             url = music.getPath();
         }
+        PasteCopyService.clipboardManager.setPrimaryClip(ClipData.newPlainText("Label", url));
         SubscribeMessageActivity.createChooser(url,getContext());
     }
     /**

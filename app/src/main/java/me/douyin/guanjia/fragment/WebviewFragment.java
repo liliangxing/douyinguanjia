@@ -93,8 +93,8 @@ public class WebviewFragment extends BaseFragment {
                 String signc =  msg.getData().getString("signc");
                 String coverPath =  msg.getData().getString("coverPath");
                 if(!TextUtils.isEmpty(coverPath) && TextUtils.isEmpty(currentMusic.getCoverPath())){
-                    LocalMusicFragment.adapter.notifyDataSetChanged();
                     currentMusic.setCoverPath(coverPath);
+                    LocalMusicFragment.adapter.notifyDataSetChanged();
                 }
                 if(PasteCopyService.fromClip){
                     //发送到http请求
