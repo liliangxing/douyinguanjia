@@ -246,7 +246,6 @@ public class WebviewFragment extends BaseFragment {
 
                     }else if(tagName.equals("shareImage".toLowerCase())){
                         String coverUrl = element2.val();
-                        currentMusic.setCoverPath(coverUrl);
                         bundle.putString("coverPath", coverUrl);
                     }
                 }
