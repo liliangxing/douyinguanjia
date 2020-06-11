@@ -1,6 +1,5 @@
 package me.douyin.guanjia.executor;
 
-import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.content.FileProvider;
@@ -11,22 +10,16 @@ import android.view.MenuItem;
 import com.alibaba.fastjson.JSONObject;
 import com.example.ijkplayer.player.VideoCacheManager;
 
-import org.jsoup.Jsoup;
-
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.util.List;
 
 import me.douyin.guanjia.activity.AboutActivity;
-import me.douyin.guanjia.activity.MainActivity;
 import me.douyin.guanjia.activity.MusicActivity;
 import me.douyin.guanjia.activity.SearchMusicActivity;
 import me.douyin.guanjia.activity.SettingActivity;
 import me.douyin.guanjia.constants.Keys;
 import me.douyin.guanjia.fragment.LocalMusicFragment;
 import me.douyin.guanjia.model.Music;
-import me.douyin.guanjia.service.PasteCopyService;
 import me.douyin.guanjia.service.PlayService;
 import me.douyin.guanjia.service.QuitTimer;
 import me.douyin.guanjia.storage.db.DBManager;

@@ -59,7 +59,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     @Bind(R.id.drawer_layout)
     private DrawerLayout drawerLayout;
     @Bind(R.id.navigation_view)
-    private NavigationView navigationView;
+    public NavigationView navigationView;
     @Bind(R.id.iv_menu)
     private ImageView ivMenu;
     @Bind(R.id.iv_share)
