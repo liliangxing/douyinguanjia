@@ -84,7 +84,7 @@
     <string name="share_app_download_message">带app下载地址</string>
     <string name="choose_app">选择应用程序打开链接</string>
     <string name="menu_clear_cache">[空白或403错误]清理缓存</string>
-    <string name="menu_full_screen">仿抖音滑动</string>
+    <string name="menu_favorite">查看所有喜欢</string>
     <string name="menu_send_links">把所有链接发送...</string>
 
     <string name="activity_full_screen">全屏播放</string>

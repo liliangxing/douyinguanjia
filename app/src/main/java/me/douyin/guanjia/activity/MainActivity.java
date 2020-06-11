@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 //        recyclerView.setNestedScrollingEnabled(false);
         final PagerSnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
-        List<Music> musicList = DBManager.get().getMusicDao().queryBuilder().orderDesc(MusicDao.Properties.Id).build().list();
+        List<Music> musicList = LocalMusicFragment.musicList;
         videoList = new ArrayList<>();
         for(Music music:musicList){
             if(TextUtils.isEmpty(music.getArtist())){ continue;}

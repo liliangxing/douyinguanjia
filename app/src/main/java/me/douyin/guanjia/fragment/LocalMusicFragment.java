@@ -52,6 +52,7 @@ import me.douyin.guanjia.activity.MusicInfoActivity;
 import me.douyin.guanjia.activity.SubscribeMessageActivity;
 import me.douyin.guanjia.adapter.OnMoreClickListener;
 import me.douyin.guanjia.adapter.PlaylistAdapter;
+import me.douyin.guanjia.executor.NaviMenuExecutor;
 import me.douyin.guanjia.model.Music;
 import me.douyin.guanjia.service.PasteCopyService;
 import me.douyin.guanjia.storage.db.DBManager;
@@ -74,7 +75,7 @@ import me.douyin.guanjia.constants.RxBusTags;
  */
 public class LocalMusicFragment extends BaseFragment implements AdapterView.OnItemClickListener, OnMoreClickListener {
     @Bind(R.id.lv_local_music)
-    private ListView lvLocalMusic;
+    private static ListView lvLocalMusic;
     @Bind(R.id.v_searching)
     private TextView vSearching;
     public static WebView mWebView;
@@ -84,6 +85,8 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     private Handler handler1;
     public static final String FILE_NAME = "test.html";
     public static LocalMusicFragment downloadFirst;
+    public static LocalMusicFragment instance;
+    public static List<Music> musicList;
 
     @Nullable
     @Override
@@ -92,13 +95,29 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         return inflater.inflate(R.layout.fragment_local_music, container, false);
     }
 
+    public static void refresh(){
+        musicList = DBManager.get().getMusicDao().queryBuilder().where(MusicDao.Properties.SongId.eq(1)).orderDesc(MusicDao.Properties.Id).build().list();
+        resetAdapter();
+    }
+
+    public static void refreshAll(){
+        musicList = DBManager.get().getMusicDao().queryBuilder().orderDesc(MusicDao.Properties.Id).build().list();
+        resetAdapter();
+    }
+    private static void resetAdapter(){
+        adapter = new PlaylistAdapter(musicList);
+        adapter.setOnMoreClickListener(instance);
+        lvLocalMusic.setAdapter(adapter);
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        List<Music> musicList = DBManager.get().getMusicDao().queryBuilder().orderDesc(MusicDao.Properties.Id).build().list();
+        musicList = DBManager.get().getMusicDao().queryBuilder().orderDesc(MusicDao.Properties.Id).build().list();
         adapter = new PlaylistAdapter(musicList);
         adapter.setOnMoreClickListener(this);
         lvLocalMusic.setAdapter(adapter);
+        instance = this;
         loadMusic();
         handler1 = new Handler(){
             @Override
@@ -216,10 +235,24 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
 
     @Override
     public void onMoreClick(final int position) {
+        if(!NaviMenuExecutor.favoriteFlag){
+            NaviMenuExecutor.changeMenuItem();
+            return;
+        }
         Music music = AppCache.get().getLocalMusicList().get(position);
         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
         dialog.setTitle(music.getTitle());
-        dialog.setItems(R.array.local_music_dialog, (dialog1, which) -> {
+        CharSequence[] mItems1 = getResources().getTextArray(R.array.local_music_dialog);
+        CharSequence[] mItems2 = new CharSequence[mItems1.length+1];
+        for (int i = 0; i < mItems1.length; i++) {
+            mItems2[i] = mItems1[i];
+        }
+        if( 0 == music.getSongId()){
+            mItems2[mItems1.length] = "设为喜欢";
+        }else {
+            mItems2[mItems1.length] = "查看所有喜欢";
+        }
+        dialog.setItems(mItems2, (dialog1, which) -> {
             switch (which) {
                 case 0:// 抖音打开
                     if(!TextUtils.isEmpty(music.getFileName())) {
@@ -281,6 +314,16 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                     break;
                 case 6:// 删除
                     deleteMusic(music);
+                    break;
+                default:
+                    if( 0 == music.getSongId()) {
+                        // 设为喜欢
+                        music.setSongId(1);
+                        DBManager.get().getMusicDao().save(music);
+                        ToastUtils.show("成功");
+                    }else {
+                        NaviMenuExecutor.changeMenuItem();
+                    }
                     break;
             }
         });

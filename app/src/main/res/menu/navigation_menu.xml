@@ -6,9 +6,9 @@
             android:icon="@drawable/ic_menu_search"
             android:title="@string/search" />
         <item
-            android:id="@+id/action_full_screen"
+            android:id="@+id/action_favorite"
             android:icon="@drawable/ic_menu_timer"
-            android:title="@string/menu_full_screen" />
+            android:title="@string/menu_favorite" />
         <item
             android:id="@+id/action_send_links"
             android:icon="@drawable/ic_menu_timer"

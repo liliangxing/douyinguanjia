@@ -44,19 +44,36 @@ import me.douyin.guanjia.constants.Actions;
  * Created by hzwangchenyan on 2016/1/14.
  */
 public class NaviMenuExecutor {
-    private MusicActivity activity;
+    private static MusicActivity activity;
+    public static boolean favoriteFlag = true;
+    public static MenuItem menuItem;
 
     public NaviMenuExecutor(MusicActivity activity) {
         this.activity = activity;
     }
 
+    public static void changeMenuItem(){
+       String title;
+        if(favoriteFlag) {
+            LocalMusicFragment.refresh();
+            title = "查看所有抖音链接";
+        }else {
+            LocalMusicFragment.refreshAll();
+            title = "查看所有喜欢";
+        }
+        favoriteFlag=  !favoriteFlag;
+        if(null != menuItem){
+            menuItem.setTitle(title);
+        }
+    }
     public boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
                 startActivity(SearchMusicActivity.class);
                 return true;
-            case R.id.action_full_screen:
-                startActivity(MainActivity.class);
+            case R.id.action_favorite:
+                menuItem = item;
+                changeMenuItem();
                 return true;
             case R.id.action_send_links:
                 sendLinks();
