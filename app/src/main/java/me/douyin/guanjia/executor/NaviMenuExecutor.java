@@ -62,9 +62,10 @@ public class NaviMenuExecutor {
             title = "查看所有喜欢";
         }
         favoriteFlag=  !favoriteFlag;
-        if(null != menuItem){
-            menuItem.setTitle(title);
+        if(null == menuItem){
+            menuItem = activity.navigationView.getMenu().findItem(R.id.action_favorite);
         }
+        menuItem.setTitle(title);
     }
     public boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
