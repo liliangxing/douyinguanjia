@@ -255,15 +255,15 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         dialog.setItems(mItems2, (dialog1, which) -> {
             switch (which) {
                 case 0:// 抖音打开
-                    if(!TextUtils.isEmpty(music.getFileName())) {
-                        SubscribeMessageActivity.createChooser(music.getFileName(),getContext());
-                    }else {
-                        ToastUtils.show("无抖音链接："+JSONObject.toJSONString(music));
+                    if (!TextUtils.isEmpty(music.getFileName())) {
+                        SubscribeMessageActivity.createChooser(music.getFileName(), getContext());
+                    } else {
+                        ToastUtils.show("无抖音链接：" + JSONObject.toJSONString(music));
                     }
                     break;
                 case 1:// 置顶
                     AppCache.get().getLocalMusicList().remove(music);
-                    if(null != music.getId()) {
+                    if (null != music.getId()) {
                         DBManager.get().getMusicDao().delete(music);
                     }
                     music.setId(null);
@@ -274,27 +274,27 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                 case 2:// 新标签页打开
                     MusicActivity.fromClicked = true;
                     MusicActivity.instance.mViewPager.setCurrentItem(1);
-                    if(music.getAlbumId() == 1){
-                        WebviewFragment.currentMusic =  music;
-                        String url =  music.getPath();
-                        if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())){
-                            url =  music.getArtist();
+                    if (music.getAlbumId() == 1) {
+                        WebviewFragment.currentMusic = music;
+                        String url = music.getPath();
+                        if (music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())) {
+                            url = music.getArtist();
                         }
                         mWebView.loadUrl(url);
                     }
                     break;
                 case 3:// 查看歌曲信息
-                    WebviewFragment.currentMusic =  music;
+                    WebviewFragment.currentMusic = music;
                     MusicInfoActivity.start(getContext(), music);
                     break;
 
                 case 4:// 用浏览器打开
-                    if(null != music.getCoverPath()) {
+                    if (null != music.getCoverPath()) {
                         openWithBrowser(music);
-                    }else {
+                    } else {
                         downloadFirst = this;
-                        if(music.getAlbumId() == 1){
-                            WebviewFragment.currentMusic =  music;
+                        if (music.getAlbumId() == 1) {
+                            WebviewFragment.currentMusic = music;
                             //分析并下载
                             mWebView.loadUrl(music.getArtist());
                         }
@@ -302,9 +302,9 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                     //requestSetRingtone(music);
                     break;
                 case 5:// 用手机下载
-                    if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())){
+                    if (music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())) {
                         ToastUtils.show("已下载");
-                    }else {
+                    } else {
                         MusicActivity.forceDownload = true;
                         if (music.getAlbumId() == 1) {
                             WebviewFragment.currentMusic = music;
@@ -313,7 +313,14 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                     }
                     break;
                 case 6:// 删除
-                    deleteMusic(music);
+                    if (0 == music.getSongId()){
+                        deleteMusic(music);
+                    }else {
+                        //取消喜欢
+                        music.setSongId(0);
+                        DBManager.get().getMusicDao().save(music);
+                        ToastUtils.show("取消喜欢");
+                    }
                     break;
                 default:
                     if( 0 == music.getSongId()) {
@@ -322,6 +329,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                         DBManager.get().getMusicDao().save(music);
                         ToastUtils.show("成功");
                     }else {
+                        // 查看所有喜欢
                         NaviMenuExecutor.changeMenuItem();
                     }
                     break;
