@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import me.douyin.guanjia.executor.NaviMenuExecutor;
 import me.douyin.guanjia.model.Music;
 import me.douyin.guanjia.utils.Utils;
 import me.douyin.guanjia.utils.binding.Bind;
@@ -82,7 +83,7 @@ public class PlaylistAdapter extends BaseAdapter {
         }else {
             holder.tvTitle.setTextColor(Color.BLACK);
         }
-        if(0 != music.getSongId()){
+        if(0 != music.getSongId() && NaviMenuExecutor.favoriteFlag){
             holder.tvTitle.setText(Html.fromHtml("<u>"+music.getTitle()+"</u>"));
         }
         holder.ivMore.setOnClickListener(v -> {
