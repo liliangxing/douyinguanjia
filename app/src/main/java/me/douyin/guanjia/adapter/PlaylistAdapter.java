@@ -1,10 +1,8 @@
 package me.douyin.guanjia.adapter;
 
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Environment;
-import android.text.util.Linkify;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +13,6 @@ import android.widget.TextView;
 import java.util.List;
 
 import me.douyin.guanjia.model.Music;
-import me.douyin.guanjia.utils.CoverLoader;
-import me.douyin.guanjia.utils.FileUtils;
 import me.douyin.guanjia.utils.Utils;
 import me.douyin.guanjia.utils.binding.Bind;
 import me.douyin.guanjia.utils.binding.ViewBinder;
@@ -87,7 +83,7 @@ public class PlaylistAdapter extends BaseAdapter {
             holder.tvTitle.setTextColor(Color.BLACK);
         }
         if(0 != music.getSongId()){
-            holder.tvTitle.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+            holder.tvTitle.setText(Html.fromHtml("<u>"+music.getTitle()+"</u>"));
         }
         holder.ivMore.setOnClickListener(v -> {
             if (listener != null) {
