@@ -235,10 +235,10 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
 
     @Override
     public void onMoreClick(final int position) {
-        if(!NaviMenuExecutor.favoriteFlag){
+        /*if(!NaviMenuExecutor.favoriteFlag){
             NaviMenuExecutor.changeMenuItem();
             return;
-        }
+        }*/
         Music music = AppCache.get().getLocalMusicList().get(position);
         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
         dialog.setTitle(music.getTitle());
@@ -247,10 +247,18 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         for (int i = 0; i < mItems1.length; i++) {
             mItems2[i] = mItems1[i];
         }
-        if( 0 == music.getSongId()){
-            mItems2[mItems1.length] = "设为喜欢";
+        if(NaviMenuExecutor.favoriteFlag) {
+            if (0 == music.getSongId()) {
+                mItems2[mItems1.length] = "设为喜欢";
+            } else {
+                mItems2[mItems1.length] = "查看所有喜欢";
+            }
         }else {
-            mItems2[mItems1.length] = "查看所有喜欢";
+            if (1 == music.getSongId()) {
+                mItems2[mItems1.length] = "取消喜欢";
+            } else {
+                mItems2[mItems1.length] = "查看所有链接";
+            }
         }
         dialog.setItems(mItems2, (dialog1, which) -> {
             switch (which) {
@@ -323,14 +331,26 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                     }
                     break;
                 default:
-                    if( 0 == music.getSongId()) {
-                        // 设为喜欢
-                        music.setSongId(1);
-                        DBManager.get().getMusicDao().save(music);
-                        ToastUtils.show("成功");
+                    if(NaviMenuExecutor.favoriteFlag) {
+                        if (0 == music.getSongId()) {
+                            // 设为喜欢
+                            music.setSongId(1);
+                            DBManager.get().getMusicDao().save(music);
+                            ToastUtils.show("成功");
+                        } else {
+                            // 查看所有喜欢
+                            NaviMenuExecutor.changeMenuItem();
+                        }
                     }else {
-                        // 查看所有喜欢
-                        NaviMenuExecutor.changeMenuItem();
+                        if (1 == music.getSongId()) {
+                            // 设为喜欢
+                            music.setSongId(0);
+                            DBManager.get().getMusicDao().save(music);
+                            ToastUtils.show("已取消");
+                        } else {
+                            // 查看所有链接
+                            NaviMenuExecutor.changeMenuItem();
+                        }
                     }
                     break;
             }

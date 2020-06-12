@@ -96,7 +96,7 @@ public class NaviMenuExecutor {
     }
 
     private void sendLinks(){
-        List<Music> musicList = DBManager.get().getMusicDao().queryBuilder().orderDesc(MusicDao.Properties.Id).build().list();
+        List<Music> musicList = LocalMusicFragment.musicList;
         StringBuffer content = new StringBuffer();
         for(Music music:musicList){
             if(TextUtils.isEmpty(music.getArtist())){ continue;}
