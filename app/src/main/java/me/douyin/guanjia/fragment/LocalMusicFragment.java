@@ -343,9 +343,11 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                         }
                     }else {
                         if (1 == music.getSongId()) {
-                            // 设为喜欢
+                            // 取消喜欢
                             music.setSongId(0);
                             DBManager.get().getMusicDao().save(music);
+                            AppCache.get().getLocalMusicList().remove(music);
+                            adapter.notifyDataSetChanged();
                             ToastUtils.show("已取消");
                         } else {
                             // 查看所有链接

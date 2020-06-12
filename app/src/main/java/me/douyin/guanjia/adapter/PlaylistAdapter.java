@@ -2,6 +2,7 @@ package me.douyin.guanjia.adapter;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Environment;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
@@ -86,7 +87,7 @@ public class PlaylistAdapter extends BaseAdapter {
             holder.tvTitle.setTextColor(Color.BLACK);
         }
         if(0 != music.getSongId()){
-            holder.tvTitle.setAutoLinkMask(Linkify.ALL);
+            holder.tvTitle.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         }
         holder.ivMore.setOnClickListener(v -> {
             if (listener != null) {
