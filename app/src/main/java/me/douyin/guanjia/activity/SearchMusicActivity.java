@@ -252,6 +252,8 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
             DBManager.get().getMusicDao().delete(music);
         }
         mAdapter.notifyDataSetChanged();
+        AppCache.get().getLocalMusicList().remove(music);
+        LocalMusicFragment.adapter.notifyDataSetChanged();
     }
 
     private void share(SearchMusic.Song song) {
