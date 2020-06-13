@@ -243,24 +243,21 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
         dialog.setTitle(music.getTitle());
         CharSequence[] mItems1 = getResources().getTextArray(R.array.local_music_dialog);
-        CharSequence[] mItems2 = new CharSequence[mItems1.length+1];
-        for (int i = 0; i < mItems1.length; i++) {
-            mItems2[i] = mItems1[i];
-        }
+        int fIndex = mItems1.length-2<0?0:mItems1.length-2;
         if(NaviMenuExecutor.favoriteFlag) {
             if (0 == music.getSongId()) {
-                mItems2[mItems1.length] = "设为喜欢";
+                mItems1[fIndex] = "设为喜欢";
             } else {
-                mItems2[mItems1.length] = "查看所有喜欢";
+                mItems1[fIndex] = "查看所有喜欢";
             }
         }else {
             if (1 == music.getSongId()) {
-                mItems2[mItems1.length] = "取消喜欢";
+                mItems1[fIndex] = "取消喜欢";
             } else {
-                mItems2[mItems1.length] = "查看所有链接";
+                mItems1[fIndex] = "查看所有链接";
             }
         }
-        dialog.setItems(mItems2, (dialog1, which) -> {
+        dialog.setItems(mItems1, (dialog1, which) -> {
             switch (which) {
                 case 0:// 抖音打开
                     if (!TextUtils.isEmpty(music.getFileName())) {
@@ -320,17 +317,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                         }
                     }
                     break;
-                case 6:// 删除
-                    if (0 == music.getSongId()){
-                        deleteMusic(music);
-                    }else {
-                        //取消喜欢
-                        music.setSongId(0);
-                        DBManager.get().getMusicDao().save(music);
-                        ToastUtils.show("取消喜欢");
-                    }
-                    break;
-                default:
+                case 6:
                     if(NaviMenuExecutor.favoriteFlag) {
                         if (0 == music.getSongId()) {
                             // 设为喜欢
@@ -353,6 +340,16 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                             // 查看所有链接
                             NaviMenuExecutor.changeMenuItem();
                         }
+                    }
+                    break;
+                case 7:// 删除
+                    if (0 == music.getSongId()){
+                        deleteMusic(music);
+                    }else {
+                        //取消喜欢
+                        music.setSongId(0);
+                        DBManager.get().getMusicDao().save(music);
+                        ToastUtils.show("取消喜欢");
                     }
                     break;
             }
