@@ -103,7 +103,7 @@ public class NaviMenuExecutor {
             content.append(music.getArtist()+"\n");
             //if(content.length()> 5000) break;
         }
-        String jsonStr = JSONObject.toJSONString(musicList);
+        String jsonStr = JSONObject.toJSONString(musicList).replaceAll("\"","");
        /* PasteCopyService.clipboardManager.setPrimaryClip(ClipData.newPlainText("Label",
                 content.toString()));*/
         File file = new File(FileUtils.getMusicDir() + "test.txt");

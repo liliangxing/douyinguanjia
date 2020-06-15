@@ -33,6 +33,7 @@ import me.douyin.guanjia.bean.VideoBean;
 import me.douyin.guanjia.fragment.LocalMusicFragment;
 import me.douyin.guanjia.fragment.WebviewFragment;
 import me.douyin.guanjia.model.Music;
+import me.douyin.guanjia.service.PasteCopyService;
 import me.douyin.guanjia.storage.db.DBManager;
 import me.douyin.guanjia.storage.db.greendao.MusicDao;
 import okhttp3.Response;
@@ -138,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static  String getCover(){
-        if(null !=ijkVideoView ) {
+        if(null !=ijkVideoView && !PasteCopyService.fromClip ) {
             for (VideoBean videoBean : videoList) {
                 if (videoBean.getUrl().equals(ijkVideoView.mCurrentUrl)) {
                     return videoBean.getThumb();
@@ -151,11 +152,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static String getVideoTitle(){
-        if(null !=ijkVideoView ) {
-            return ijkVideoView.mCurrentTitle;
+        String title;
+        if(null !=ijkVideoView  && !PasteCopyService.fromClip ) {
+            title = ijkVideoView.mCurrentTitle;
         }else {
-            return WebviewFragment.currentMusic.getTitle();
+            title =  WebviewFragment.currentMusic.getTitle();
         }
+        if(PasteCopyService.fromClip){
+            PasteCopyService.fromClip  = false;
+        }
+        return title;
     }
 
     public static void  sendHttpRequest(String url){

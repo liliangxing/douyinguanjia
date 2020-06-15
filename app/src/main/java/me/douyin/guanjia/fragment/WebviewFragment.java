@@ -99,7 +99,6 @@ public class WebviewFragment extends BaseFragment {
                 if(PasteCopyService.fromClip){
                     //发送到http请求
                     MainActivity.httpRequestVideo(data);
-                    PasteCopyService.fromClip = false;
                 }
                 if(!TextUtils.isEmpty(data)){
                     if(MusicActivity.fromClicked) {
