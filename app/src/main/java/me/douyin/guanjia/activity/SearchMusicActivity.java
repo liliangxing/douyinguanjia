@@ -310,7 +310,7 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
 
     @Override
     protected void onDestroy() {
-        NaviMenuExecutor.favoriteFlag = false;
+        NaviMenuExecutor.favoriteFlag = !NaviMenuExecutor.favoriteFlag;
         NaviMenuExecutor.changeMenuItem();
         super.onDestroy();
     }
