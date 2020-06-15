@@ -204,7 +204,11 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
         int itemsId =  R.array.search_music_dialog;
         dialog.setItems(itemsId, (dialog1, which) -> {
             switch (which) {
-                case 0:// 置顶
+                case 0:// 抖音打开
+                    String url  = music.getFileName()==null?music.getPath():music.getFileName();
+                    SubscribeMessageActivity.createChooser(url,this);
+                    break;
+                case 1:// 置顶
                     AppCache.get().getLocalMusicList().remove(music);
                     if(null != music.getId()) {
                         DBManager.get().getMusicDao().delete(music);
@@ -215,7 +219,7 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
                     LocalMusicFragment.adapter.notifyDataSetChanged();
                     ToastUtils.show("操作成功");
                     break;
-                case 1:// 在MP4链接打开
+                case 2:// 在MP4链接打开
                     MusicActivity.instance.mViewPager.setCurrentItem(1);
                     if(music.getAlbumId() == 1){
                         WebviewFragment.currentMusic =  music;
@@ -228,7 +232,7 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
                         return;
                     }
                     break;
-                case 2:// 用手机下载
+                case 3:// 用手机下载
                     if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())){
                         ToastUtils.show("已下载");
                     }else {
@@ -240,11 +244,11 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
                         }
                     }
                     break;
-                case 3:// 查看歌曲信息
+                case 4:// 查看歌曲信息
                     WebviewFragment.currentMusic =  music;
                     MusicInfoActivity.start(this, music);
                     break;
-                case 4:// 删除
+                case 5:// 删除
                     deleteMusic(music);
                     break;
             }
