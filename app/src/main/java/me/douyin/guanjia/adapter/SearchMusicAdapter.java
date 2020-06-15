@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import me.douyin.guanjia.model.Music;
-import me.douyin.guanjia.model.SearchMusic;
+import me.douyin.guanjia.utils.Utils;
 import me.douyin.guanjia.utils.binding.Bind;
 import me.douyin.guanjia.utils.binding.ViewBinder;
 import me.douyin.guanjia.R;
@@ -52,6 +52,7 @@ public class SearchMusicAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+        Utils.getBitmapUtils().display(holder.ivCover,mData.get(position).getCoverPath());
         holder.tvTitle.setText(mData.get(position).getTitle());
         holder.tvArtist.setText(mData.get(position).getPath());
         holder.ivMore.setOnClickListener(v -> mListener.onMoreClick(position));
@@ -81,7 +82,7 @@ public class SearchMusicAdapter extends BaseAdapter {
 
         public ViewHolder(View view) {
             ViewBinder.bind(this, view);
-            ivCover.setVisibility(View.GONE);
+            //ivCover.setVisibility(View.GONE);
         }
     }
 }
