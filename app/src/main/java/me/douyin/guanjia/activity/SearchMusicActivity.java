@@ -217,6 +217,8 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
                     DBManager.get().getMusicDao().save(music);
                     LocalMusicFragment.adapter.addMusic(music);
                     LocalMusicFragment.adapter.notifyDataSetChanged();
+                   // mAdapter.addMusic(music);
+                    mAdapter.notifyDataSetChanged();
                     ToastUtils.show("操作成功");
                     break;
                 case 2:// 在MP4链接打开
