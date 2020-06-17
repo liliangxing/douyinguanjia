@@ -100,7 +100,6 @@ public class NaviMenuExecutor {
         StringBuffer content = new StringBuffer();
         for(Music music:musicList){
             if(TextUtils.isEmpty(music.getArtist())){ continue;}
-            music.setTitle(music.getTitle().replaceAll("\"",""));
             content.append(music.getArtist()+"\n");
             //if(content.length()> 5000) break;
         }
