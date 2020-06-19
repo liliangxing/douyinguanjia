@@ -22,7 +22,7 @@ public class VideoCacheManager {
 
     private static HttpProxyCacheServer newProxy(Context context) {
         return new HttpProxyCacheServer.Builder(context)
-                .maxCacheSize(1024 * 1024 * 1024)       // 1 Gb for cache
+                .maxCacheSize(5 * 1024 * 1024 * 1024)       // 5 Gb for cache
                 .build();
     }
 

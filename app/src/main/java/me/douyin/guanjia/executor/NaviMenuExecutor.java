@@ -143,7 +143,7 @@ public class NaviMenuExecutor {
             LocalMusicFragment.mWebView.clearCache(true);
             LocalMusicFragment.mWebView.loadUrl(Keys.HOME_PAGE);
         }
-        VideoCacheManager.clearAllCache(this.activity);
+        //VideoCacheManager.clearAllCache(this.activity);
     }
 
     private void startActivity(Class<?> cls) {
