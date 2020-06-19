@@ -235,17 +235,33 @@ public class WebviewFragment extends BaseFragment {
             if(html2.contains("aweme.snssdk.com")){
                 Elements elements2 =Jsoup.parse(html2).select("video[src]");
                 Elements list2 = Jsoup.parse(html2).getElementsByTag("input");
+                Elements elements3 =Jsoup.parse(html2).select("#videoPoster");
                 Message message = new Message();
                 Bundle bundle = new Bundle();
+                String coverUrl = null;
                 for(Element element2:list2) {
                     String tagName =  element2.attr("name").toLowerCase();
                     if(tagName.equals("shareAppDesc".toLowerCase())){
-                        currentMusic.setTitle(element2.val().equals("[]")?
-                                currentMusic.getFileName():element2.val());
-
+                        currentMusic.setTitle(element2.val());
                     }else if(tagName.equals("shareImage".toLowerCase())){
-                        String coverUrl = element2.val();
+                        coverUrl = element2.val();
                         bundle.putString("coverPath", coverUrl);
+                    }
+                }
+                if(TextUtils.isEmpty(coverUrl) && !elements3.isEmpty()){
+                    String styleContent = elements3.get(0).attr("style");
+                    Matcher m =Pattern.compile("background-image:url\\(([\\S-]+)\\)").matcher(styleContent);
+                    if(m.find()){
+                        coverUrl = m.group(1);
+                        if(coverUrl.startsWith("//")){
+                            coverUrl = coverUrl.replace("//","https://");
+                        }
+                        bundle.putString("coverPath", coverUrl);
+                    }
+                    Elements elements4 =Jsoup.parse(html2).select(".bottom-desc");
+                    if((TextUtils.isEmpty(currentMusic.getTitle()) || currentMusic.getTitle().equals("[]"))
+                            && !elements4.isEmpty()){
+                        currentMusic.setTitle(elements4.get(0).text());
                     }
                 }
                 if(!elements2.isEmpty()){

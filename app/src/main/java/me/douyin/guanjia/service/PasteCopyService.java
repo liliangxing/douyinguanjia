@@ -108,7 +108,7 @@ public class PasteCopyService extends Service {
                     }
                     ToastUtils.show("您有新的"+(isWeiShi?"微视":"抖音")+"链接了！");
                     HashSet<String> hashSet = new HashSet<>();
-                    List<Music> musicList = DBManager.get().getMusicDao().queryBuilder().build().list();
+                    List<Music> musicList = LocalMusicFragment.musicList;
                     MusicActivity.moreUrl = false;
                     while(m.find()){
                         String url = m.group();
@@ -127,6 +127,7 @@ public class PasteCopyService extends Service {
                             hashSet.add(url);
                         }
                     }
+                    //新链接加入
                     if(hashSet.size()>1){
                         MusicActivity.moreUrl = true;
                     } else if(hashSet.isEmpty()){

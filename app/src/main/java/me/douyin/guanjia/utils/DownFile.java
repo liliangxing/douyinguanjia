@@ -15,17 +15,21 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.net.URLConnection;
 
 import javax.net.ssl.SSLHandshakeException;
+
+import me.douyin.guanjia.fragment.LocalMusicFragment;
 
 public class DownFile {
     private URL fileUrl;// 文件下载路径
@@ -176,4 +180,28 @@ public class DownFile {
         }
     }
 
+    public static void customBufferStreamCopy(File source, File target) {
+        InputStream fis = null;
+        OutputStream fos = null;
+        try {
+            fis = new FileInputStream(source);
+            fos = new FileOutputStream(target);
+            byte[] buf = new byte[4096];
+            int i;
+            while ((i = fis.read(buf)) != -1) {
+                fos.write(buf, 0, i);
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fis.close();
+                fos.close();
+                LocalMusicFragment.refreshCache(target);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

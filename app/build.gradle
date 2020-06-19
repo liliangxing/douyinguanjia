@@ -81,5 +81,6 @@ dependencies {
     implementation files('libs/jsoup.jar')
     implementation files('libs/xUtils-2.6.14.jar')
     implementation files('libs/fastjson-1.0.4.jar')
+    implementation 'com.danikula:videocache:2.7.0'
     implementation project(':ijkplayer')
 }

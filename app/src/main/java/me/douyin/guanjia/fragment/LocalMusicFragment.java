@@ -30,6 +30,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
+import com.danikula.videocache.HttpProxyCacheServer;
+import com.example.ijkplayer.player.VideoCacheManager;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.lidroid.xutils.HttpUtils;
@@ -57,6 +59,7 @@ import me.douyin.guanjia.model.Music;
 import me.douyin.guanjia.service.PasteCopyService;
 import me.douyin.guanjia.storage.db.DBManager;
 import me.douyin.guanjia.storage.db.greendao.MusicDao;
+import me.douyin.guanjia.utils.DownFile;
 import me.douyin.guanjia.utils.FileUtils;
 import me.douyin.guanjia.utils.Modify;
 import me.douyin.guanjia.utils.PermissionReq;
@@ -87,6 +90,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     public static LocalMusicFragment downloadFirst;
     public static LocalMusicFragment instance;
     public static List<Music> musicList;
+    public static boolean fileNameOrder;
 
     @Nullable
     @Override
@@ -98,6 +102,16 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     public static void refresh(){
         musicList = DBManager.get().getMusicDao().queryBuilder().where(MusicDao.Properties.SongId.eq(1)).orderDesc(MusicDao.Properties.Id).build().list();
         resetAdapter();
+    }
+
+    public static void refreshOrder(){
+        if(!fileNameOrder) {
+            musicList = DBManager.get().getMusicDao().queryBuilder().orderAsc(MusicDao.Properties.FileName).build().list();
+            resetAdapter();
+        }else {
+            refreshAll();
+        }
+        fileNameOrder = !fileNameOrder;
     }
 
     public static void refreshAll(){
@@ -231,7 +245,15 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         });
     }
 
+    private static HttpProxyCacheServer mCacheServer;
+    private static HttpProxyCacheServer getCacheServer() {
+        return VideoCacheManager.getProxy(instance.getContext().getApplicationContext());
+    }
 
+    public static String getProxyPathByUrl(Music music){
+        mCacheServer = getCacheServer();
+        return mCacheServer.getProxyUrl(music.getArtist());
+    }
 
     @Override
     public void onMoreClick(final int position) {
@@ -306,7 +328,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                     }
                     //requestSetRingtone(music);
                     break;
-                case 5:// 用手机下载
+                case 5:// 下载到手机
                     if (music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())) {
                         ToastUtils.show("已下载");
                     } else {
@@ -317,7 +339,39 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                         }
                     }
                     break;
-                case 6:
+                case 6:// 缓存转本地MP4
+                    WebviewFragment.currentMusic = music;
+                    if (music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())) {
+                        refreshCache(new File(music.getPath()));
+                        ToastUtils.show("已有MP4");
+                        return;
+                    }
+                    String proxyPath = getProxyPathByUrl(music);
+                    File fileCache =  new File(proxyPath.replace("file://",""));
+                    if (!proxyPath.startsWith("file:///")) {
+                        ToastUtils.show("没缓存");
+                        return;
+                    }
+                    int slashIndex = proxyPath.lastIndexOf('/');
+                    String fileName = proxyPath.substring(slashIndex+1)+".mp4";
+                    String path  = FileUtils.getMusicDir().concat(fileName);
+                    File file = new File(path);
+                    if(fileCache.exists()) {
+                        if(file.exists()){
+                            ToastUtils.show("目标文件已存在");
+                            refreshCache(file);
+                            return;
+                        }
+                        DownFile.customBufferStreamCopy(fileCache, file);
+                        ToastUtils.show("缓存成功");
+                    }else {
+                        ToastUtils.show("缓存文件不存在");
+                    }
+                    break;
+                case 7:// 按链接排序
+                    refreshOrder();
+                    break;
+                case 8:
                     if(NaviMenuExecutor.favoriteFlag) {
                         if (0 == music.getSongId()) {
                             // 设为喜欢
@@ -342,7 +396,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                         }
                     }
                     break;
-                case 7:// 删除
+                case 9:// 删除
                     if (0 == music.getSongId()){
                         deleteMusic(music);
                     }else {
@@ -355,6 +409,16 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
             }
         });
         dialog.show();
+    }
+
+    public static void refreshCache(File target){
+        WebviewFragment.currentMusic.setPath(target.getPath());
+        DBManager.get().getMusicDao().save(WebviewFragment.currentMusic);
+        // 刷新媒体库
+        Intent intent =
+                new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://".concat(WebviewFragment.currentMusic.getPath())));
+        instance.getContext().sendBroadcast(intent);
+        adapter.notifyDataSetChanged();
     }
 
     public void openWithBrowser(Music music){
