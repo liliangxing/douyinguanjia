@@ -76,7 +76,7 @@ import me.douyin.guanjia.constants.RxBusTags;
  * 本地音乐列表
  * Created by wcy on 2015/11/26.
  */
-public class LocalMusicFragment extends BaseFragment implements AdapterView.OnItemClickListener, OnMoreClickListener {
+public class LocalMusicFragment extends BaseFragment implements AdapterView.OnItemClickListener, OnMoreClickListener, AdapterView.OnItemLongClickListener {
     @Bind(R.id.lv_local_music)
     private static ListView lvLocalMusic;
     @Bind(R.id.v_searching)
@@ -200,6 +200,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     @Override
     protected void setListener() {
         lvLocalMusic.setOnItemClickListener(this);
+        lvLocalMusic.setOnItemLongClickListener(this);
     }
 
     private final static String userInfoUrl = "https://www.iesdouyin.com/share/user/";
@@ -217,6 +218,91 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
             }
         }
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        MusicActivity.position = position-1;
+        Music music = AppCache.get().getLocalMusicList().get(position-1);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+        CharSequence[] mItems1 = getResources().getTextArray(R.array.local_music_long_dialog);
+        int fIndex = mItems1.length-1<0?0:mItems1.length-1;
+        if(NaviMenuExecutor.favoriteFlag) {
+            if (0 == music.getSongId()) {
+                mItems1[fIndex] = "设为喜欢";
+            } else {
+                mItems1[fIndex] = "查看所有喜欢";
+            }
+        }else {
+            if (1 == music.getSongId()) {
+                mItems1[fIndex] = "取消喜欢";
+            } else {
+                mItems1[fIndex] = "查看所有链接";
+            }
+        }
+        dialog.setItems(mItems1, (dialog1, which) -> {
+            switch (which) {
+                case 0:// 缓存转本地MP4
+                    WebviewFragment.currentMusic = music;
+                    if (music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())) {
+                        refreshCache(new File(music.getPath()));
+                        ToastUtils.show("已有MP4");
+                        return;
+                    }
+                    String proxyPath = getProxyPathByUrl(music);
+                    File fileCache =  new File(proxyPath.replace("file://",""));
+                    if (!proxyPath.startsWith("file:///")) {
+                        ToastUtils.show("没缓存");
+                        return;
+                    }
+                    int slashIndex = proxyPath.lastIndexOf('/');
+                    String fileName = proxyPath.substring(slashIndex+1)+".mp4";
+                    String path  = FileUtils.getMusicDir().concat(fileName);
+                    File file = new File(path);
+                    if(fileCache.exists()) {
+                        if(file.exists()){
+                            ToastUtils.show("目标文件已存在");
+                            refreshCache(file);
+                            return;
+                        }
+                        DownFile.customBufferStreamCopy(fileCache, file);
+                        ToastUtils.show("缓存成功");
+                    }else {
+                        ToastUtils.show("缓存文件不存在");
+                    }
+                    break;
+                case 1:// 按链接排序
+                    refreshOrder();
+                    break;
+                case 2:
+                    if(NaviMenuExecutor.favoriteFlag) {
+                        if (0 == music.getSongId()) {
+                            // 设为喜欢
+                            music.setSongId(1);
+                            DBManager.get().getMusicDao().save(music);
+                            ToastUtils.show("成功");
+                        } else {
+                            // 查看所有喜欢
+                            NaviMenuExecutor.changeMenuItem();
+                        }
+                    }else {
+                        if (1 == music.getSongId()) {
+                            // 取消喜欢
+                            music.setSongId(0);
+                            DBManager.get().getMusicDao().save(music);
+                            AppCache.get().getLocalMusicList().remove(music);
+                            adapter.notifyDataSetChanged();
+                            ToastUtils.show("已取消");
+                        } else {
+                            // 查看所有链接
+                            NaviMenuExecutor.changeMenuItem();
+                        }
+                    }
+                    break;
+            }
+        });
+        dialog.show();
+        return true;
     }
 
     private void downloadDouyin(Music music){
@@ -265,20 +351,6 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
         dialog.setTitle(music.getTitle());
         CharSequence[] mItems1 = getResources().getTextArray(R.array.local_music_dialog);
-        int fIndex = mItems1.length-2<0?0:mItems1.length-2;
-        if(NaviMenuExecutor.favoriteFlag) {
-            if (0 == music.getSongId()) {
-                mItems1[fIndex] = "设为喜欢";
-            } else {
-                mItems1[fIndex] = "查看所有喜欢";
-            }
-        }else {
-            if (1 == music.getSongId()) {
-                mItems1[fIndex] = "取消喜欢";
-            } else {
-                mItems1[fIndex] = "查看所有链接";
-            }
-        }
         dialog.setItems(mItems1, (dialog1, which) -> {
             switch (which) {
                 case 0:// 抖音打开
@@ -339,64 +411,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                         }
                     }
                     break;
-                case 6:// 缓存转本地MP4
-                    WebviewFragment.currentMusic = music;
-                    if (music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())) {
-                        refreshCache(new File(music.getPath()));
-                        ToastUtils.show("已有MP4");
-                        return;
-                    }
-                    String proxyPath = getProxyPathByUrl(music);
-                    File fileCache =  new File(proxyPath.replace("file://",""));
-                    if (!proxyPath.startsWith("file:///")) {
-                        ToastUtils.show("没缓存");
-                        return;
-                    }
-                    int slashIndex = proxyPath.lastIndexOf('/');
-                    String fileName = proxyPath.substring(slashIndex+1)+".mp4";
-                    String path  = FileUtils.getMusicDir().concat(fileName);
-                    File file = new File(path);
-                    if(fileCache.exists()) {
-                        if(file.exists()){
-                            ToastUtils.show("目标文件已存在");
-                            refreshCache(file);
-                            return;
-                        }
-                        DownFile.customBufferStreamCopy(fileCache, file);
-                        ToastUtils.show("缓存成功");
-                    }else {
-                        ToastUtils.show("缓存文件不存在");
-                    }
-                    break;
-                case 7:// 按链接排序
-                    refreshOrder();
-                    break;
-                case 8:
-                    if(NaviMenuExecutor.favoriteFlag) {
-                        if (0 == music.getSongId()) {
-                            // 设为喜欢
-                            music.setSongId(1);
-                            DBManager.get().getMusicDao().save(music);
-                            ToastUtils.show("成功");
-                        } else {
-                            // 查看所有喜欢
-                            NaviMenuExecutor.changeMenuItem();
-                        }
-                    }else {
-                        if (1 == music.getSongId()) {
-                            // 取消喜欢
-                            music.setSongId(0);
-                            DBManager.get().getMusicDao().save(music);
-                            AppCache.get().getLocalMusicList().remove(music);
-                            adapter.notifyDataSetChanged();
-                            ToastUtils.show("已取消");
-                        } else {
-                            // 查看所有链接
-                            NaviMenuExecutor.changeMenuItem();
-                        }
-                    }
-                    break;
-                case 9:// 删除
+                case 6:// 删除
                     if (0 == music.getSongId()){
                         deleteMusic(music);
                     }else {

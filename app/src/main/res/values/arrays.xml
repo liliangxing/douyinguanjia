@@ -7,10 +7,13 @@
         <item>@string/music_info</item>
         <item>用浏览器打开并复制</item>
         <item>下载到手机</item>
+        <item>从手机删除</item>
+    </string-array>
+
+    <string-array name="local_music_long_dialog">
         <item>缓存转本地MP4</item>
         <item>按链接排序/取消</item>
         <item>设为喜欢</item>
-        <item>从手机删除</item>
     </string-array>
 
     <string-array name="online_music_dialog">
