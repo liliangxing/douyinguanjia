@@ -280,6 +280,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                             // 设为喜欢
                             music.setSongId(1);
                             DBManager.get().getMusicDao().save(music);
+                            adapter.notifyDataSetChanged();
                             ToastUtils.show("成功");
                         } else {
                             // 查看所有喜欢
