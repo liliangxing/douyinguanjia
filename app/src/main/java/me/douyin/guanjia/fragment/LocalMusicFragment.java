@@ -514,14 +514,14 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         dialog.setMessage(msg);
         dialog.setPositiveButton(R.string.delete, (dialog1, which) -> {
             File file = new File(music.getPath());
+            //删除缓存
+            String proxyPath = getProxyPathByUrl(music);
+            File fileCache =  new File(proxyPath.replace("file://",""));
+            String cacheMsg =  fileCache.delete()?",已删缓存":"";
             if (file.delete()) {
-                // 刷新媒体库
-                Intent intent =
-                        new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://".concat(music.getPath())));
-                getContext().sendBroadcast(intent);
-                ToastUtils.show("删除成功");
+                ToastUtils.show("删除成功"+ cacheMsg);
             }else {
-                ToastUtils.show("手机没有下载该文件");
+                ToastUtils.show("手机没有下载该文件" + cacheMsg);
             }
             AppCache.get().getLocalMusicList().remove(music);
             if(null != music.getId()) {
