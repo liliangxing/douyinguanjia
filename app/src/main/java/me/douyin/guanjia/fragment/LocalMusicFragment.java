@@ -515,9 +515,12 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         dialog.setPositiveButton(R.string.delete, (dialog1, which) -> {
             File file = new File(music.getPath());
             //删除缓存
-            String proxyPath = getProxyPathByUrl(music);
-            File fileCache =  new File(proxyPath.replace("file://",""));
-            String cacheMsg =  fileCache.delete()?",已删缓存":"";
+            String cacheMsg = null;
+            if(null != music.getArtist()) {
+                String proxyPath = getProxyPathByUrl(music);
+                File fileCache = new File(proxyPath.replace("file://", ""));
+                cacheMsg = fileCache.delete() ? ",已删缓存" : "";
+            }
             if (file.delete()) {
                 ToastUtils.show("删除成功"+ cacheMsg);
             }else {
