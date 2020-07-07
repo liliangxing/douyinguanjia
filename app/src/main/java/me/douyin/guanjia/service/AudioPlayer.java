@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Random;
 
 import me.douyin.guanjia.enums.PlayModeEnum;
+import me.douyin.guanjia.fragment.LocalMusicFragment;
 import me.douyin.guanjia.model.Music;
 import me.douyin.guanjia.utils.ToastUtils;
 import me.douyin.guanjia.application.Notifier;
@@ -37,7 +38,7 @@ public class AudioPlayer {
     private Handler handler;
     private NoisyAudioStreamReceiver noisyReceiver;
     private IntentFilter noisyFilter;
-    private static List<Music> musicList = new ArrayList<>();
+    private List<Music> musicList;
     private final List<OnPlayerEventListener> listeners = new ArrayList<>();
     private int state = STATE_IDLE;
 
@@ -54,6 +55,7 @@ public class AudioPlayer {
 
     public void init(Context context) {
         this.context = context.getApplicationContext();
+        musicList = DBManager.get().getMusicDao().queryBuilder().limit(LocalMusicFragment.MUSIC_LIST_SIZE).build().list();
         audioFocusManager = new AudioFocusManager(context);
         mediaPlayer = new MediaPlayer();
         handler = new Handler(Looper.getMainLooper());

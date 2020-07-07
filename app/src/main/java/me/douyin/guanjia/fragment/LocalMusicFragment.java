@@ -101,7 +101,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     public static List<Music> musicList = new ArrayList<>();
     public static boolean fileNameOrder;
 
-    private static final int MUSIC_LIST_SIZE = 20;
+    public static final int MUSIC_LIST_SIZE = 20;
     @Bind(R.id.ll_loading)
     private LinearLayout llLoading;
     @Bind(R.id.ll_load_fail)
