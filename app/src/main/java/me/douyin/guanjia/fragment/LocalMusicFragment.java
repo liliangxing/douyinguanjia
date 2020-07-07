@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -40,12 +41,16 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
 
+import org.greenrobot.greendao.Property;
+import org.greenrobot.greendao.query.QueryBuilder;
+import org.greenrobot.greendao.query.WhereCondition;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 import me.douyin.guanjia.activity.MainActivity;
@@ -54,6 +59,7 @@ import me.douyin.guanjia.activity.MusicInfoActivity;
 import me.douyin.guanjia.activity.SubscribeMessageActivity;
 import me.douyin.guanjia.adapter.OnMoreClickListener;
 import me.douyin.guanjia.adapter.PlaylistAdapter;
+import me.douyin.guanjia.enums.LoadStateEnum;
 import me.douyin.guanjia.executor.NaviMenuExecutor;
 import me.douyin.guanjia.model.Music;
 import me.douyin.guanjia.service.PasteCopyService;
@@ -65,20 +71,23 @@ import me.douyin.guanjia.utils.Modify;
 import me.douyin.guanjia.utils.PermissionReq;
 import me.douyin.guanjia.utils.ScreenUtils;
 import me.douyin.guanjia.utils.ToastUtils;
+import me.douyin.guanjia.utils.ViewUtils;
 import me.douyin.guanjia.utils.binding.Bind;
 import me.douyin.guanjia.R;
 import me.douyin.guanjia.application.AppCache;
 import me.douyin.guanjia.constants.Keys;
 import me.douyin.guanjia.constants.RequestCode;
 import me.douyin.guanjia.constants.RxBusTags;
+import me.douyin.guanjia.widget.AutoLoadListView;
 
 /**
  * 本地音乐列表
  * Created by wcy on 2015/11/26.
  */
-public class LocalMusicFragment extends BaseFragment implements AdapterView.OnItemClickListener, OnMoreClickListener, AdapterView.OnItemLongClickListener {
-    @Bind(R.id.lv_local_music)
-    private static ListView lvLocalMusic;
+public class LocalMusicFragment extends BaseFragment implements AdapterView.OnItemClickListener, OnMoreClickListener, AdapterView.OnItemLongClickListener ,
+        AutoLoadListView.OnLoadListener {
+    @Bind(R.id.lv_online_music_list)
+    private static AutoLoadListView lvLocalMusic;
     @Bind(R.id.v_searching)
     private TextView vSearching;
     public static WebView mWebView;
@@ -89,8 +98,17 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     public static final String FILE_NAME = "test.html";
     public static LocalMusicFragment downloadFirst;
     public static LocalMusicFragment instance;
-    public static List<Music> musicList;
+    public static List<Music> musicList = new ArrayList<>();
     public static boolean fileNameOrder;
+
+    private static final int MUSIC_LIST_SIZE = 20;
+    @Bind(R.id.ll_loading)
+    private LinearLayout llLoading;
+    @Bind(R.id.ll_load_fail)
+    private LinearLayout llLoadFail;
+    private static int mOffset = 0;
+    private static  WhereCondition cond = null;
+    private static Property orderBy =MusicDao.Properties.Id;
 
     @Nullable
     @Override
@@ -100,13 +118,22 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     public static void refresh(){
-        musicList = DBManager.get().getMusicDao().queryBuilder().where(MusicDao.Properties.SongId.eq(1)).orderDesc(MusicDao.Properties.Id).build().list();
+        resetOffset();
+        cond = MusicDao.Properties.SongId.eq(1);
         resetAdapter();
+    }
+
+    public static void resetOffset(){
+        mOffset = 0;
+        cond = null;
+        orderBy = MusicDao.Properties.Id;
+        musicList.clear();
     }
 
     public static void refreshOrder(){
         if(!fileNameOrder) {
-            musicList = DBManager.get().getMusicDao().queryBuilder().orderAsc(MusicDao.Properties.FileName).build().list();
+            resetOffset();
+            orderBy = MusicDao.Properties.FileName;
             resetAdapter();
         }else {
             refreshAll();
@@ -115,19 +142,19 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     public static void refreshAll(){
-        musicList = DBManager.get().getMusicDao().queryBuilder().orderDesc(MusicDao.Properties.Id).build().list();
+        resetOffset();
         resetAdapter();
     }
     private static void resetAdapter(){
         adapter = new PlaylistAdapter(musicList);
         adapter.setOnMoreClickListener(instance);
         lvLocalMusic.setAdapter(adapter);
+        instance.onLoad();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        musicList = DBManager.get().getMusicDao().queryBuilder().orderDesc(MusicDao.Properties.Id).build().list();
         adapter = new PlaylistAdapter(musicList);
         adapter.setOnMoreClickListener(this);
         lvLocalMusic.setAdapter(adapter);
@@ -157,8 +184,28 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         AbsListView.LayoutParams params = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ScreenUtils.dp2px(150));
         vHeader.setLayoutParams(params);
         lvLocalMusic.addHeaderView(vHeader, null, false);
+        lvLocalMusic.setOnLoadListener(this);
+        onLoad();
     }
 
+    @Override
+    public void onLoad() {
+        getMusic(mOffset);
+    }
+    private void getMusic(final int offset) {
+        QueryBuilder<Music> queryBuilder = DBManager.get().getMusicDao().queryBuilder();
+        if (null != cond) {
+            queryBuilder = queryBuilder.where(cond);
+        }
+        List<Music> songList = queryBuilder.orderDesc(orderBy)
+                .offset(offset).limit(MUSIC_LIST_SIZE).build().list();
+                lvLocalMusic.onLoadComplete();
+                ViewUtils.changeViewState(lvLocalMusic, llLoading, llLoadFail, LoadStateEnum.LOAD_SUCCESS);
+                mOffset += MUSIC_LIST_SIZE;
+                musicList.addAll(songList);
+                adapter.notifyDataSetChanged();
+
+    }
     private void loadMusic() {
         lvLocalMusic.setVisibility(View.GONE);
         vSearching.setVisibility(View.VISIBLE);

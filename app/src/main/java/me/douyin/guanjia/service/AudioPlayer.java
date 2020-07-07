@@ -37,7 +37,7 @@ public class AudioPlayer {
     private Handler handler;
     private NoisyAudioStreamReceiver noisyReceiver;
     private IntentFilter noisyFilter;
-    private List<Music> musicList;
+    private static List<Music> musicList = new ArrayList<>();
     private final List<OnPlayerEventListener> listeners = new ArrayList<>();
     private int state = STATE_IDLE;
 
@@ -54,7 +54,6 @@ public class AudioPlayer {
 
     public void init(Context context) {
         this.context = context.getApplicationContext();
-        musicList = DBManager.get().getMusicDao().queryBuilder().build().list();
         audioFocusManager = new AudioFocusManager(context);
         mediaPlayer = new MediaPlayer();
         handler = new Handler(Looper.getMainLooper());

@@ -3,13 +3,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ListView
-        android:id="@+id/lv_local_music"
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/play_bar_height">
+
+    <me.douyin.guanjia.widget.AutoLoadListView
+        android:id="@+id/lv_online_music_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:divider="@null"
-        android:paddingBottom="@dimen/play_bar_height" />
+        android:divider="@null" />
+
+    <include
+        android:id="@+id/ll_loading"
+        layout="@layout/include_loading"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/ll_load_fail"
+        layout="@layout/include_load_fail"
+        android:visibility="gone" />
+
+    </FrameLayout>
 
     <TextView
         android:id="@+id/v_searching"
