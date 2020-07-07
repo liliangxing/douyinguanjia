@@ -280,9 +280,9 @@ public class WebviewFragment extends BaseFragment {
             }else {
                 Elements list2 = Jsoup.parse(html2).getElementsByTag("input");
                 for(Element element2:list2) {
-                    String tagName =  element2.attr("name").toLowerCase();
-                    if(tagName.equals("shareAppDesc".toLowerCase()) ||
-                       tagName.equals("shareAppLink".toLowerCase())){
+                    String tagName =  element2.attr("name");
+                    if(tagName.equalsIgnoreCase("shareAppDesc") ||
+                       tagName.equals("shareAppLink")){
                         if(PasteCopyService.hashSetIterator.hasNext()){
                             String url = PasteCopyService.hashSetIterator.next();
                             MusicActivity.instance.playService2.dealWithUrl(url);
