@@ -281,7 +281,8 @@ public class WebviewFragment extends BaseFragment {
                 Elements list2 = Jsoup.parse(html2).getElementsByTag("input");
                 for(Element element2:list2) {
                     String tagName =  element2.attr("name").toLowerCase();
-                    if(tagName.equals("shareAppDesc".toLowerCase())){
+                    if(tagName.equals("shareAppDesc".toLowerCase()) ||
+                       tagName.equals("shareAppLink".toLowerCase())){
                         if(PasteCopyService.hashSetIterator.hasNext()){
                             String url = PasteCopyService.hashSetIterator.next();
                             MusicActivity.instance.playService2.dealWithUrl(url);
