@@ -277,19 +277,12 @@ public class WebviewFragment extends BaseFragment {
                     }
                 }
                 return;
-            }else {
-                Elements list2 = Jsoup.parse(html2).getElementsByTag("input");
-                for(Element element2:list2) {
-                    String tagName =  element2.attr("name");
-                    if(tagName.equalsIgnoreCase("shareAppDesc") ||
-                       tagName.equalsIgnoreCase("shareAppLink")){
+            }else if(html2.contains("douyin_wap")){
                         if(PasteCopyService.hashSetIterator.hasNext()){
                             String url = PasteCopyService.hashSetIterator.next();
                             MusicActivity.instance.playService2.dealWithUrl(url);
                         }
                         return;
-                    }
-                }
             }
             if(!html.contains("aweme_list")){
                 return;

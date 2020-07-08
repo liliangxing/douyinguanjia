@@ -10,5 +10,5 @@ public interface Keys {
     String PLAYLIST_POSITION = "playlist_position";
     String PLAYLIST_OFFSET = "playlist_offset";
     String WEBVIEW_URL = "webview_url";
-    String HOME_PAGE = "about:blank";
+    String HOME_PAGE = "http://www.time24.cn/kezhu.html";
 }

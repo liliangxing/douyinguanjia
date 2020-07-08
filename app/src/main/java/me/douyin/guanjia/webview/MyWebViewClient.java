@@ -8,6 +8,7 @@ import android.webkit.WebViewClient;
 
 import me.douyin.guanjia.activity.MainActivity;
 import me.douyin.guanjia.fragment.LocalMusicFragment;
+import me.douyin.guanjia.service.PasteCopyService;
 
 /**
  * Created by hzwangchenyan on 2017/2/8.
@@ -59,7 +60,7 @@ public class MyWebViewClient extends WebViewClient {
                     "document.getElementsByTagName('html')[0].innerHTML+'</head>');},2000);");
         }
 
-        if(MainActivity.fromPush){
+        if(MainActivity.fromPush && !PasteCopyService.hashSetIterator.hasNext()){
             view.loadUrl("about:blank");
             MainActivity.sendHttpRequest(url);
         }

@@ -96,7 +96,12 @@ public class NaviMenuExecutor {
     }
 
     private void sendLinks(){
-        List<Music> musicList = LocalMusicFragment.musicList;
+        List<Music> musicList;
+        if(favoriteFlag) {
+            musicList = DBManager.get().getMusicDao().queryBuilder().orderDesc(MusicDao.Properties.Id).build().list();
+        }else {
+            musicList = DBManager.get().getMusicDao().queryBuilder().where(MusicDao.Properties.SongId.eq(1)).orderDesc(MusicDao.Properties.Id).build().list();
+        }
         StringBuffer content = new StringBuffer();
         for(Music music:musicList){
             if(TextUtils.isEmpty(music.getArtist())){ continue;}
@@ -106,6 +111,7 @@ public class NaviMenuExecutor {
         String jsonStr = JSONObject.toJSONString(musicList);
        /* PasteCopyService.clipboardManager.setPrimaryClip(ClipData.newPlainText("Label",
                 content.toString()));*/
+       musicList = null;
         File file = new File(FileUtils.getMusicDir() + "test.txt");
         Modify.createNewContent(content.toString(),file);
         shareMusic(file);

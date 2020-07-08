@@ -1,10 +1,12 @@
 package me.douyin.guanjia.activity;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Build;
@@ -15,6 +17,8 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -25,6 +29,7 @@ import android.view.WindowManager;
 
 import me.douyin.guanjia.service.PasteCopyService;
 import me.douyin.guanjia.service.PlayService;
+import me.douyin.guanjia.storage.db.DBManager;
 import me.douyin.guanjia.storage.preference.Preferences;
 import me.douyin.guanjia.utils.PermissionReq;
 import me.douyin.guanjia.utils.binding.ViewBinder;
@@ -48,16 +53,24 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (Preferences.isNightMode()) {
             setTheme(getDarkTheme());
         }
-
         super.onCreate(savedInstanceState);
-
         setSystemBarTransparent();
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         handler = new Handler(Looper.getMainLooper());
-        bindService();
-        bindService2();
+        checkPermission();
     }
-
+    private void checkPermission() {
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    1);
+        }else {
+            DBManager.get().init(this);
+            bindService();
+            bindService2();
+        }
+    }
     @StyleRes
     protected int getDarkTheme() {
         return R.style.AppThemeDark;
