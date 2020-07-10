@@ -268,9 +268,8 @@ public class WebviewFragment extends BaseFragment {
                 Elements elements5 =Jsoup.parse(html2).select(".user-info-id");
                 if(!elements5.isEmpty()){
                     String url = elements5.get(0).text();
-                    Matcher m =Pattern.compile(":[| ]([\\S-][^&]+)").matcher(url);
-                    if(m.find()){
-                        currentMusic.setAlbum(m.group(1));
+                    if(url != null){
+                        currentMusic.setAlbum(url.trim());
                     }
                 }
                 if(!elements2.isEmpty()){
