@@ -27,7 +27,6 @@ import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
@@ -67,6 +66,7 @@ import me.douyin.guanjia.storage.db.DBManager;
 import me.douyin.guanjia.storage.db.greendao.MusicDao;
 import me.douyin.guanjia.utils.DownFile;
 import me.douyin.guanjia.utils.FileUtils;
+import me.douyin.guanjia.utils.HttpPostUtils;
 import me.douyin.guanjia.utils.Modify;
 import me.douyin.guanjia.utils.PermissionReq;
 import me.douyin.guanjia.utils.ScreenUtils;
@@ -107,6 +107,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     @Bind(R.id.ll_load_fail)
     private LinearLayout llLoadFail;
     private static int mOffset = 0;
+    private static int uploadNum = 1;
     private static  WhereCondition cond = null;
     private static Property orderBy =MusicDao.Properties.Id;
 
@@ -289,39 +290,16 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         }
         dialog.setItems(mItems1, (dialog1, which) -> {
             switch (which) {
-                case 0:// 缓存转本地MP4
-                    WebviewFragment.currentMusic = music;
-                    if (music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())) {
-                        refreshCache(new File(music.getPath()));
-                        ToastUtils.show("已有MP4");
-                        return;
-                    }
-                    String proxyPath = getProxyPathByUrl(music);
-                    File fileCache =  new File(proxyPath.replace("file://",""));
-                    if (!proxyPath.startsWith("file:///")) {
-                        ToastUtils.show("没缓存");
-                        return;
-                    }
-                    int slashIndex = proxyPath.lastIndexOf('/');
-                    String fileName = proxyPath.substring(slashIndex+1)+".mp4";
-                    String path  = FileUtils.getMusicDir().concat(fileName);
-                    File file = new File(path);
-                    if(fileCache.exists()) {
-                        if(file.exists()){
-                            ToastUtils.show("目标文件已存在");
-                            refreshCache(file);
-                            return;
-                        }
-                        DownFile.customBufferStreamCopy(fileCache, file);
-                        ToastUtils.show("缓存成功");
-                    }else {
-                        ToastUtils.show("缓存文件不存在");
-                    }
+                case 0:// 上传到根目录
+                    doUploadCache(music);
                     break;
-                case 1:// 按链接排序
+                case 1:// 缓存转本地MP4
+                    doCacheSave(music);
+                    break;
+                case 2:// 按链接排序
                     refreshOrder();
                     break;
-                case 2:
+                case 3:
                     if(NaviMenuExecutor.favoriteFlag) {
                         if (0 == music.getSongId()) {
                             // 设为喜欢
@@ -351,6 +329,56 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         });
         dialog.show();
         return true;
+    }
+
+    private void doCacheSave(Music music){
+        WebviewFragment.currentMusic = music;
+        if (music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())) {
+            refreshCache(new File(music.getPath()));
+            ToastUtils.show("已有MP4");
+            return;
+        }
+        String proxyPath = getProxyPathByUrl(music);
+        File fileCache =  new File(proxyPath.replace("file://",""));
+        if (!proxyPath.startsWith("file:///")) {
+            ToastUtils.show("没缓存");
+            return;
+        }
+        int slashIndex = proxyPath.lastIndexOf('/');
+        String fileName = proxyPath.substring(slashIndex+1)+".mp4";
+        String path  = FileUtils.getMusicDir().concat(fileName);
+        File file = new File(path);
+        if(fileCache.exists()) {
+            if(file.exists()){
+                ToastUtils.show("目标文件已存在");
+                refreshCache(file);
+                return;
+            }
+            DownFile.customBufferStreamCopy(fileCache, file);
+            ToastUtils.show("缓存成功");
+        }else {
+            ToastUtils.show("缓存文件不存在");
+        }
+    }
+
+    private void doUploadCache(Music music){
+        WebviewFragment.currentMusic = music;
+        String proxyPath = getProxyPathByUrl(music);
+        File fileCache =  new File(proxyPath.replace("file://",""));
+        if (!proxyPath.startsWith("file:///")) {
+            ToastUtils.show("没缓存");
+            return;
+        }
+        String fileName = uploadNum+".mp4";
+        ToastUtils.show("准备上传"+fileName+"到\nhttp://www.time24.cn/test/upload/"+fileName);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpPostUtils.httpPost(getActivity(),"http://www.time24.cn/test/index_upload.php"
+                ,fileCache,fileName);
+                uploadNum ++;
+            }
+        }).start();
     }
 
     private void downloadDouyin(Music music){

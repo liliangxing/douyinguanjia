@@ -11,6 +11,7 @@
     </string-array>
 
     <string-array name="local_music_long_dialog">
+        <item>上传到目录1.mp4(2,3)</item>
         <item>缓存转本地MP4</item>
         <item>按链接排序/取消</item>
         <item>设为喜欢</item>
