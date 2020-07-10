@@ -264,6 +264,15 @@ public class WebviewFragment extends BaseFragment {
                         currentMusic.setTitle(elements4.get(0).text());
                     }
                 }
+                //uid获取
+                Elements elements5 =Jsoup.parse(html2).select(".user-info-id");
+                if(!elements5.isEmpty()){
+                    String url = elements5.get(0).text();
+                    Matcher m =Pattern.compile(":[| ]([\\S-][^&]+)").matcher(url);
+                    if(m.find()){
+                        currentMusic.setAlbum(m.group(1));
+                    }
+                }
                 if(!elements2.isEmpty()){
                     String url = elements2.get(0).attr("src");
                     Matcher m =Pattern.compile("video_id=([\\S-][^&]+)").matcher(url);
@@ -276,7 +285,7 @@ public class WebviewFragment extends BaseFragment {
                         handler1.sendMessage(message);
                     }
                 }
-                return;
+              return;
             }else if(html2.contains("douyin_wap")){
                         if(PasteCopyService.hashSetIterator.hasNext()){
                             String url = PasteCopyService.hashSetIterator.next();
