@@ -401,6 +401,9 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     protected void onDestroy() {
         AudioPlayer.get().removeOnPlayEventListener(controlPanel);
         QuitTimer.get().setOnTimerListener(null);
+        if (mWebView != null) {
+            mWebView.destroy();
+        }
         super.onDestroy();
     }
 
