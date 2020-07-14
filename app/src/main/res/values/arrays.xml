@@ -10,7 +10,7 @@
     </string-array>
 
     <string-array name="local_music_long_dialog">
-        <item>查看抖音ID所有</item>
+        <item>查看抖音ID所有/取消</item>
         <item>置顶</item>
         <item>上传到目录1.mp4(2,3)</item>
         <item>缓存转本地MP4</item>

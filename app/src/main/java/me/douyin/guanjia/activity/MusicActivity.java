@@ -416,6 +416,10 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
                     mWebView.goBack();
                     return true;
                 }
+                if(LocalMusicFragment.fileNameOrder) {
+                    LocalMusicFragment.refreshOrder(null);
+                    return true;
+                }
                 if(!isPlayFragmentShow)// 右键处理
                 {
                     moveTaskToBack(true);
