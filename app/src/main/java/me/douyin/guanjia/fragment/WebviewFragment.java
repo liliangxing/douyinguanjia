@@ -134,18 +134,6 @@ public class WebviewFragment extends BaseFragment {
        // PasteCopyService.startCommand(getActivity());
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString(Keys.WEBVIEW_URL,  mWebView.getUrl());
-
-    }
-
-    public void onRestoreInstanceState(final Bundle savedInstanceState) {
-        mWebView.post(() -> {
-            String position = savedInstanceState.getString(Keys.WEBVIEW_URL);
-        });
-    }
-
     private void init(){
         webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);

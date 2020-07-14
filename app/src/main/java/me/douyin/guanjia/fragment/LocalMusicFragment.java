@@ -75,7 +75,6 @@ import me.douyin.guanjia.utils.ViewUtils;
 import me.douyin.guanjia.utils.binding.Bind;
 import me.douyin.guanjia.R;
 import me.douyin.guanjia.application.AppCache;
-import me.douyin.guanjia.constants.Keys;
 import me.douyin.guanjia.constants.RequestCode;
 import me.douyin.guanjia.constants.RxBusTags;
 import me.douyin.guanjia.widget.AutoLoadListView;
@@ -637,21 +636,5 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                 ToastUtils.show(R.string.grant_permission_setting);
             }
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        int position = lvLocalMusic.getFirstVisiblePosition();
-        int offset = (lvLocalMusic.getChildAt(0) == null) ? 0 : lvLocalMusic.getChildAt(0).getTop();
-        outState.putInt(Keys.LOCAL_MUSIC_POSITION, position);
-        outState.putInt(Keys.LOCAL_MUSIC_OFFSET, offset);
-    }
-
-    public void onRestoreInstanceState(final Bundle savedInstanceState) {
-        lvLocalMusic.post(() -> {
-            int position = savedInstanceState.getInt(Keys.LOCAL_MUSIC_POSITION);
-            int offset = savedInstanceState.getInt(Keys.LOCAL_MUSIC_OFFSET);
-            lvLocalMusic.setSelectionFromTop(position, offset);
-        });
     }
 }

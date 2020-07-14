@@ -38,7 +38,6 @@ import me.douyin.guanjia.utils.Utils;
 import me.douyin.guanjia.utils.binding.Bind;
 import me.douyin.guanjia.R;
 import me.douyin.guanjia.constants.Extras;
-import me.douyin.guanjia.constants.Keys;
 import me.douyin.guanjia.executor.ControlPanel;
 import me.douyin.guanjia.executor.NaviMenuExecutor;
 import me.douyin.guanjia.executor.WeatherExecutor;
@@ -378,23 +377,6 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         }
 
         super.onBackPressed();
-    }
-
-    @SuppressLint("MissingSuperCall")
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt(Keys.VIEW_PAGER_INDEX, mViewPager.getCurrentItem());
-        mLocalMusicFragment.onSaveInstanceState(outState);
-        mSheetListFragment.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(final Bundle savedInstanceState) {
-        mViewPager.post(() -> {
-            mViewPager.setCurrentItem(savedInstanceState.getInt(Keys.VIEW_PAGER_INDEX), false);
-            mLocalMusicFragment.onRestoreInstanceState(savedInstanceState);
-            mSheetListFragment.onRestoreInstanceState(savedInstanceState);
-        });
     }
 
     @Override
