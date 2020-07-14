@@ -8,10 +8,12 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.ijkplayer.player.VideoCacheManager;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import me.douyin.guanjia.activity.AboutActivity;
 import me.douyin.guanjia.activity.MusicActivity;
@@ -20,6 +22,7 @@ import me.douyin.guanjia.activity.SettingActivity;
 import me.douyin.guanjia.constants.Keys;
 import me.douyin.guanjia.fragment.LocalMusicFragment;
 import me.douyin.guanjia.model.Music;
+import me.douyin.guanjia.service.PasteCopyService;
 import me.douyin.guanjia.service.PlayService;
 import me.douyin.guanjia.service.QuitTimer;
 import me.douyin.guanjia.storage.db.DBManager;
@@ -40,6 +43,7 @@ public class NaviMenuExecutor {
     private static MusicActivity activity;
     public static boolean favoriteFlag = true;
     public static MenuItem menuItem;
+    public  static Map<String,Music> mapLinks = new HashMap<>();
 
     public NaviMenuExecutor(MusicActivity activity) {
         this.activity = activity;
@@ -102,6 +106,7 @@ public class NaviMenuExecutor {
         }else {
             musicList = DBManager.get().getMusicDao().queryBuilder().where(MusicDao.Properties.SongId.eq(1)).orderDesc(MusicDao.Properties.Id).build().list();
         }
+        //doAlbum(musicList);
         StringBuffer content = new StringBuffer();
         for(Music music:musicList){
             if(TextUtils.isEmpty(music.getArtist())){ continue;}
@@ -126,6 +131,24 @@ public class NaviMenuExecutor {
         }).start();
     }
 
+    private void doAlbum(List<Music> musicList){
+        HashSet<String> hashSet = new HashSet<>();
+        for(Music music:musicList) {
+            if(TextUtils.isEmpty(music.getFileName())
+            || music.getFileName().contains("weishi")){ continue;}
+            if (TextUtils.isEmpty(music.getAlbum())
+            ||!music.getAlbum().contains("抖音")) {
+                hashSet.add(music.getFileName());
+                mapLinks.put(music.getFileName(),music);
+            }
+        }
+        MusicActivity.moreUrl = true;
+        PasteCopyService.fromClip = false;
+        PasteCopyService.hashSetIterator = hashSet.iterator();
+        if(PasteCopyService.hashSetIterator.hasNext()) {
+            PasteCopyService.instance.dealWithUrl(PasteCopyService.hashSetIterator.next());
+        }
+    }
     /**
      * 分享音乐
      */

@@ -41,6 +41,7 @@ import me.douyin.guanjia.R;
 import me.douyin.guanjia.activity.MusicActivity;
 import me.douyin.guanjia.application.Notifier;
 import me.douyin.guanjia.constants.Extras;
+import me.douyin.guanjia.executor.NaviMenuExecutor;
 import me.douyin.guanjia.fragment.LocalMusicFragment;
 import me.douyin.guanjia.model.Music;
 import me.douyin.guanjia.storage.db.DBManager;
@@ -55,6 +56,7 @@ public class PasteCopyService extends Service {
     private static final String TAG = "Service";
     private static  LocalMusicFragment adapter;
     public static boolean fromClip;
+    public static PasteCopyService instance;
 
     public  static ClipboardManager clipboardManager;
 
@@ -81,6 +83,7 @@ public class PasteCopyService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         Log.i(TAG, "onCreate: " + getClass().getSimpleName());
         clipboardManager =(ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
         clipboardManager.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
@@ -162,8 +165,11 @@ public class PasteCopyService extends Service {
         videoVO.setAlbumId(1);
         //videoVO.setTitle(mPreviousText);
         videoVO.setFileName(url);
+        if(null != NaviMenuExecutor.mapLinks.get(url)){
+            sendMsgVO(NaviMenuExecutor.mapLinks.get(url));
+            return;
+        }
         sendMsgVO(videoVO);
-        return;
         //}
         //clipUrlCrawler(url);
     }
@@ -312,7 +318,7 @@ public class PasteCopyService extends Service {
         }).start();
     }
 
-    private void sendMsgVO(Music videoVO){
+    public void sendMsgVO(Music videoVO){
         Message message = new Message();
         Bundle bundle = new Bundle();
         bundle.putString("data", JSON.toJSONString(videoVO));

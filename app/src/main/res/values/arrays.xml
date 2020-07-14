@@ -2,7 +2,6 @@
 <resources>
     <string-array name="local_music_dialog">
         <item>抖音打开</item>
-        <item>置顶</item>
         <item>新标签页打开</item>
         <item>@string/music_info</item>
         <item>用浏览器打开并复制</item>
@@ -11,9 +10,10 @@
     </string-array>
 
     <string-array name="local_music_long_dialog">
+        <item>查看抖音ID所有</item>
+        <item>置顶</item>
         <item>上传到目录1.mp4(2,3)</item>
         <item>缓存转本地MP4</item>
-        <item>按链接排序/取消</item>
         <item>设为喜欢</item>
     </string-array>
 

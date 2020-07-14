@@ -3,6 +3,7 @@ package me.douyin.guanjia.adapter;
 import android.graphics.Color;
 import android.os.Environment;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,6 +79,10 @@ public class PlaylistAdapter extends BaseAdapter {
         //String artist = FileUtils.getArtistAndAlbum(music.getArtist(), music.getAlbum());
         //holder.tvArtist.setText(artist);
         holder.tvArtist.setText(music.getPath());
+        if(!TextUtils.isEmpty(music.getAlbum())){
+            holder.tvArtist.setText(music.getAlbum()+" "+
+                    music.getPath());
+        }
         if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())){
             holder.tvTitle.setTextColor(0xFF666666);
         }else {

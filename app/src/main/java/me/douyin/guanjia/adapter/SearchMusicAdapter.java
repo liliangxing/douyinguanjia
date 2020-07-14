@@ -1,5 +1,6 @@
 package me.douyin.guanjia.adapter;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,7 @@ public class SearchMusicAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
+        Music music =  mData.get(position);
         ViewHolder holder;
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_holder_music, parent, false);
@@ -52,9 +54,13 @@ public class SearchMusicAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        Utils.getBitmapUtils().display(holder.ivCover,mData.get(position).getCoverPath());
-        holder.tvTitle.setText(mData.get(position).getTitle());
-        holder.tvArtist.setText(mData.get(position).getPath());
+        Utils.getBitmapUtils().display(holder.ivCover,music.getCoverPath());
+        holder.tvTitle.setText(music.getTitle());
+        holder.tvArtist.setText(music.getPath());
+        if(!TextUtils.isEmpty(music.getAlbum())){
+            holder.tvArtist.setText(music.getAlbum()+" "+
+                    music.getPath());
+        }
         holder.ivMore.setOnClickListener(v -> mListener.onMoreClick(position));
         holder.vDivider.setVisibility(isShowDivider(position) ? View.VISIBLE : View.GONE);
         return convertView;

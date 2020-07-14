@@ -56,6 +56,7 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
     private List<Music> musicList = LocalMusicFragment.musicList;
     private SearchMusicAdapter mAdapter = new SearchMusicAdapter(musicList);
     public static String keywords;
+    public static final int MUSIC_LIST_SIZE = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,10 +124,10 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
                 MusicDao jbxxDao = DBManager.get().getMusicDao();
                 List<Music> queryList = jbxxDao.queryBuilder().where(
                         jbxxDao.queryBuilder().or(
-                        MusicDao.Properties.FileName.like("%"+ keyword + "%"),
+                        MusicDao.Properties.Album.like("%"+ keyword + "%"),
                         MusicDao.Properties.Title.like("%"+ keyword + "%")
                         )
-                ).orderDesc(MusicDao.Properties.Id).build().list();
+                ).orderDesc(MusicDao.Properties.Id).limit(MUSIC_LIST_SIZE).build().list();
 
                 jbxxDao.queryBuilder().where(jbxxDao.queryBuilder()
                         .and(MusicDao.Properties.AlbumId.eq(1),
@@ -205,7 +206,7 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
         dialog.setItems(itemsId, (dialog1, which) -> {
             switch (which) {
                 case 0:// 抖音打开
-                    String fileName  = music.getFileName()==null?music.getPath():music.getFileName();
+                    String fileName  = TextUtils.isEmpty(music.getFileName())?music.getPath():music.getFileName();
                     SubscribeMessageActivity.createChooser(fileName,this);
                     break;
                 case 1:// 置顶
