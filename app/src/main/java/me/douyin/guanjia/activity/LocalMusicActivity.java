@@ -1,4 +1,4 @@
-package me.douyin.guanjia.fragment;
+package me.douyin.guanjia.activity;
 
 import android.Manifest;
 import android.content.ClipData;
@@ -16,7 +16,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -27,7 +26,6 @@ import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
@@ -53,15 +51,16 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.douyin.guanjia.activity.MainActivity;
-import me.douyin.guanjia.activity.MusicActivity;
-import me.douyin.guanjia.activity.MusicInfoActivity;
-import me.douyin.guanjia.activity.SubscribeMessageActivity;
+import me.douyin.guanjia.R;
 import me.douyin.guanjia.adapter.OnMoreClickListener;
 import me.douyin.guanjia.adapter.PlaylistAdapter;
-import me.douyin.guanjia.constants.Keys;
+import me.douyin.guanjia.application.AppCache;
+import me.douyin.guanjia.constants.RequestCode;
+import me.douyin.guanjia.constants.RxBusTags;
 import me.douyin.guanjia.enums.LoadStateEnum;
 import me.douyin.guanjia.executor.NaviMenuExecutor;
+import me.douyin.guanjia.fragment.LocalMusicFragment;
+import me.douyin.guanjia.fragment.WebviewFragment;
 import me.douyin.guanjia.model.Music;
 import me.douyin.guanjia.service.PasteCopyService;
 import me.douyin.guanjia.storage.db.DBManager;
@@ -75,46 +74,48 @@ import me.douyin.guanjia.utils.ScreenUtils;
 import me.douyin.guanjia.utils.ToastUtils;
 import me.douyin.guanjia.utils.ViewUtils;
 import me.douyin.guanjia.utils.binding.Bind;
-import me.douyin.guanjia.R;
-import me.douyin.guanjia.application.AppCache;
-import me.douyin.guanjia.constants.RequestCode;
-import me.douyin.guanjia.constants.RxBusTags;
+import me.douyin.guanjia.widget.AutoLoadListView;
 
 /**
  * 本地音乐列表
  * Created by wcy on 2015/11/26.
  */
-public class LocalMusicFragment extends BaseFragment implements AdapterView.OnItemClickListener, OnMoreClickListener, AdapterView.OnItemLongClickListener {
-    @Bind(R.id.lv_local_music)
-    private static ListView lvLocalMusic;
+public class LocalMusicActivity extends BaseActivity implements AdapterView.OnItemClickListener, OnMoreClickListener, AdapterView.OnItemLongClickListener ,
+        AutoLoadListView.OnLoadListener {
+    @Bind(R.id.lv_online_music_list)
+    private  AutoLoadListView lvLocalMusic;
     @Bind(R.id.v_searching)
     private TextView vSearching;
-    public static WebView mWebView;
+    public static WebView mWebView = LocalMusicFragment.mWebView;
     private View vHeader;
     private Loader<Cursor> loader;
-    public static PlaylistAdapter adapter;
+    public  PlaylistAdapter adapter;
     private Handler handler1;
     public static final String FILE_NAME = "test.html";
-    public static LocalMusicFragment downloadFirst;
-    public static LocalMusicFragment instance;
-    public static List<Music> musicList = new ArrayList<>();
+    public static LocalMusicActivity downloadFirst;
+    public static LocalMusicActivity instance;
+    public List<Music> musicList = new ArrayList<>();
     public static boolean fileNameOrder;
 
-    public static final int MUSIC_LIST_SIZE = 1000;
+    public static final int MUSIC_LIST_SIZE = 100;
     @Bind(R.id.ll_loading)
     private LinearLayout llLoading;
     @Bind(R.id.ll_load_fail)
     private LinearLayout llLoadFail;
-    private static int mOffset = 0;
+    private int mOffset = 0;
     private static int uploadNum = 1;
     private static  WhereCondition cond = null;
     private static Property[] orderBy =new Property[] {MusicDao.Properties.Id};
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_local_music, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_local_music);
+    }
+
+    @Override
+    protected void onServiceBound() {
+        init();
     }
 
     public static void refresh(){
@@ -124,10 +125,10 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     public static void resetOffset(){
-        mOffset = 0;
+        instance.mOffset = 0;
         cond = null;
         orderBy = new Property[] {MusicDao.Properties.Id};
-        musicList.clear();
+        instance.musicList.clear();
     }
 
     public static void refreshOrder(Music music){
@@ -149,15 +150,13 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         resetAdapter();
     }
     private static void resetAdapter(){
-        adapter = new PlaylistAdapter(musicList);
-        adapter.setOnMoreClickListener(instance);
-        lvLocalMusic.setAdapter(adapter);
+        instance.adapter = new PlaylistAdapter(instance.musicList);
+        instance.adapter.setOnMoreClickListener(instance);
+        instance.lvLocalMusic.setAdapter(instance.adapter);
         instance.onLoad();
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void init() {      
         adapter = new PlaylistAdapter(musicList);
         adapter.setOnMoreClickListener(this);
         lvLocalMusic.setAdapter(adapter);
@@ -181,15 +180,19 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                 downloadDouyin(music);
             }
         };
-        //PasteCopyService.startCommand(getActivity(), handler1);
+        //PasteCopyService.startCommand(this, handler1);
         PasteCopyService.handler1 = handler1;
-        vHeader = LayoutInflater.from(getActivity()).inflate(R.layout.activity_local_music_list_header, null);
+        vHeader = LayoutInflater.from(this).inflate(R.layout.activity_local_music_list_header, null);
         AbsListView.LayoutParams params = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ScreenUtils.dp2px(150));
         vHeader.setLayoutParams(params);
         lvLocalMusic.addHeaderView(vHeader, null, false);
+        lvLocalMusic.setOnLoadListener(this);
+        lvLocalMusic.setOnItemClickListener(this);
+        lvLocalMusic.setOnItemLongClickListener(this);
         onLoad();
     }
 
+    @Override
     public void onLoad() {
         getMusic(mOffset);
     }
@@ -200,6 +203,8 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         }
         List<Music> songList = queryBuilder.orderDesc(orderBy)
                 .offset(offset).limit(MUSIC_LIST_SIZE).build().list();
+                lvLocalMusic.onLoadComplete();
+                ViewUtils.changeViewState(lvLocalMusic, llLoading, llLoadFail, LoadStateEnum.LOAD_SUCCESS);
                 mOffset += MUSIC_LIST_SIZE;
                 musicList.addAll(songList);
                 adapter.notifyDataSetChanged();
@@ -229,7 +234,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     private void initLoader() {
         lvLocalMusic.setVisibility(View.VISIBLE);
         vSearching.setVisibility(View.GONE);
-        /*loader = getActivity().getLoaderManager().initLoader(0, null,new MusicLoaderCallback(getContext(), value -> {
+        /*loader = this.getLoaderManager().initLoader(0, null,new MusicLoaderCallback(this, value -> {
             AppCache.get().getLocalMusicList().clear();
             AppCache.get().getLocalMusicList().addAll(value);
             adapter.notifyDataSetChanged();
@@ -243,18 +248,12 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         }
     }
 
-    @Override
-    protected void setListener() {
-        lvLocalMusic.setOnItemClickListener(this);
-        lvLocalMusic.setOnItemLongClickListener(this);
-    }
-
     private final static String userInfoUrl = "https://www.iesdouyin.com/share/user/";
     public final static String userAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36";
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        Intent intent = new Intent(getContext(), MainActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         MusicActivity.position = position-1;
         Music music = AppCache.get().getLocalMusicList().get(position-1);
         for(Music music2:AppCache.get().getLocalMusicList()){
@@ -270,7 +269,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         MusicActivity.position = position-1;
         Music music = AppCache.get().getLocalMusicList().get(position-1);
-        AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         CharSequence[] mItems1 = getResources().getTextArray(R.array.local_music_long_dialog);
         int fIndex = mItems1.length-1<0?0:mItems1.length-1;
         if(NaviMenuExecutor.favoriteFlag) {
@@ -292,14 +291,18 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                     refreshOrder(music);
                     break;
                 case 1:// 置顶
-                    AppCache.get().getLocalMusicList().remove(music);
-                    if (null != music.getId()) {
-                        DBManager.get().getMusicDao().delete(music);
+                    if(!TextUtils.isEmpty(music.getAlbum())) {
+                            List<Music> musicList2 = DBManager.get().getMusicDao().queryBuilder().where(MusicDao.Properties.Album.eq(music.getAlbum())).build().list();
+                            for(Music musicOther:musicList2) {
+                                moveTopDel(musicOther);
+                            }
+                    }else {
+                        moveTop(music);
                     }
-                    music.setId(null);
-                    DBManager.get().getMusicDao().save(music);
-                    adapter.addMusic(music);
                     adapter.notifyDataSetChanged();
+                    if(fileNameOrder) {
+                        refreshOrder(music);
+                    }
                     break;
                 case 2:// 上传到根目录
                     doUploadCache(music);
@@ -339,6 +342,19 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         return true;
     }
 
+    private static void moveTop(Music musicOther){
+        AppCache.get().getLocalMusicList().remove(musicOther);
+        moveTopDel(musicOther);
+    }
+
+    private static void moveTopDel(Music musicOther){
+        if (null != musicOther.getId()) {
+            DBManager.get().getMusicDao().delete(musicOther);
+        }
+        musicOther.setId(null);
+        DBManager.get().getMusicDao().save(musicOther);
+        instance.adapter.addMusic(musicOther);
+    }
 
     private void doCacheSave(Music music){
         WebviewFragment.currentMusic = music;
@@ -383,7 +399,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpPostUtils.httpPost(getActivity(),"http://www.time24.cn/test/index_upload.php"
+                HttpPostUtils.httpPost(LocalMusicActivity.this,"http://www.time24.cn/test/index_upload.php"
                 ,fileCache,fileName);
                 uploadNum ++;
             }
@@ -405,8 +421,8 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                         .replace("'</script>", "");
                 File file = new File(FileUtils.getMusicDir() + FILE_NAME);
                 file.delete();
-                Modify.modify("var tac=", "var tac='"+tac+"';",getContext(),FILE_NAME);
-                Modify.modify("var user_id=","var user_id="+music.getSongId()+"",getContext(),FILE_NAME);
+                Modify.modify("var tac=", "var tac='"+tac+"';",getApplicationContext(),FILE_NAME);
+                Modify.modify("var user_id=","var user_id="+music.getSongId()+"",getApplicationContext(),FILE_NAME);
                 mWebView.loadUrl("file:///mnt/sdcard"+FileUtils.DATA_DIR+FILE_NAME);
             }
             @Override
@@ -418,7 +434,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
 
     private static HttpProxyCacheServer mCacheServer;
     private static HttpProxyCacheServer getCacheServer() {
-        return VideoCacheManager.getProxy(instance.getContext().getApplicationContext());
+        return VideoCacheManager.getProxy(instance.getApplicationContext());
     }
 
     public static String getProxyPathByUrl(Music music){
@@ -433,17 +449,18 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
             return;
         }*/
         Music music = AppCache.get().getLocalMusicList().get(position);
-        AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle(music.getTitle());
         CharSequence[] mItems1 = getResources().getTextArray(R.array.local_music_dialog);
         dialog.setItems(mItems1, (dialog1, which) -> {
             switch (which) {
                 case 0:// 抖音打开
-                    if (!TextUtils.isEmpty(music.getFileName())) {
-                        SubscribeMessageActivity.createChooser(music.getFileName(), getContext());
-                    } else {
+                    if (TextUtils.isEmpty(music.getFileName())) {
                         ToastUtils.show("无抖音链接：" + JSONObject.toJSONString(music));
+                        music.setFileName(music.getPath());
+                        DBManager.get().getMusicDao().save(music);
                     }
+                    SubscribeMessageActivity.createChooser(music.getFileName(), this);
                     break;
                 case 1:// 新标签页打开
                     MusicActivity.fromClicked = true;
@@ -459,7 +476,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                     break;
                 case 2:// 查看歌曲信息
                     WebviewFragment.currentMusic = music;
-                    MusicInfoActivity.start(getContext(), music);
+                    MusicInfoActivity.start(this, music);
                     break;
 
                 case 3:// 用浏览器打开
@@ -507,8 +524,8 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         // 刷新媒体库
         Intent intent =
                 new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://".concat(WebviewFragment.currentMusic.getPath())));
-        instance.getContext().sendBroadcast(intent);
-        adapter.notifyDataSetChanged();
+        instance.sendBroadcast(intent);
+        instance.adapter.notifyDataSetChanged();
     }
 
     public void openWithBrowser(Music music){
@@ -521,7 +538,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
             url = music.getPath();
         }
         PasteCopyService.clipboardManager.setPrimaryClip(ClipData.newPlainText("Label", url));
-        SubscribeMessageActivity.createChooser(url,getContext());
+        SubscribeMessageActivity.createChooser(url,this);
     }
     /**
      * 分享音乐
@@ -532,8 +549,8 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         intent.setType("audio/*");
         Uri data;
         // Android  7.0
-        if (android.os.Build.VERSION.SDK_INT >= 23) {
-            data = FileProvider.getUriForFile(getContext(), "me.douyin.guanjia.fileProvider",file);
+        if (Build.VERSION.SDK_INT >= 23) {
+            data = FileProvider.getUriForFile(this, "me.douyin.guanjia.fileProvider",file);
         }else {
             data = Uri.fromFile(file);
         }
@@ -542,10 +559,10 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     private void requestSetRingtone(final Music music) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.System.canWrite(getContext())) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.System.canWrite(this)) {
             ToastUtils.show(R.string.no_permission_setting);
             Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-            intent.setData(Uri.parse("package:" + getContext().getPackageName()));
+            intent.setData(Uri.parse("package:" + this.getPackageName()));
             startActivityForResult(intent, RequestCode.REQUEST_WRITE_SETTINGS);
         } else {
             setRingtone(music);
@@ -558,7 +575,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     private void setRingtone(Music music) {
         Uri uri = MediaStore.Audio.Media.getContentUriForPath(music.getPath());
         // 查询音乐文件在媒体库是否存在
-        Cursor cursor = getContext().getContentResolver()
+        Cursor cursor = this.getContentResolver()
                 .query(uri, null, MediaStore.MediaColumns.DATA + "=?", new String[] { music.getPath() }, null);
         if (cursor == null) {
             return;
@@ -572,17 +589,17 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
             values.put(MediaStore.Audio.Media.IS_NOTIFICATION, false);
             values.put(MediaStore.Audio.Media.IS_PODCAST, false);
 
-            getContext().getContentResolver()
+            this.getContentResolver()
                     .update(uri, values, MediaStore.MediaColumns.DATA + "=?", new String[] { music.getPath() });
             Uri newUri = ContentUris.withAppendedId(uri, Long.valueOf(_id));
-            RingtoneManager.setActualDefaultRingtoneUri(getContext(), RingtoneManager.TYPE_RINGTONE, newUri);
+            RingtoneManager.setActualDefaultRingtoneUri(this, RingtoneManager.TYPE_RINGTONE, newUri);
             ToastUtils.show(R.string.setting_ringtone_success);
         }
         cursor.close();
     }
 
     private void deleteMusic(final Music music) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         String title = music.getTitle();
         String msg = getString(R.string.delete_music, title);
         dialog.setMessage(msg);
@@ -614,25 +631,15 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RequestCode.REQUEST_WRITE_SETTINGS) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.System.canWrite(getContext())) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.System.canWrite(this)) {
                 ToastUtils.show(R.string.grant_permission_setting);
             }
         }
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        int position = lvLocalMusic.getFirstVisiblePosition();
-        int offset = (lvLocalMusic.getChildAt(0) == null) ? 0 : lvLocalMusic.getChildAt(0).getTop();
-        outState.putInt(Keys.LOCAL_MUSIC_POSITION, position);
-        outState.putInt(Keys.LOCAL_MUSIC_OFFSET, offset);
-    }
-
-    public void onRestoreInstanceState(final Bundle savedInstanceState) {
-        lvLocalMusic.post(() -> {
-            int position = savedInstanceState.getInt(Keys.LOCAL_MUSIC_POSITION);
-            int offset = savedInstanceState.getInt(Keys.LOCAL_MUSIC_OFFSET);
-            lvLocalMusic.setSelectionFromTop(position, offset);
-        });
+    protected void onDestroy() {
+        LocalMusicFragment.adapter.notifyDataSetChanged();
+        super.onDestroy();
     }
 }

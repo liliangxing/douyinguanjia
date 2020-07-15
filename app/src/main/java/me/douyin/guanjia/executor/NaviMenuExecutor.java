@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import me.douyin.guanjia.activity.AboutActivity;
+import me.douyin.guanjia.activity.LocalMusicActivity;
 import me.douyin.guanjia.activity.MusicActivity;
 import me.douyin.guanjia.activity.SearchMusicActivity;
 import me.douyin.guanjia.activity.SettingActivity;
@@ -66,6 +67,9 @@ public class NaviMenuExecutor {
     }
     public boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_search_all:
+                startActivity(LocalMusicActivity.class);
+                return true;
             case R.id.action_search:
                 startActivity(SearchMusicActivity.class);
                 return true;

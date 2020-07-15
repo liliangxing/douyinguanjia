@@ -79,6 +79,9 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Search" />
         <activity
+            android:name="me.douyin.guanjia.activity.LocalMusicActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name="me.douyin.guanjia.activity.SettingActivity"
             android:label="@string/menu_setting"
             android:screenOrientation="portrait" />

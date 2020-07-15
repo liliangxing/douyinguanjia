@@ -5,6 +5,7 @@
     <string name="share">分享</string>
     <string name="delete">删除</string>
     <string name="search">搜索</string>
+    <string name="search_all">查看所有</string>
     <string name="save">保存</string>
     <string name="loading">努力加载中…</string>
     <string name="load_fail">加载失败，请检查网络后重试</string>
