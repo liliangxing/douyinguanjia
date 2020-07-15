@@ -29,6 +29,7 @@ import java.util.List;
 
 import me.douyin.guanjia.R;
 import me.douyin.guanjia.adapter.VideoRecyclerViewAdapter;
+import me.douyin.guanjia.application.AppCache;
 import me.douyin.guanjia.bean.VideoBean;
 import me.douyin.guanjia.fragment.LocalMusicFragment;
 import me.douyin.guanjia.fragment.WebviewFragment;
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 //        recyclerView.setNestedScrollingEnabled(false);
         final PagerSnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
-        List<Music> musicList = LocalMusicFragment.musicList;
+        List<Music> musicList = AppCache.get().getLocalMusicList();
         videoList = new ArrayList<>();
         for(Music music:musicList){
             if(TextUtils.isEmpty(music.getArtist())){ continue;}
