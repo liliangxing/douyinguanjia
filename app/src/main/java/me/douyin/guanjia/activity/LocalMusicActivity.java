@@ -109,7 +109,7 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
 
     private static int position;
     private static int offset;
-    private List<Music> firsList;
+    private List<Music> firstList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +119,7 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
 
     @Override
     protected void onServiceBound() {
-        firsList=AppCache.get().getLocalMusicList();
+        firstList=AppCache.get().getLocalMusicList();
         init();
     }
 
@@ -158,8 +158,7 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
         resetAdapter();
     }
     private static void resetAdapter(){
-        instance.adapter = new PlaylistAdapter(instance.musicList);
-        instance.adapter.setOnMoreClickListener(instance);
+        instance.adapter.setMusicList(instance.musicList);
         instance.lvLocalMusic.setAdapter(instance.adapter);
         instance.onLoad();
     }
@@ -651,8 +650,17 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
     @Override
     protected void onDestroy() {
         AppCache.get().getLocalMusicList().clear();
-        AppCache.get().getLocalMusicList().addAll(firsList);
+        AppCache.get().getLocalMusicList().addAll(firstList);
         LocalMusicFragment.adapter.notifyDataSetChanged();
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(fileNameOrder) {
+            refreshOrder(null);
+            return;
+        }
+        super.onBackPressed();
     }
 }

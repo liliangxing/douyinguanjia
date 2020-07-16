@@ -154,8 +154,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         resetAdapter();
     }
     private static void resetAdapter(){
-        adapter = new PlaylistAdapter(musicList);
-        adapter.setOnMoreClickListener(instance);
+        adapter.setMusicList(musicList);
         lvLocalMusic.setAdapter(adapter);
         instance.onLoad();
     }

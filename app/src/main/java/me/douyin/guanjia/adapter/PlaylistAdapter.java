@@ -34,6 +34,10 @@ public class PlaylistAdapter extends BaseAdapter {
         musicList = musicList2;
     }
 
+    public void setMusicList(List<Music> musicList2) {
+        musicList = musicList2;
+    }
+
     public void setIsPlaylist(boolean isPlaylist) {
         this.isPlaylist = isPlaylist;
     }
