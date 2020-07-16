@@ -6,7 +6,6 @@
         <item>@string/music_info</item>
         <item>用浏览器打开并复制</item>
         <item>下载到手机</item>
-        <item>发送文件到</item>
         <item>从手机删除</item>
     </string-array>
 
@@ -15,6 +14,7 @@
         <item>置顶</item>
         <item>上传到目录1.mp4(2,3)</item>
         <item>缓存转本地MP4</item>
+        <item>发送文件到</item>
         <item>设为喜欢</item>
     </string-array>
 

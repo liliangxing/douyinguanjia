@@ -60,7 +60,6 @@ import me.douyin.guanjia.activity.SubscribeMessageActivity;
 import me.douyin.guanjia.adapter.OnMoreClickListener;
 import me.douyin.guanjia.adapter.PlaylistAdapter;
 import me.douyin.guanjia.constants.Keys;
-import me.douyin.guanjia.enums.LoadStateEnum;
 import me.douyin.guanjia.executor.NaviMenuExecutor;
 import me.douyin.guanjia.model.Music;
 import me.douyin.guanjia.service.PasteCopyService;
@@ -73,7 +72,6 @@ import me.douyin.guanjia.utils.Modify;
 import me.douyin.guanjia.utils.PermissionReq;
 import me.douyin.guanjia.utils.ScreenUtils;
 import me.douyin.guanjia.utils.ToastUtils;
-import me.douyin.guanjia.utils.ViewUtils;
 import me.douyin.guanjia.utils.binding.Bind;
 import me.douyin.guanjia.R;
 import me.douyin.guanjia.application.AppCache;
@@ -100,7 +98,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     public static List<Music> musicList = new ArrayList<>();
     public static boolean fileNameOrder;
 
-    public static final int MUSIC_LIST_SIZE = 1000;
+    public static final int MUSIC_LIST_SIZE = 10000;
     @Bind(R.id.ll_loading)
     private LinearLayout llLoading;
     @Bind(R.id.ll_load_fail)
@@ -311,6 +309,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                     if(fileNameOrder) {
                         refreshOrder(music);
                     }
+                    ToastUtils.show("置顶成功");
                     break;
                 case 2:// 上传到根目录
                     doUploadCache(music);
@@ -318,7 +317,14 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                 case 3:// 缓存转本地MP4
                     doCacheSave(music);
                     break;
-                case 4:
+                case 4:// 发送文件到
+                    if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())) {
+                        shareMusic(music);
+                    }else {
+                        ToastUtils.show("文件未下载");
+                    }
+                    break;
+                case 5:
                     if(NaviMenuExecutor.favoriteFlag) {
                         if (0 == music.getSongId()) {
                             // 设为喜欢
@@ -382,7 +388,6 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     private static synchronized void moveTop(Music musicOther){
-        AppCache.get().getLocalMusicList().remove(musicOther);
         if (null != musicOther.getId()) {
             DBManager.get().getMusicDao().delete(musicOther);
         }
@@ -507,14 +512,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                         }
                     }
                     break;
-                case 5:// 发送文件到
-                    if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())) {
-                        shareMusic(music);
-                    }else {
-                        ToastUtils.show("文件未下载");
-                    }
-                    break;
-                case 6:// 删除
+                case 5:// 删除
                     if (0 == music.getSongId()){
                         deleteMusic(music);
                     }else {

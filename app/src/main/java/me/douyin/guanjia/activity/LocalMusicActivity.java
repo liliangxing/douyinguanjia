@@ -318,7 +318,14 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
                 case 3:// 缓存转本地MP4
                     doCacheSave(music);
                     break;
-                case 4:
+                case 4:// 发送文件到
+                    if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())) {
+                        shareMusic(music);
+                    }else {
+                        ToastUtils.show("文件未下载");
+                    }
+                    break;
+                case 5:
                     if(NaviMenuExecutor.favoriteFlag) {
                         if (0 == music.getSongId()) {
                             // 设为喜欢
@@ -507,14 +514,7 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
                         }
                     }
                     break;
-                case 5:// 发送文件到
-                    if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())) {
-                        shareMusic(music);
-                    }else {
-                        ToastUtils.show("文件未下载");
-                    }
-                    break;
-                case 6:// 删除
+                case 5:// 删除
                     if (0 == music.getSongId()){
                         deleteMusic(music);
                     }else {
