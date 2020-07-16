@@ -508,7 +508,11 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
                     }
                     break;
                 case 5:// 发送文件到
-                    shareMusic(music);
+                    if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())) {
+                        shareMusic(music);
+                    }else {
+                        ToastUtils.show("文件未下载");
+                    }
                     break;
                 case 6:// 删除
                     if (0 == music.getSongId()){
