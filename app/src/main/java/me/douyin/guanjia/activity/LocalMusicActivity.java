@@ -107,6 +107,10 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
     private static  WhereCondition cond = null;
     private static Property[] orderBy =new Property[] {MusicDao.Properties.Id};
 
+    private static int position;
+    private static int offset;
+    private List<Music> firsList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,6 +119,7 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
 
     @Override
     protected void onServiceBound() {
+        firsList=AppCache.get().getLocalMusicList();
         init();
     }
 
@@ -133,6 +138,8 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
 
     public static void refreshOrder(Music music){
         if(!fileNameOrder) {
+            position = instance.lvLocalMusic.getFirstVisiblePosition();
+            offset = (instance.lvLocalMusic.getChildAt(0) == null) ? 0 : instance.lvLocalMusic.getChildAt(0).getTop();
             resetOffset();
             if(!TextUtils.isEmpty(music.getAlbum())) {
                 cond = MusicDao.Properties.Album.eq(music.getAlbum());
@@ -141,6 +148,7 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
             resetAdapter();
         }else {
             refreshAll();
+            instance.lvLocalMusic.setSelectionFromTop(position, offset);
         }
         fileNameOrder = !fileNameOrder;
     }
@@ -294,7 +302,7 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
                     if(!TextUtils.isEmpty(music.getAlbum())) {
                             List<Music> musicList2 = DBManager.get().getMusicDao().queryBuilder().where(MusicDao.Properties.Album.eq(music.getAlbum())).build().list();
                             for(Music musicOther:musicList2) {
-                                moveTopDel(musicOther);
+                                moveTop(musicOther);
                             }
                     }else {
                         moveTop(music);
@@ -342,12 +350,8 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
         return true;
     }
 
-    private static void moveTop(Music musicOther){
+    private static synchronized void moveTop(Music musicOther){
         AppCache.get().getLocalMusicList().remove(musicOther);
-        moveTopDel(musicOther);
-    }
-
-    private static void moveTopDel(Music musicOther){
         if (null != musicOther.getId()) {
             DBManager.get().getMusicDao().delete(musicOther);
         }
@@ -503,7 +507,10 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
                         }
                     }
                     break;
-                case 5:// 删除
+                case 5:// 发送文件到
+                    shareMusic(music);
+                    break;
+                case 6:// 删除
                     if (0 == music.getSongId()){
                         deleteMusic(music);
                     }else {
@@ -639,6 +646,8 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
 
     @Override
     protected void onDestroy() {
+        AppCache.get().getLocalMusicList().clear();
+        AppCache.get().getLocalMusicList().addAll(firsList);
         LocalMusicFragment.adapter.notifyDataSetChanged();
         super.onDestroy();
     }

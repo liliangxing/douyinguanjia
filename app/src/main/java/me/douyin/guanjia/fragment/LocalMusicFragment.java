@@ -110,6 +110,10 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     private static  WhereCondition cond = null;
     private static Property[] orderBy =new Property[] {MusicDao.Properties.Id};
 
+    private static int position;
+    private static int offset;
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -132,6 +136,8 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
 
     public static void refreshOrder(Music music){
         if(!fileNameOrder) {
+            position = lvLocalMusic.getFirstVisiblePosition();
+            offset = (lvLocalMusic.getChildAt(0) == null) ? 0 : lvLocalMusic.getChildAt(0).getTop();
             resetOffset();
             if(!TextUtils.isEmpty(music.getAlbum())) {
                 cond = MusicDao.Properties.Album.eq(music.getAlbum());
@@ -140,6 +146,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
             resetAdapter();
         }else {
             refreshAll();
+            lvLocalMusic.setSelectionFromTop(position, offset);
         }
         fileNameOrder = !fileNameOrder;
     }
@@ -292,14 +299,18 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                     refreshOrder(music);
                     break;
                 case 1:// 置顶
-                    AppCache.get().getLocalMusicList().remove(music);
-                    if (null != music.getId()) {
-                        DBManager.get().getMusicDao().delete(music);
+                    if(!TextUtils.isEmpty(music.getAlbum())) {
+                        List<Music> musicList2 = DBManager.get().getMusicDao().queryBuilder().where(MusicDao.Properties.Album.eq(music.getAlbum())).build().list();
+                        for(Music musicOther:musicList2) {
+                            moveTop(musicOther);
+                        }
+                    }else {
+                        moveTop(music);
                     }
-                    music.setId(null);
-                    DBManager.get().getMusicDao().save(music);
-                    adapter.addMusic(music);
                     adapter.notifyDataSetChanged();
+                    if(fileNameOrder) {
+                        refreshOrder(music);
+                    }
                     break;
                 case 2:// 上传到根目录
                     doUploadCache(music);
@@ -368,6 +379,16 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         }else {
             ToastUtils.show("缓存文件不存在");
         }
+    }
+
+    private static synchronized void moveTop(Music musicOther){
+        AppCache.get().getLocalMusicList().remove(musicOther);
+        if (null != musicOther.getId()) {
+            DBManager.get().getMusicDao().delete(musicOther);
+        }
+        musicOther.setId(null);
+        DBManager.get().getMusicDao().save(musicOther);
+        adapter.addMusic(musicOther);
     }
 
     private void doUploadCache(Music music){
@@ -486,7 +507,10 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                         }
                     }
                     break;
-                case 5:// 删除
+                case 5:// 发送文件到
+                    shareMusic(music);
+                    break;
+                case 6:// 删除
                     if (0 == music.getSongId()){
                         deleteMusic(music);
                     }else {
