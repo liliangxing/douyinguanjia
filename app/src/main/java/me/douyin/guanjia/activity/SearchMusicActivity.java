@@ -53,7 +53,7 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
     private LinearLayout llLoading;
     @Bind(R.id.ll_load_fail)
     private LinearLayout llLoadFail;
-    private List<Music> musicList = LocalMusicFragment.musicList;
+    private List<Music> musicList = AppCache.get().getLocalMusicList();
     private SearchMusicAdapter mAdapter = new SearchMusicAdapter(musicList);
     public static String keywords;
     public static final int MUSIC_LIST_SIZE = 1000;
@@ -168,8 +168,8 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
         SubscribeMessageActivity.createChooser(url,this);*/
         Intent intent = new Intent(this, MainActivity.class);
         MusicActivity.position = position;
-        Music music = AppCache.get().getLocalMusicList().get(position);
-        for(Music music2:AppCache.get().getLocalMusicList()){
+        Music music = musicList.get(position);
+        for(Music music2:musicList){
             if(TextUtils.isEmpty(music2.getArtist())){ -- MusicActivity.position;}
             if(music2.equals(music)){
                 break;
@@ -271,7 +271,6 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
             DBManager.get().getMusicDao().delete(music);
         }
         mAdapter.notifyDataSetChanged();
-        AppCache.get().getLocalMusicList().remove(music);
         LocalMusicFragment.adapter.notifyDataSetChanged();
     }
 

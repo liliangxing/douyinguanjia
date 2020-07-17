@@ -12,8 +12,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.content.FileProvider;
@@ -90,7 +88,6 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
     private View vHeader;
     private Loader<Cursor> loader;
     public  PlaylistAdapter adapter;
-    private Handler handler1;
     public static final String FILE_NAME = "test.html";
     public static LocalMusicActivity downloadFirst;
     public static LocalMusicActivity instance;
@@ -169,26 +166,6 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
         lvLocalMusic.setAdapter(adapter);
         instance = this;
         loadMusic();
-        handler1 = new Handler(){
-            @Override
-            public void handleMessage(Message msg) {
-
-                super.handleMessage(msg);
-                String data =  msg.getData().getString("data");
-                Music music = JSONObject.parseObject(data,Music.class);
-                adapter.addMusic(music);
-                adapter.notifyDataSetChanged();
-                MusicActivity.fromClicked = false;
-                if(music.getAlbumId() == 1){
-                    WebviewFragment.currentMusic =  music;
-                    mWebView.loadUrl(music.getFileName());
-                    return;
-                }
-                downloadDouyin(music);
-            }
-        };
-        //PasteCopyService.startCommand(this, handler1);
-        PasteCopyService.handler1 = handler1;
         vHeader = LayoutInflater.from(this).inflate(R.layout.activity_local_music_list_header, null);
         AbsListView.LayoutParams params = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ScreenUtils.dp2px(150));
         vHeader.setLayoutParams(params);
