@@ -98,7 +98,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     public static List<Music> musicList = new ArrayList<>();
     public static boolean fileNameOrder;
 
-    public static final int MUSIC_LIST_SIZE = 10000;
+    public static final int MUSIC_LIST_SIZE = 1000;
     @Bind(R.id.ll_loading)
     private LinearLayout llLoading;
     @Bind(R.id.ll_load_fail)
@@ -387,6 +387,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     private static synchronized void moveTop(Music musicOther){
+        AppCache.get().getLocalMusicList().remove(musicOther);
         if (null != musicOther.getId()) {
             DBManager.get().getMusicDao().delete(musicOther);
         }
