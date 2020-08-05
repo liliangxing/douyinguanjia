@@ -170,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+                    ijkVideoView.mCurrentUrl = url;
                     Response response =OkHttpUtils.get().url(pushURL)
                             .addParams("cover_path", getCover())
                             .addParams("video", url)
