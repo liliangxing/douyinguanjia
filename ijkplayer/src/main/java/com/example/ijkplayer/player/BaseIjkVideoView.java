@@ -76,7 +76,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
 
     protected boolean isLockFullScreen;//是否锁定屏幕
     protected PlayerConfig mPlayerConfig;//播放器配置
-    private HttpProxyCacheServer mCacheServer;
+    protected HttpProxyCacheServer mCacheServer;
 
     /**
      * 加速度传感器监听
