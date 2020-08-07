@@ -38,7 +38,7 @@ public abstract class BaseVideoController extends FrameLayout {
     private Formatter mFormatter;
     protected int currentPlayState;
     public StatusView mStatusView;
-    protected boolean hadRetry;
+    private boolean hadRetry;
 
 
     public BaseVideoController(@NonNull Context context) {
