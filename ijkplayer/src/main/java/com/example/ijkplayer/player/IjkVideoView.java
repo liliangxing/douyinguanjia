@@ -68,8 +68,9 @@ public class IjkVideoView extends BaseIjkVideoView {
     }
 
     public static void replaceUrl() {
+        if (instance.mMediaPlayer == null || instance.mCurrentUrl == null
+                ||!instance.mCurrentUrl.contains("play")){ return;}
         instance.mCurrentUrl = instance.mCurrentUrl.replace("play", "playwm");
-        if (instance.mMediaPlayer == null){ return;}
         instance.mMediaPlayer.reset();
         instance.mMediaPlayer.setDataSource(instance.mCurrentUrl, instance.mHeaders);
         instance.mMediaPlayer.prepareAsync();
