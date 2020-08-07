@@ -26,6 +26,8 @@ import com.example.ijkplayer.util.WindowUtil;
 import com.example.ijkplayer.widget.ResizeSurfaceView;
 import com.example.ijkplayer.widget.ResizeTextureView;
 
+import java.io.File;
+
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
@@ -47,6 +49,8 @@ public class IjkVideoView extends BaseIjkVideoView {
     public static final int SCREEN_SCALE_ORIGINAL = 4;
     public static final int SCREEN_SCALE_CENTER_CROP = 5;
 
+    public static IjkVideoView instance;
+
     protected int mCurrentScreenScale = SCREEN_SCALE_CENTER_CROP;
 
     public IjkVideoView(@NonNull Context context) {
@@ -60,6 +64,19 @@ public class IjkVideoView extends BaseIjkVideoView {
     public IjkVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView();
+        instance = this;
+    }
+
+    public static void replaceUrl() {
+        instance.mCurrentUrl = instance.mCurrentUrl.replace("play", "playwm");
+        if (instance.mMediaPlayer == null){ return;}
+        instance.mMediaPlayer.reset();
+        instance.mMediaPlayer.setDataSource(instance.mCurrentUrl, instance.mHeaders);
+        instance.mMediaPlayer.prepareAsync();
+        if (instance.mCacheServer == null){ return;}
+        String proxyPath = instance.mCacheServer.getProxyUrl(instance.mCurrentUrl);
+        File fileCache = new File(proxyPath.replace("file://", ""));
+        fileCache.delete();
     }
 
     /**
