@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowInsets;
 
+import com.example.ijkplayer.controller.BaseVideoController;
 import com.example.ijkplayer.player.IjkVideoView;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
@@ -119,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 switch (newState) {
                     case SCROLL_STATE_IDLE: //滚动停止
                          ijkVideoView = snapHelper.findSnapView(layoutManager).findViewById(R.id.video_view);
+                        BaseVideoController.hadRetry = false;
                         if (ijkVideoView != null) {
                             ijkVideoView.start();
                         }
