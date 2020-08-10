@@ -38,6 +38,7 @@ public abstract class BaseVideoController extends FrameLayout {
     private Formatter mFormatter;
     protected int currentPlayState;
     public StatusView mStatusView;
+    public static boolean hadRetry;
 
 
     public BaseVideoController(@NonNull Context context) {
@@ -85,8 +86,12 @@ public abstract class BaseVideoController extends FrameLayout {
         hideStatusView();
         switch (playState) {
             case IjkVideoView.STATE_ERROR:
-                IjkVideoView.replaceUrl();
-                clickedRetry();
+                if(!hadRetry){
+                    IjkVideoView.replaceUrl();
+                    clickedRetry();
+                    hadRetry = ! hadRetry;
+                    return;
+                }
                 mStatusView.setMessage(getResources().getString(R.string.player_error_message));
                 mStatusView.setButtonTextAndAction(getResources().getString(R.string.player_retry), new OnClickListener() {
                     @Override

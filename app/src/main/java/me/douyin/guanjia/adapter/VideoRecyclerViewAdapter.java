@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.ijkplayer.controller.BaseVideoController;
 import com.example.ijkplayer.player.IjkVideoView;
 import com.example.ijkplayer.player.PlayerConfig;
 
@@ -48,6 +49,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
         holder.ijkVideoView.setScreenScale(IjkVideoView.SCREEN_SCALE_DEFAULT);
         holder.ijkVideoView.setUrl(videoBean.getUrl());
         holder.ijkVideoView.setTitle(videoBean.getTitle());
+        BaseVideoController.hadRetry = false;
        // holder.title.setText(videoBean.getTitle());
        // holder.name.setText("@" + videoBean.getTitle());
     }

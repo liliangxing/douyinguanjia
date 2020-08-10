@@ -69,16 +69,19 @@ public class IjkVideoView extends BaseIjkVideoView {
 
     public static void replaceUrl() {
         final String url = instance.mCurrentUrl;
-        if (instance.mMediaPlayer == null || url == null
-                ||!url.contains("play")){ return;}
+        if (instance.mCacheServer == null){ instance.mCacheServer = instance.getCacheServer();}
+        String proxyPath = instance.mCacheServer.getProxyUrl(url);
+        File fileCache = new File(proxyPath.replace("file://", ""));
+        fileCache.delete();
+        if (instance.mMediaPlayer == null)
+        {
+            instance.initPlayer();
+        }
+        if(!url.contains("play")){ return;}
         instance.mCurrentUrl = url.replace("play", "playwm");
         instance.mMediaPlayer.reset();
         instance.mMediaPlayer.setDataSource(instance.mCurrentUrl, instance.mHeaders);
         instance.mMediaPlayer.prepareAsync();
-        if (instance.mCacheServer == null){ return;}
-        String proxyPath = instance.mCacheServer.getProxyUrl(url);
-        File fileCache = new File(proxyPath.replace("file://", ""));
-        fileCache.delete();
     }
 
     /**

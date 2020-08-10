@@ -204,7 +204,7 @@ public abstract class BaseIjkVideoView extends FrameLayout implements MediaPlaye
         setPlayerState(isFullScreen() ? PLAYER_FULL_SCREEN : PLAYER_NORMAL);
     }
 
-    private HttpProxyCacheServer getCacheServer() {
+    protected HttpProxyCacheServer getCacheServer() {
         return VideoCacheManager.getProxy(getContext().getApplicationContext());
     }
 
