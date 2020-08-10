@@ -120,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
                 switch (newState) {
                     case SCROLL_STATE_IDLE: //滚动停止
                          ijkVideoView = snapHelper.findSnapView(layoutManager).findViewById(R.id.video_view);
-                        BaseVideoController.hadRetry = false;
                         if (ijkVideoView != null) {
                             ijkVideoView.start();
                         }
