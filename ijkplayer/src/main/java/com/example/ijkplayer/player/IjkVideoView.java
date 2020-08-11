@@ -72,9 +72,7 @@ public class IjkVideoView extends BaseIjkVideoView {
         if (instance.mCacheServer == null){ instance.mCacheServer = instance.getCacheServer();}
         String proxyPath = instance.mCacheServer.getProxyUrl(url);
         File fileCache = new File(proxyPath.replace("file://", ""));
-        if(fileCache.exists() && fileCache.length() > 1024) {
-            fileCache.delete();
-        }
+        fileCache.delete();
         if (instance.mMediaPlayer == null)
         {
             instance.initPlayer();
