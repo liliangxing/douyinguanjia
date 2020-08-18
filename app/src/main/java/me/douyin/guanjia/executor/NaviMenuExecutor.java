@@ -110,7 +110,10 @@ public class NaviMenuExecutor {
         }else {
             musicList = DBManager.get().getMusicDao().queryBuilder().where(MusicDao.Properties.SongId.eq(1)).orderDesc(MusicDao.Properties.Id).build().list();
         }
-        //doAlbum(musicList);
+        if(false) {
+            doAlbum(musicList);
+            return;
+        }
         StringBuffer content = new StringBuffer();
         for(Music music:musicList){
             if(TextUtils.isEmpty(music.getArtist())){ continue;}
@@ -140,8 +143,7 @@ public class NaviMenuExecutor {
         for(Music music:musicList) {
             if(TextUtils.isEmpty(music.getFileName())
             || music.getFileName().contains("weishi")){ continue;}
-            if (TextUtils.isEmpty(music.getAlbum())
-            ||!music.getAlbum().contains("抖音")) {
+            if (TextUtils.isEmpty(music.getAlbum())) {
                 hashSet.add(music.getFileName());
                 mapLinks.put(music.getFileName(),music);
             }

@@ -235,7 +235,7 @@ public class WebviewFragment extends BaseFragment {
             if(html2.contains("aweme.snssdk.com")){
                 Elements elements2 =Jsoup.parse(html2).select("video[src]");
                 Elements list2 = Jsoup.parse(html2).getElementsByTag("input");
-                Elements elements3 =Jsoup.parse(html2).select("#videoPoster");
+                Elements elements3 =Jsoup.parse(html2).select(".poster--1S1KW");
                 Message message = new Message();
                 Bundle bundle = new Bundle();
                 String coverUrl = null;
@@ -249,23 +249,19 @@ public class WebviewFragment extends BaseFragment {
                     }
                 }
                 if(TextUtils.isEmpty(coverUrl) && !elements3.isEmpty()){
-                    String styleContent = elements3.get(0).attr("style");
-                    Matcher m =Pattern.compile("background-image:url\\(([\\S-]+)\\)").matcher(styleContent);
-                    if(m.find()){
-                        coverUrl = m.group(1);
-                        if(coverUrl.startsWith("//")){
-                            coverUrl = coverUrl.replace("//","https://");
-                        }
-                        bundle.putString("coverPath", coverUrl);
+                    coverUrl = elements3.get(0).attr("src");
+                    if(coverUrl.startsWith("//")){
+                        coverUrl = coverUrl.replace("//","https://");
                     }
-                    Elements elements4 =Jsoup.parse(html2).select(".bottom-desc");
+                    bundle.putString("coverPath", coverUrl);
+                    Elements elements4 =Jsoup.parse(html2).select(".desc--72uxy");
                     if((TextUtils.isEmpty(currentMusic.getTitle()) || currentMusic.getTitle().equals("[]"))
                             && !elements4.isEmpty()){
                         currentMusic.setTitle(elements4.get(0).text());
                     }
                 }
                 //uid获取
-                Elements elements5 =Jsoup.parse(html2).select(".user-info-id");
+                Elements elements5 =Jsoup.parse(html2).select(".unique_id--3FCG7");
                 if(!elements5.isEmpty()){
                     String url = elements5.get(0).text();
                     if(url != null){
@@ -285,7 +281,7 @@ public class WebviewFragment extends BaseFragment {
                     }
                 }
               return;
-            }else if(html2.contains("douyin_wap")){
+            }else if(html2.contains("抖音短视频")){
                         if(PasteCopyService.hashSetIterator.hasNext()){
                             String url = PasteCopyService.hashSetIterator.next();
                             MusicActivity.instance.playService2.dealWithUrl(url);
