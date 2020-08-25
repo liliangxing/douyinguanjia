@@ -132,14 +132,17 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         musicList.clear();
     }
 
+    public static WhereCondition getAlbumCondition(Music music){
+       return MusicDao.Properties.Album.like("%"+ music.getAlbum().
+                replaceAll("(.*)[：|:| ](.*)", "$2") + "%");
+    }
     public static void refreshOrder(Music music){
         if(!fileNameOrder) {
             position = lvLocalMusic.getFirstVisiblePosition();
             offset = (lvLocalMusic.getChildAt(0) == null) ? 0 : lvLocalMusic.getChildAt(0).getTop();
             resetOffset();
             if(!TextUtils.isEmpty(music.getAlbum())) {
-                cond = MusicDao.Properties.Album.like("%"+ music.getAlbum().
-                        replaceAll("(.*)[：|:| ](.*)", "$2") + "%");
+                cond = getAlbumCondition(music);
             }
             orderBy = new Property[] {MusicDao.Properties.Album , MusicDao.Properties.Id};
             resetAdapter();
@@ -298,7 +301,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                     break;
                 case 1:// 置顶
                     if(!TextUtils.isEmpty(music.getAlbum())) {
-                        List<Music> musicList2 = DBManager.get().getMusicDao().queryBuilder().where(MusicDao.Properties.Album.eq(music.getAlbum())).build().list();
+                        List<Music> musicList2 = DBManager.get().getMusicDao().queryBuilder().where(getAlbumCondition(music)).build().list();
                         for(Music musicOther:musicList2) {
                             moveTop(musicOther);
                         }
