@@ -128,7 +128,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onServiceBound() {
         setupView();
-        updateWeather();
+        //updateWeather();
         controlPanel = new ControlPanel(flPlayBar);
         naviMenuExecutor = new NaviMenuExecutor(this);
         AudioPlayer.get().addOnPlayEventListener(controlPanel);
