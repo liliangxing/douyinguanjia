@@ -235,7 +235,13 @@ public class WebviewFragment extends BaseFragment {
             if(html2.contains("aweme.snssdk.com")){
                 Elements elements2 =Jsoup.parse(html2).select("video[src]");
                 Elements list2 = Jsoup.parse(html2).getElementsByTag("input");
-                Elements elements3 =Jsoup.parse(html2).select(".poster--1S1KW");
+                Elements elements3 =Jsoup.parse(html2).select("img");
+                for(Element element:elements3){
+                    if(element.attr("class").contains("poster")){
+                        elements3 = new Elements(element);
+                        break;
+                    }
+                }
                 Message message = new Message();
                 Bundle bundle = new Bundle();
                 String coverUrl = null;
@@ -254,14 +260,26 @@ public class WebviewFragment extends BaseFragment {
                         coverUrl = coverUrl.replace("//","https://");
                     }
                     bundle.putString("coverPath", coverUrl);
-                    Elements elements4 =Jsoup.parse(html2).select(".desc--72uxy");
+                    Elements elements4 =Jsoup.parse(html2).select("p");
+                    for(Element element:elements4){
+                        if(element.attr("class").contains("desc")){
+                            elements4 = new Elements(element);
+                            break;
+                        }
+                    }
                     if((TextUtils.isEmpty(currentMusic.getTitle()) || currentMusic.getTitle().equals("[]"))
                             && !elements4.isEmpty()){
                         currentMusic.setTitle(elements4.get(0).text());
                     }
                 }
                 //uid获取
-                Elements elements5 =Jsoup.parse(html2).select(".unique_id--3FCG7");
+                Elements elements5 =Jsoup.parse(html2).select("p");
+                for(Element element:elements5){
+                    if(element.attr("class").contains("unique")){
+                        elements5 = new Elements(element);
+                        break;
+                    }
+                }
                 if(!elements5.isEmpty()){
                     String url = elements5.get(0).text();
                     if(url != null){
