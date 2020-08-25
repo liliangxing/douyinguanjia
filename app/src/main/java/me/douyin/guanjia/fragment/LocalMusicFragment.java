@@ -138,7 +138,8 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
             offset = (lvLocalMusic.getChildAt(0) == null) ? 0 : lvLocalMusic.getChildAt(0).getTop();
             resetOffset();
             if(!TextUtils.isEmpty(music.getAlbum())) {
-                cond = MusicDao.Properties.Album.eq(music.getAlbum());
+                cond = MusicDao.Properties.Album.eq(music.getAlbum().
+                        replaceAll("(.*)[：|:| ](.*)", "$2"));
             }
             orderBy = new Property[] {MusicDao.Properties.Album , MusicDao.Properties.Id};
             resetAdapter();
