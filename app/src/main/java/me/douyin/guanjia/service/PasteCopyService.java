@@ -39,12 +39,11 @@ import java.util.regex.Pattern;
 
 import me.douyin.guanjia.R;
 import me.douyin.guanjia.activity.MusicActivity;
-import me.douyin.guanjia.application.Notifier;
+import me.douyin.guanjia.application.AppCache;
 import me.douyin.guanjia.constants.Extras;
 import me.douyin.guanjia.executor.NaviMenuExecutor;
 import me.douyin.guanjia.fragment.LocalMusicFragment;
 import me.douyin.guanjia.model.Music;
-import me.douyin.guanjia.storage.db.DBManager;
 import me.douyin.guanjia.utils.DownFile;
 import me.douyin.guanjia.utils.ToastUtils;
 
@@ -94,24 +93,23 @@ public class PasteCopyService extends Service {
                 if(null == item || null == item.getText()){
                     return;
                 }
+                boolean isWeiShi = false;
                 if(mPreviousText.equals(item.getText().toString())){ return;}
                 else{
                     mPreviousText = item.getText().toString();
                     String html  = mPreviousText;
                     String mode = "(http[s]?:\\/\\/([\\w-]+\\.)+[\\w-]+([\\w-./?%&*=]*))";
+                    String htmlText = html.replaceAll(mode,"");
                     Pattern p = Pattern.compile(mode);
                     Matcher m = p.matcher(html);
-
-                    boolean isWeiShi = false;
                     if(html.contains("h5.weishi.qq.com/weishi/feed/")){
                         isWeiShi =  true;
                     }
                     if(!checkUrl(html)){
                         return;
                     }
-                    ToastUtils.show("您有新的"+(isWeiShi?"微视":"抖音")+"链接了！");
                     HashSet<String> hashSet = new HashSet<>();
-                    List<Music> musicList = LocalMusicFragment.musicList;
+                    List<Music> musicList = AppCache.get().getLocalMusicList();
                     MusicActivity.moreUrl = false;
                     while(m.find()){
                         String url = m.group();
@@ -121,7 +119,7 @@ public class PasteCopyService extends Service {
                         }
                         boolean addFlag = true;
                         for(Music music:musicList){
-                            if(url.equals(music.getFileName())){
+                            if(url.equals(music.getFileName())|| htmlText.contains(music.getTitle())){
                                 addFlag = false;
                                 break;
                             }
@@ -134,17 +132,15 @@ public class PasteCopyService extends Service {
                     if(hashSet.size()>1){
                         MusicActivity.moreUrl = true;
                     } else if(hashSet.isEmpty()){
-                        Matcher m2 = p.matcher(html);
-                        if(m2.find()){
-                            ToastUtils.show("存在重复链接");
-                            dealWithUrl(m2.group(1));
-                        }
+                        ToastUtils.show("存在重复链接");
+                        return;
                     }
                     hashSetIterator = hashSet.iterator();
                     if(hashSetIterator.hasNext()) {
                         dealWithUrl(hashSetIterator.next());
                     }
                 }
+                ToastUtils.show("您有新的"+(isWeiShi?"微视":"抖音")+"链接了！");
             }
         });
         startForeground( 0x111, buildNotification(this));
