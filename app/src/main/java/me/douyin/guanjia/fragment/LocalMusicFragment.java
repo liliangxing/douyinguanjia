@@ -178,7 +178,10 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
                 super.handleMessage(msg);
                 String data =  msg.getData().getString("moveTop");
                 if(!TextUtils.isEmpty(data)){
-                    moveTop(JSONObject.parseObject(data,Music.class));
+                    Music music = JSONObject.parseObject(data,Music.class);
+                    AppCache.get().getLocalMusicList().remove(music);
+                    moveTop(music);
+                    adapter.notifyDataSetChanged();
                     return;
                 }
                 data =  msg.getData().getString("data");
