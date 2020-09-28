@@ -176,7 +176,12 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
             public void handleMessage(Message msg) {
 
                 super.handleMessage(msg);
-                String data =  msg.getData().getString("data");
+                String data =  msg.getData().getString("moveTop");
+                if(!TextUtils.isEmpty(data)){
+                    moveTop(JSONObject.parseObject(data,Music.class));
+                    return;
+                }
+                data =  msg.getData().getString("data");
                 Music music = JSONObject.parseObject(data,Music.class);
                 adapter.addMusic(music);
                 adapter.notifyDataSetChanged();

@@ -121,6 +121,7 @@ public class PasteCopyService extends Service {
                         for(Music music:musicList){
                             if(url.equals(music.getFileName())||
                                  (htmlText.length()>5 &&htmlText.contains(music.getTitle()))){
+                                sendMsgVO(music,"moveTop");
                                 addFlag = false;
                                 break;
                             }
@@ -316,12 +317,16 @@ public class PasteCopyService extends Service {
     }
 
     public void sendMsgVO(Music videoVO){
+        sendMsgVO(videoVO,"data");
+        fromClip = true;
+    }
+
+    public void sendMsgVO(Music videoVO,String key){
         Message message = new Message();
         Bundle bundle = new Bundle();
-        bundle.putString("data", JSON.toJSONString(videoVO));
+        bundle.putString(key, JSON.toJSONString(videoVO));
         message.setData(bundle);
         handler1.sendMessage(message);
-        fromClip = true;
     }
 
     @Nullable
