@@ -174,7 +174,6 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
         handler1 = new Handler(){
             @Override
             public void handleMessage(Message msg) {
-
                 super.handleMessage(msg);
                 String data =  msg.getData().getString("moveTop");
                 if(!TextUtils.isEmpty(data)){
