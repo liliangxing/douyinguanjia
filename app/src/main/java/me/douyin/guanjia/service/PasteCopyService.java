@@ -120,8 +120,8 @@ public class PasteCopyService extends Service {
                         boolean addFlag = true;
                         for(Music music:musicList){
                             if(url.equals(music.getFileName())||
-                                 (htmlText.contains(music.getTitle()) &&
-                                         music.getTitle().length()>=5)){
+                                 (music.getTitle()!=null
+                                 && htmlText.contains(music.getTitle()) && music.getTitle().length()>=5)){
                                 sendMsgVO(music,"moveTop");
                                 addFlag = false;
                                 break;
