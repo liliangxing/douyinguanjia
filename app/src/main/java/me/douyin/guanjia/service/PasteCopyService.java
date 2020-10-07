@@ -338,9 +338,11 @@ public class PasteCopyService extends Service {
             clipPreTime = clipNowTime;
         }else {
             long delayMillis;
-            if(clipNowTime - clipPreTime < 0){
+            long exceedTime = clipPreTime - clipNowTime;
+            if(exceedTime > 0){
                 //时间点还没到，计算下一个延时
-                delayMillis = (clipPreTime - clipNowTime)*3+runMillis;
+                delayMillis = (exceedTime> runMillis?
+                        runMillis:exceedTime*2)+runMillis;
             }else {
                 delayMillis = runMillis;
             }
