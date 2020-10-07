@@ -73,6 +73,9 @@ public class PasteCopyService extends Service {
 
     private String mPreviousText = "";
     public static Handler handler1;
+    private long clipNowTime;
+    private long clipPreTime;
+    private long runMillis = 8 * 1000;
     public class PlayBinder extends Binder {
         public PasteCopyService getService() {
             return PasteCopyService.this;
@@ -85,9 +88,11 @@ public class PasteCopyService extends Service {
         instance = this;
         Log.i(TAG, "onCreate: " + getClass().getSimpleName());
         clipboardManager =(ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
+        clipPreTime = System.currentTimeMillis();
         clipboardManager.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
             @Override
             public void onPrimaryClipChanged() {
+                clipNowTime = System.currentTimeMillis();
                 ClipData clipData = clipboardManager.getPrimaryClip();
                 ClipData.Item item = clipData.getItemAt(0);
                 if(null == item || null == item.getText()){
@@ -102,7 +107,7 @@ public class PasteCopyService extends Service {
                     String htmlText = html.replaceAll(mode,"");
                     Pattern p = Pattern.compile(mode);
                     Matcher m = p.matcher(html);
-                    if(html.contains("h5.weishi.qq.com/weishi/feed/")){
+                    if(html.contains("h5.weishi.qq.com/weishi/")){
                         isWeiShi =  true;
                     }
                     if(!checkUrl(html)){
@@ -121,7 +126,8 @@ public class PasteCopyService extends Service {
                         for(Music music:musicList){
                             if(url.equals(music.getFileName())||
                                  (music.getTitle()!=null
-                                 && htmlText.contains(music.getTitle()) && music.getTitle().length()>=5)){
+                                 && htmlText.contains(music.getTitle()) && music.getTitle().length()>=5
+                                 && !htmlText.startsWith("@"))){
                                 sendMsgVO(music,"moveTop");
                                 addFlag = false;
                                 break;
@@ -151,7 +157,7 @@ public class PasteCopyService extends Service {
 
     public static boolean checkUrl(String url){
         if(!(url.contains("v.douyin.com")||url.contains("www.iesdouyin.com/share/video")
-                ||url.contains("h5.weishi.qq.com/weishi/feed/"))){
+                ||url.contains("h5.weishi.qq.com/weishi/"))){
             return false;
         }
         return true;
@@ -327,7 +333,21 @@ public class PasteCopyService extends Service {
         Bundle bundle = new Bundle();
         bundle.putString(key, JSON.toJSONString(videoVO));
         message.setData(bundle);
-        handler1.sendMessage(message);
+        if(clipNowTime - clipPreTime > runMillis) {
+            handler1.sendMessage(message);
+            clipPreTime = clipNowTime;
+        }else {
+            long delayMillis;
+            if(clipNowTime - clipPreTime < 0){
+                //时间点还没到，计算下一个延时
+                delayMillis = (clipPreTime - clipNowTime)*3+runMillis;
+            }else {
+                delayMillis = runMillis;
+            }
+            handler1.sendMessageDelayed(message,delayMillis);
+            clipPreTime = clipNowTime + delayMillis;
+        }
+
     }
 
     @Nullable

@@ -125,7 +125,8 @@ public class SearchMusicActivity extends BaseActivity implements SearchView.OnQu
                 List<Music> queryList = jbxxDao.queryBuilder().where(
                         jbxxDao.queryBuilder().or(
                         MusicDao.Properties.Album.like("%"+ keyword + "%"),
-                        MusicDao.Properties.Title.like("%"+ keyword + "%")
+                        MusicDao.Properties.Title.like("%"+ keyword + "%"),
+                        MusicDao.Properties.FileName.like("%"+ keyword + "%")
                         )
                 ).orderDesc(MusicDao.Properties.Id).limit(MUSIC_LIST_SIZE).build().list();
 
