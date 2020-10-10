@@ -124,13 +124,12 @@ public class PasteCopyService extends Service {
                         }
                         boolean addFlag = true;
                         for(Music music:musicList){
+                            boolean startSpc = music.getTitle().startsWith("@")||
+                                    music.getTitle().startsWith("#");
                             if(url.equals(music.getFileName())||
                                  (music.getTitle()!=null
                                  && htmlText.contains(music.getTitle()) && music.getTitle().length()>=5
-                                 &&!(htmlText.startsWith("@")||
-                                         htmlText.startsWith("#")||
-                                         music.getTitle().startsWith("@")||
-                                         music.getTitle().startsWith("#")))){
+                                 &&(!startSpc||startSpc && music.getTitle().length()> 9))){
                                 sendMsgVO(music,"moveTop");
                                 addFlag = false;
                                 break;
