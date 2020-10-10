@@ -75,7 +75,7 @@ public class PasteCopyService extends Service {
     public static Handler handler1;
     private long clipNowTime;
     private long clipPreTime;
-    private long runMillis = 8 * 1000;
+    private final static long runMillis = 8 * 1000;
     public class PlayBinder extends Binder {
         public PasteCopyService getService() {
             return PasteCopyService.this;
