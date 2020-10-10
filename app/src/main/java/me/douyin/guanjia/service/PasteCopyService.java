@@ -124,7 +124,7 @@ public class PasteCopyService extends Service {
                         }
                         boolean addFlag = true;
                         for(Music music:musicList){
-                            boolean startSpc = music.getTitle().startsWith("@")||
+                            boolean startSpc = music.getTitle()==null||music.getTitle().startsWith("@")||
                                     music.getTitle().startsWith("#");
                             if(url.equals(music.getFileName())||
                                  (music.getTitle()!=null
