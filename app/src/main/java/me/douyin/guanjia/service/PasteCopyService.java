@@ -127,7 +127,10 @@ public class PasteCopyService extends Service {
                             if(url.equals(music.getFileName())||
                                  (music.getTitle()!=null
                                  && htmlText.contains(music.getTitle()) && music.getTitle().length()>=5
-                                 && !htmlText.startsWith("@"))){
+                                 &&!(htmlText.startsWith("@")||
+                                         htmlText.startsWith("#")||
+                                         music.getTitle().startsWith("@")||
+                                         music.getTitle().startsWith("#")))){
                                 sendMsgVO(music,"moveTop");
                                 addFlag = false;
                                 break;
