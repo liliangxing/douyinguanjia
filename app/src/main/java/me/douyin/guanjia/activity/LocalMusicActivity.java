@@ -461,12 +461,23 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
                         mWebView.loadUrl(url);
                     }
                     break;
-                case 2:// 查看歌曲信息
+                case 2:// 置顶
+                    AppCache.get().getLocalMusicList().remove(music);
+                    if(null != music.getId()) {
+                        DBManager.get().getMusicDao().delete(music);
+                    }
+                    music.setId(null);
+                    DBManager.get().getMusicDao().save(music);
+                    adapter.addMusic(music);
+                    adapter.notifyDataSetChanged();
+                    ToastUtils.show("操作成功");
+                    break;
+                case 3:// 查看歌曲信息
                     WebviewFragment.currentMusic = music;
                     MusicInfoActivity.start(this, music);
                     break;
 
-                case 3:// 用浏览器打开
+                case 4:// 用浏览器打开
                     if (null != music.getCoverPath()) {
                         openWithBrowser(music);
                     } else {
@@ -479,7 +490,7 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
                     }
                     //requestSetRingtone(music);
                     break;
-                case 4:// 下载到手机
+                case 5:// 下载到手机
                     if (music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())) {
                         ToastUtils.show("已下载");
                     } else {
@@ -490,7 +501,7 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
                         }
                     }
                     break;
-                case 5:// 删除
+                case 6:// 删除
                     if (0 == music.getSongId()){
                         deleteMusic(music);
                     }else {

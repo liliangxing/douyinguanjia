@@ -212,24 +212,8 @@ public class WebviewFragment extends BaseFragment {
                 if(!elements1.isEmpty()){
                     currentMusic.setTitle(elements1.get(0).text());
                 }
-                Message message = new Message();
-                Bundle bundle = new Bundle();
                 Matcher m =Pattern.compile("background:url\\(([\\S-]+)\\)").matcher(html2);
-                if(m.find()){
-                    String coverUrl = m.group(1);
-                    if(coverUrl.startsWith("//")){
-                        coverUrl = coverUrl.replace("//","https://");
-                    }
-                    bundle.putString("coverPath", coverUrl);
-                }
-                if(!elements2.isEmpty()){
-                    String url = elements2.get(0).attr("src");
-                    currentMusic.setArtist(url);
-                    bundle.putString("data", url);
-                    message.setData(bundle);
-                    //LocalMusicFragment.adapter.notifyDataSetChanged();
-                    handler1.sendMessage(message);
-                }
+                doBundle(m,elements2);
                 return;
             }
             if(html2.contains("aweme.snssdk.com")){
@@ -306,6 +290,22 @@ public class WebviewFragment extends BaseFragment {
                         }
                         return;
             }
+            if(html2.contains("<video")){
+                Elements elements1 =Jsoup.parse(html2).select(".caption-container");
+                Elements elements2 =Jsoup.parse(html2).select("video[src]");
+                Elements elements3 =Jsoup.parse(html2).select(".video-cover");
+                if(!elements1.isEmpty()){
+                    currentMusic.setTitle(elements1.get(0).text());
+                }
+
+                Matcher m =Pattern.compile("background:url\\(([\\S-]+)\\)").matcher(html2);
+                if(!elements3.isEmpty()) {
+                    String url = elements3.get(0).attr("style");
+                    m =Pattern.compile("background-image:url\\(([\\S-]+)\\)").matcher(url);
+                }
+                doBundle(m,elements2);
+                return;
+            }
             if(!html.contains("aweme_list")){
                 return;
             }
@@ -327,6 +327,26 @@ public class WebviewFragment extends BaseFragment {
                     break;
                 }
             }
+        }
+    }
+
+    private void doBundle( Matcher m, Elements elements2 ){
+        Message message = new Message();
+        Bundle bundle = new Bundle();
+        if(m.find()){
+            String coverUrl = m.group(1);
+            if(coverUrl.startsWith("//")){
+                coverUrl = coverUrl.replace("//","https://");
+            }
+            bundle.putString("coverPath", coverUrl);
+        }
+        if(!elements2.isEmpty()){
+            String url = elements2.get(0).attr("src");
+            currentMusic.setArtist(url);
+            bundle.putString("data", url);
+            message.setData(bundle);
+            //LocalMusicFragment.adapter.notifyDataSetChanged();
+            handler1.sendMessage(message);
         }
     }
     private final class JSInterface{
