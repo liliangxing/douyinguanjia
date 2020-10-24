@@ -159,7 +159,8 @@ public class PasteCopyService extends Service {
 
     public static boolean checkUrl(String url){
         if(!(url.contains("v.douyin.com")||url.contains("www.iesdouyin.com/share/video")
-                ||url.contains("h5.weishi.qq.com/weishi/") || url.contains("v.kuaishouapp.com"))){
+                ||url.contains("h5.weishi.qq.com/weishi/") || url.contains("v.kuaishouapp.com")
+                || url.contains("yxixy.com/fw/photo/"))){
             return false;
         }
         return true;
