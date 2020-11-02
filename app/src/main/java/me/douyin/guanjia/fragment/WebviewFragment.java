@@ -283,7 +283,7 @@ public class WebviewFragment extends BaseFragment {
                     }
                 }
               return;
-            }else if(html2.contains("抖音短视频")){
+            }else if(html2.contains("抖音")){
                         if(PasteCopyService.hashSetIterator.hasNext()){
                             String url = PasteCopyService.hashSetIterator.next();
                             MusicActivity.instance.playService2.dealWithUrl(url);
