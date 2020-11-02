@@ -107,6 +107,9 @@ public class PasteCopyService extends Service {
                     String htmlText = html.replaceAll(mode,"");
                     Pattern p = Pattern.compile(mode);
                     Matcher m = p.matcher(html);
+                    Matcher m2 = p.matcher(html);
+                    int urlCount= 0;
+                    while(m2.find()){ ++urlCount;}
                     if(html.contains("h5.weishi.qq.com/weishi/")){
                         isWeiShi =  true;
                     }
@@ -131,7 +134,7 @@ public class PasteCopyService extends Service {
                                  (music.getTitle()!=null
                                  && htmlText.contains(music.getTitle()) && music.getTitle().length()>=5
                                  &&(!startSpc||startSpc && music.getTitle().length()> 9)))
-                                    && m.groupCount()<=1
+                                    && urlCount<=1
                              ){
                                 sendMsgVO(music,"moveTop");
                                 addFlag = false;
