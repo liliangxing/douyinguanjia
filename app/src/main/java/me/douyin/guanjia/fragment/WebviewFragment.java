@@ -24,11 +24,13 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.FileCallBack;
 
 import org.jsoup.Jsoup;
+import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -258,17 +260,21 @@ public class WebviewFragment extends BaseFragment {
                 }
                 //uid获取
                 Elements elements5 =Jsoup.parse(html2).select("p");
+                Elements elementsAuthor = elements5;
                 for(Element element:elements5){
-                    if(element.attr("class").contains("unique")){
+                    if(element.attr("class").contains("author")){
+                        elementsAuthor = new Elements(element);
+                    }else if(element.attr("class").contains("unique")){
                         elements5 = new Elements(element);
-                        break;
+                        if(elementsAuthor!= elements5) {
+                            break;
+                        }
                     }
                 }
-                if(!elements5.isEmpty()){
-                    String url = elements5.get(0).text();
-                    if(url != null){
-                        currentMusic.setAlbum(url.trim());
-                    }
+                if(!elements5.isEmpty() && !elementsAuthor.isEmpty()){
+                    String url = elements5.get(0).text().replaceAll("(.*)：","");
+                    String author = elementsAuthor.get(0).text().replaceAll("(.*)@","");
+                    currentMusic.setAlbum(StringUtil.join(Arrays.asList(url.trim(),author)," "));
                 }
                 if(!elements2.isEmpty()){
                     String url = elements2.get(0).attr("src");

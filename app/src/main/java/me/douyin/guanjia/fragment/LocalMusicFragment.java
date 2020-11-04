@@ -398,6 +398,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     private static synchronized void moveTop(Music musicOther){
+        AppCache.get().getLocalMusicList().remove(musicOther);
         if (null != musicOther.getId()) {
             DBManager.get().getMusicDao().delete(musicOther);
         }
