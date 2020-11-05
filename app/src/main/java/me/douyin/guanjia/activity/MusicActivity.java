@@ -92,6 +92,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //阻止gc回收
         TextView label = new TextView(this);
         label.setText("Leaks are bad");
         if (sBackground == null) {
@@ -199,7 +200,8 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         navigationView.addHeaderView(vNavigationHeader);
 
         // setup view pager
-        mLocalMusicFragment = new LocalMusicFragment();
+        //阻止gc回收
+        mLocalMusicFragment = new LocalMusicFragment(this);
         mSheetListFragment = new WebviewFragment();
         FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager());
         adapter.addFragment(mLocalMusicFragment);

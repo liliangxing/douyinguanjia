@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.ClipData;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -52,6 +53,8 @@ import java.io.File;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import me.douyin.guanjia.activity.MainActivity;
 import me.douyin.guanjia.activity.MusicActivity;
@@ -110,7 +113,11 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
 
     private static int position;
     private static int offset;
+    private Context context;
 
+    public LocalMusicFragment(Context context){
+        this.context = context;
+    }
 
     @Nullable
     @Override
@@ -133,8 +140,14 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     public static WhereCondition getAlbumCondition(Music music){
-       return MusicDao.Properties.Album.like("%"+ music.getAlbum().
-                replaceAll("(.*)[：|:| ](.*)", "$2") + "%");
+        String keyword =  null;
+        String check = "([_.0-9a-zA-Z-]+)";
+        Pattern regex = Pattern.compile(check);
+        Matcher matcher = regex.matcher(music.getAlbum());
+        if(matcher.find()) {
+            keyword = matcher.group(1);
+        }
+       return MusicDao.Properties.Album.like("%"+ keyword + "%");
     }
     public static void refreshOrder(Music music){
         if(!fileNameOrder) {
@@ -144,7 +157,6 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
             if(!TextUtils.isEmpty(music.getAlbum())) {
                 cond = getAlbumCondition(music);
             }
-            orderBy = new Property[] {MusicDao.Properties.Album , MusicDao.Properties.Id};
             resetAdapter();
         }else {
             refreshAll();
