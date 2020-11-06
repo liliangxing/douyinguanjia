@@ -68,7 +68,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     @Bind(R.id.fl_play_bar)
     private FrameLayout flPlayBar;
     private View vNavigationHeader;
-    private LocalMusicFragment mLocalMusicFragment;
+    private static LocalMusicFragment mLocalMusicFragment;
     private WebviewFragment mSheetListFragment;
     private PlayFragment mPlayFragment;
     private ControlPanel controlPanel;
@@ -87,18 +87,10 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     public static boolean moreUrl ;
     public static final String PREFERENCES_FILE = "share_data1";
     public static int position;
-    private static Drawable sBackground;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //阻止gc回收
-        TextView label = new TextView(this);
-        label.setText("Leaks are bad");
-        if (sBackground == null) {
-            sBackground = getResources().getDrawable(R.drawable.play_page_cover_top_line_shape);
-        }
-        label.setBackgroundDrawable(sBackground);
         setContentView(R.layout.activity_music);
         instance = this;
         //设置全局上下文
