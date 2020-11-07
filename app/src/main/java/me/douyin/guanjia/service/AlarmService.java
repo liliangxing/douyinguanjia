@@ -19,7 +19,7 @@ public class AlarmService extends Service {
     /**
      * 每1分钟更新一次数据
      */
-    private static final int ONE_Miniute=60*1000;
+    private static final int ONE_Miniute=10*1000;
     private static final int PENDING_REQUEST=0;
 
     public AlarmService() {

@@ -105,6 +105,11 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
     /**
      * 当横竖屏切换时会调用该方法
      * @author
