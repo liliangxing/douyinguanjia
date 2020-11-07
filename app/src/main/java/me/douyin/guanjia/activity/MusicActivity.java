@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import me.douyin.guanjia.adapter.FragmentAdapter;
+import me.douyin.guanjia.service.AlarmService;
 import me.douyin.guanjia.service.AudioPlayer;
 import me.douyin.guanjia.service.QuitTimer;
 import me.douyin.guanjia.utils.PermissionReq;
@@ -68,7 +69,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     @Bind(R.id.fl_play_bar)
     private FrameLayout flPlayBar;
     private View vNavigationHeader;
-    private static LocalMusicFragment mLocalMusicFragment;
+    private LocalMusicFragment mLocalMusicFragment;
     private WebviewFragment mSheetListFragment;
     private PlayFragment mPlayFragment;
     private ControlPanel controlPanel;
@@ -104,6 +105,8 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         if(!autoDownload){
             iv_settings.setBackgroundColor(Color.LTGRAY);
         }
+        Intent intent = new Intent(this, AlarmService.class);
+        startService(intent);
     }
 
     /**
@@ -193,7 +196,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
 
         // setup view pager
         //阻止gc回收
-        mLocalMusicFragment = new LocalMusicFragment(this);
+        mLocalMusicFragment = new LocalMusicFragment();
         mSheetListFragment = new WebviewFragment();
         FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager());
         adapter.addFragment(mLocalMusicFragment);

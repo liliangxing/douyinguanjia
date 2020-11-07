@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.ClipData;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -113,11 +112,6 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
 
     private static int position;
     private static int offset;
-    private Context context;
-
-    public LocalMusicFragment(Context context){
-        this.context = context;
-    }
 
     @Nullable
     @Override

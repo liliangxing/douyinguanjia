@@ -7,7 +7,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,9 +14,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.text.TextUtils;
 import android.util.Log;
-import android.widget.BaseAdapter;
 
 import com.alibaba.fastjson.JSON;
 import com.lidroid.xutils.HttpUtils;
@@ -160,7 +157,7 @@ public class PasteCopyService extends Service {
                 ToastUtils.show("您有新的"+(isWeiShi?"微视":"抖音")+"链接了！");
             }
         });
-        startForeground( 0x111, buildNotification(this));
+        //startForeground( 0x111, buildNotification(this));
     }
 
     public static boolean checkUrl(String url){

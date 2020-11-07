@@ -36,8 +36,6 @@ import me.douyin.guanjia.fragment.LocalMusicFragment;
 import me.douyin.guanjia.fragment.WebviewFragment;
 import me.douyin.guanjia.model.Music;
 import me.douyin.guanjia.service.PasteCopyService;
-import me.douyin.guanjia.storage.db.DBManager;
-import me.douyin.guanjia.storage.db.greendao.MusicDao;
 import okhttp3.Response;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
