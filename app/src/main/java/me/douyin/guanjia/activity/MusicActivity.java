@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -29,7 +28,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import me.douyin.guanjia.adapter.FragmentAdapter;
-import me.douyin.guanjia.service.AlarmService;
 import me.douyin.guanjia.service.AudioPlayer;
 import me.douyin.guanjia.service.QuitTimer;
 import me.douyin.guanjia.utils.PermissionReq;
@@ -105,8 +103,6 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         if(!autoDownload){
             iv_settings.setBackgroundColor(Color.LTGRAY);
         }
-        Intent intent = new Intent(this, AlarmService.class);
-        startService(intent);
     }
 
     /**
