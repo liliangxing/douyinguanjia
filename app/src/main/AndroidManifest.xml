@@ -65,7 +65,6 @@
             android:name="me.douyin.guanjia.activity.MusicActivity"
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden"
-            android:launchMode="singleInstance"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
