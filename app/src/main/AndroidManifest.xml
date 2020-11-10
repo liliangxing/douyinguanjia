@@ -40,12 +40,6 @@
         <service android:name="me.douyin.guanjia.service.PlayService" />
         <service android:name="me.douyin.guanjia.service.PasteCopyService" />
 
-        <service
-            android:name=".service.AlarmService"
-            android:enabled="true"
-            android:exported="true"/>
-        <receiver android:name=".receiver.AlarmReceive"/>
-
         <receiver android:name="me.douyin.guanjia.receiver.DownloadReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
