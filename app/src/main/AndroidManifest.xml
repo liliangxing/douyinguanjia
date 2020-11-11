@@ -39,11 +39,10 @@
 
         <service android:name="me.douyin.guanjia.service.PlayService" />
 
-        <service
-            android:name=".service.PasteCopyService"
-            android:enabled="true"
-            android:exported="true"/>
-        <receiver android:name=".receiver.AlarmReceive"/>
+        <service android:name=".service.PasteCopyService"/>
+
+        <service android:name=".service.PushService" android:process=":push"/>
+        <receiver android:name=".receiver.AlarmReceive" android:process=":push"/>
 
         <receiver android:name="me.douyin.guanjia.receiver.DownloadReceiver">
             <intent-filter>
@@ -65,6 +64,7 @@
             android:name="me.douyin.guanjia.activity.MusicActivity"
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

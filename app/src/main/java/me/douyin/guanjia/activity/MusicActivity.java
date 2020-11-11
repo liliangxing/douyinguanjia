@@ -29,6 +29,7 @@ import android.widget.TextView;
 
 import me.douyin.guanjia.adapter.FragmentAdapter;
 import me.douyin.guanjia.service.AudioPlayer;
+import me.douyin.guanjia.service.PushService;
 import me.douyin.guanjia.service.QuitTimer;
 import me.douyin.guanjia.utils.PermissionReq;
 import me.douyin.guanjia.utils.SystemUtils;
@@ -103,6 +104,8 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         if(!autoDownload){
             iv_settings.setBackgroundColor(Color.LTGRAY);
         }
+        Intent intent = new Intent(this, PushService.class);
+        startService(intent);
     }
 
     @Override

@@ -1,6 +1,4 @@
 package me.douyin.guanjia.service;
-
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -13,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -43,8 +40,6 @@ import me.douyin.guanjia.constants.Extras;
 import me.douyin.guanjia.executor.NaviMenuExecutor;
 import me.douyin.guanjia.fragment.LocalMusicFragment;
 import me.douyin.guanjia.model.Music;
-import me.douyin.guanjia.receiver.AlarmReceive;
-import me.douyin.guanjia.storage.db.SQLiteDatabase;
 import me.douyin.guanjia.utils.DownFile;
 import me.douyin.guanjia.utils.ToastUtils;
 
@@ -86,8 +81,6 @@ public class PasteCopyService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        ar(getApplicationContext());
-        aq(getApplicationContext());
         instance = this;
         Log.i(TAG, "onCreate: " + getClass().getSimpleName());
         clipboardManager =(ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
@@ -374,29 +367,5 @@ public class PasteCopyService extends Service {
         Intent intent = new Intent(context, PasteCopyService.class);
         context.startService(intent);
         handler1 = handler;
-    }
-
-    private static final int ONE_Miniute=30*1000;
-    public static void aq(Context context) {
-        //通过AlarmManager定时启动广播
-        AlarmManager alarmManager= (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        if (alarmManager == null) {
-            return;
-        }
-        Intent i=new Intent(context, AlarmReceive.class);
-        PendingIntent pIntent= PendingIntent.getBroadcast(context,0,i,SQLiteDatabase.CREATE_IF_NECESSARY);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + ((long) ONE_Miniute), (long) ONE_Miniute, pIntent);
-    }
-
-    public static void ar(Context context) {
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        if (alarmManager == null) {
-            return;
-        }
-        PendingIntent broadcast = PendingIntent.getBroadcast(context, 0, new Intent(context, AlarmReceive.class), SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING);
-        if (broadcast != null) {
-            alarmManager.cancel(broadcast);
-            broadcast.cancel();
-        }
     }
 }

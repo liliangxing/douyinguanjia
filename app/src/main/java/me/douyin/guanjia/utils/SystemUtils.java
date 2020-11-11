@@ -5,6 +5,9 @@ import android.app.Service;
 import android.content.Context;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.util.Log;
+
+import com.hwangjr.rxbus.annotation.Tag;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -14,7 +17,7 @@ import java.util.Locale;
  * Created by hzwangchenyan on 2016/3/22.
  */
 public class SystemUtils {
-
+    private static final String TAG = "SystemUtils";
     /**
      * 判断是否有Activity在运行
      */
@@ -60,5 +63,24 @@ public class SystemUtils {
         String mm = String.format(Locale.getDefault(), "%02d", m);
         String ss = String.format(Locale.getDefault(), "%02d", s);
         return pattern.replace("mm", mm).replace("ss", ss);
+    }
+
+    public static boolean isAppALive(Context context ,String str) {
+        ActivityManager am = (ActivityManager) context
+                .getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> list = am.getRunningTasks(100);
+        boolean isAppRunning = false;
+        //String MY_PKG_NAME = "你的包名";
+        for (ActivityManager.RunningTaskInfo info : list) {
+            if (info.topActivity.getPackageName().equals(str)//如果想要手动输入的话可以str换成<span style="font-family: Arial, Helvetica, sans-serif;">MY_PKG_NAME，下面相同</span>
+                    || info.baseActivity.getPackageName().equals(str)) {
+                isAppRunning = true;
+                Log.i(TAG, info.topActivity.getPackageName()
+                        + " info.baseActivity.getPackageName()="
+                        + info.baseActivity.getPackageName());
+                break;
+            }
+        }
+        return isAppRunning;
     }
 }
