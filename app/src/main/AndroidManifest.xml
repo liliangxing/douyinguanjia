@@ -44,7 +44,9 @@
             android:exported="true"/>
 
         <service android:name=".service.PushService"   android:enabled="true"
-            android:exported="true" android:process=":RemoteProcess"/>
+            android:exported="false" android:process=":push"/>
+        <service android:name=".service.PushService$DaemonInnerService"   android:enabled="true"
+            android:exported="false" android:process=":push"/>
         <receiver android:name=".receiver.AlarmReceive" android:process=":push"/>
 
         <service
