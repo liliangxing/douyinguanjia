@@ -45,6 +45,11 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     useLibrary 'org.apache.http.legacy'
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['src/main/libs']//默认为jniLibs
+        }
+    }
 }
 
 def getLocalValue(String key) {
@@ -73,6 +78,7 @@ dependencies {
     implementation "com.android.support:design:$SUPPORT_VERSION"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.zhy:okhttputils:2.6.2'
+    implementation 'com.squareup.okhttp3:okhttp:3.3.1'
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.github.bumptech.glide:glide:3.8.0'
     implementation 'me.wcy:lrcview:2.0.1'

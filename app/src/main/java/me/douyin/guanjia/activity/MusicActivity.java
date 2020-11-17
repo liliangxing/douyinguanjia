@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import me.douyin.guanjia.adapter.FragmentAdapter;
+import me.douyin.guanjia.application.MusicApplication;
 import me.douyin.guanjia.service.AudioPlayer;
 import me.douyin.guanjia.service.PushService;
 import me.douyin.guanjia.service.QuitTimer;
@@ -106,6 +107,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         }
         Intent intent = new Intent(this, PushService.class);
         startService(intent);
+        MusicApplication.setMainActivity(MusicActivity.this);
     }
 
     @Override
