@@ -135,7 +135,7 @@ public class LocalMusicFragment extends BaseFragment implements AdapterView.OnIt
 
     public static WhereCondition getAlbumCondition(Music music){
         String keyword = music.getAlbum();
-        String check = "([_.0-9a-zA-Z-]+)";
+        String check = "([_.0-9a-zA-Z-]{3,})";
         Pattern regex = Pattern.compile(check);
         Matcher matcher = regex.matcher(music.getAlbum());
         if(matcher.find()) {
