@@ -50,6 +50,11 @@ android {
             jniLibs.srcDirs = ['src/main/libs']//默认为jniLibs
         }
     }
+    externalNativeBuild{
+        cmake{
+            path 'CMakeLists.txt'
+        }
+    }
 }
 
 def getLocalValue(String key) {

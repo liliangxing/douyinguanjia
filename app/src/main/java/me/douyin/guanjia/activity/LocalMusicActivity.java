@@ -102,7 +102,7 @@ public class LocalMusicActivity extends BaseActivity implements AdapterView.OnIt
     private int mOffset = 0;
     private static int uploadNum = 1;
     private static  WhereCondition cond = null;
-    private static Property[] orderBy =new Property[] {MusicDao.Properties.Id};
+    private static Property[] orderBy =new Property[] {MusicDao.Properties.Album , MusicDao.Properties.Id};
 
     private static int position;
     private static int offset;

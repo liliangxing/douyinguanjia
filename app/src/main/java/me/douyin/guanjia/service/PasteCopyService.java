@@ -94,7 +94,6 @@ public class PasteCopyService extends Service {
                 if(null == item || null == item.getText()){
                     return;
                 }
-                boolean isWeiShi = false;
                 if(mPreviousText.equals(item.getText().toString())){ return;}
                 else{
                     mPreviousText = item.getText().toString();
@@ -106,9 +105,6 @@ public class PasteCopyService extends Service {
                     Matcher m2 = p.matcher(html);
                     int urlCount= 0;
                     while(m2.find()){ ++urlCount;}
-                    if(html.contains("h5.weishi.qq.com/weishi/")){
-                        isWeiShi =  true;
-                    }
                     if(!checkUrl(html)){
                         return;
                     }
@@ -152,13 +148,22 @@ public class PasteCopyService extends Service {
                     if(hashSetIterator.hasNext()) {
                         dealWithUrl(hashSetIterator.next());
                     }
+                    ToastUtils.show("您有新的"+getSiteName(html)+"链接了！");
                 }
-                ToastUtils.show("您有新的"+(isWeiShi?"微视":"抖音")+"链接了！");
             }
         });
         startForeground( 0x111, buildNotification(this));
     }
 
+    private static String getSiteName(String html){
+        String siteName = "抖音";
+        if(html.contains("weishi.qq.com")){
+            siteName =  "微视";
+        }else if(html.contains("v.kuaishouapp.com")){
+            siteName =  "快手";
+        }
+        return siteName;
+    }
     public static boolean checkUrl(String url){
         if(!(url.contains("v.douyin.com")||url.contains("www.iesdouyin.com/share/video")
                 ||url.contains("h5.weishi.qq.com/weishi/") || url.contains("v.kuaishouapp.com")

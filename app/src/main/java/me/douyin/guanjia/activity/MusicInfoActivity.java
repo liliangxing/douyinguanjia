@@ -27,6 +27,7 @@ import me.douyin.guanjia.utils.ImageUtils;
 import me.douyin.guanjia.utils.PermissionReq;
 import me.douyin.guanjia.utils.SystemUtils;
 import me.douyin.guanjia.utils.ToastUtils;
+import me.douyin.guanjia.utils.Utils;
 import me.douyin.guanjia.utils.binding.Bind;
 import me.douyin.guanjia.utils.id3.ID3TagUtils;
 import me.douyin.guanjia.utils.id3.ID3Tags;
@@ -43,6 +44,8 @@ public class MusicInfoActivity extends BaseActivity implements View.OnClickListe
     private EditText etArtist;
     @Bind(R.id.et_music_info_album)
     private EditText etAlbum;
+    @Bind(R.id.et_music_info_cover)
+    private EditText etCover;
     @Bind(R.id.tv_music_info_duration)
     private TextView tvDuration;
     @Bind(R.id.tv_music_info_file_name)
@@ -76,13 +79,12 @@ public class MusicInfoActivity extends BaseActivity implements View.OnClickListe
             finish();
         }
         //mMusicFile = new File(mMusic.getPath());
-        mCoverBitmap = CoverLoader.get().loadThumb(mMusic);
 
         initView();
     }
 
     private void initView() {
-        ivCover.setImageBitmap(mCoverBitmap);
+        Utils.getBitmapUtils().display(ivCover,mMusic.getCoverPath());
         ivCover.setOnClickListener(this);
 
         etTitle.setText(mMusic.getTitle());
@@ -93,6 +95,9 @@ public class MusicInfoActivity extends BaseActivity implements View.OnClickListe
 
         etAlbum.setText(mMusic.getAlbum());
         etAlbum.setSelection(etAlbum.length());
+
+        etCover.setText(mMusic.getCoverPath());
+        etCover.setSelection(etCover.length());
 
         tvDuration.setText(SystemUtils.formatTime("mm:ss", mMusic.getDuration()));
 
@@ -179,6 +184,7 @@ public class MusicInfoActivity extends BaseActivity implements View.OnClickListe
         mMusic.setTitle(etTitle.getText().toString());
         mMusic.setArtist(etArtist.getText().toString());
         mMusic.setAlbum(etAlbum.getText().toString());
+        mMusic.setCoverPath(etCover.getText().toString());
         mMusic.setFileName(tvFileName.getText().toString());
         mMusic.setPath(tvFilePath.getText().toString());
         DBManager.get().getMusicDao().save(mMusic);

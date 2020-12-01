@@ -85,7 +85,7 @@ public class PlaylistAdapter extends BaseAdapter {
         holder.tvArtist.setText(music.getPath());
         if(!TextUtils.isEmpty(music.getAlbum())){
             holder.tvArtist.setText(music.getAlbum()+" "+
-                    music.getPath());
+                    music.getPath().replaceAll("http[|s]:\\/\\/",""));
         }
         if(music.getPath().startsWith(Environment.getExternalStorageDirectory().toString())){
             holder.tvTitle.setTextColor(0xFF666666);
