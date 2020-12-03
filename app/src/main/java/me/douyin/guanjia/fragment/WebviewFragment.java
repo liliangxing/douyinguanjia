@@ -223,6 +223,18 @@ public class WebviewFragment extends BaseFragment {
                     Matcher m =Pattern.compile("spid=([\\S-][^&]+)").matcher(html2);
                     if(m.find()){
                         url = m.group(1);
+                    }else {
+                        Elements elements5 =Jsoup.parse(html2).select(".figure-img");
+                        if(!elements5.isEmpty()){
+                            elements5 = elements5.get(0).children();
+                            if(!elements5.isEmpty()) {
+                                url = elements5.get(0).attr("src");
+                            }
+                            m =Pattern.compile("\\/([\\S-][^\\/]+)\\.jpg").matcher(url);
+                            if(m.find()){
+                                url = m.group(1);
+                            }
+                        }
                     }
                     String author = elementsAuthor.get(0).text();
                     currentMusic.setAlbum(StringUtil.join(Arrays.asList(url.trim(),author)," "));
