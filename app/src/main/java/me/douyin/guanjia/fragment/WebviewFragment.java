@@ -213,25 +213,21 @@ public class WebviewFragment extends BaseFragment {
                 ||html2.contains("h5.weishi.qq.com")){
                 Elements elements1 =Jsoup.parse(html2).select(".desc");
                 final Elements elements2 =Jsoup.parse(html2).select("video[src],video");
-                Elements elements5 =Jsoup.parse(html2).select(".figure-img");
+                //Elements elements5 =Jsoup.parse(html2).select(".figure-img");
                 Elements elementsAuthor =Jsoup.parse(html2).select(".user-name");
                 if(!elements1.isEmpty()){
                     currentMusic.setTitle(elements1.get(0).text());
                 }
-                if(!elements5.isEmpty() && !elementsAuthor.isEmpty()){
-                    elements5 = elements5.get(0).children();
+                if(!elementsAuthor.isEmpty()){
                     String url="";
-                    if(!elements5.isEmpty()) {
-                        url = elements5.get(0).attr("src");
-                    }
-                    Matcher m =Pattern.compile("\\/([\\S-][^\\/]+)\\.jpg").matcher(url);
+                    Matcher m =Pattern.compile("spid=([\\S-][^&]+)").matcher(html2);
                     if(m.find()){
                         url = m.group(1);
                     }
                     String author = elementsAuthor.get(0).text();
                     currentMusic.setAlbum(StringUtil.join(Arrays.asList(url.trim(),author)," "));
                 }
-                //部分封面图和视频地址拿不到？已跳转到tit le为腾讯微视，weishi://feed?feed_id=76sQaLbUp1KHtLMSf
+                //部分封面图和视频地址拿不到？已跳转到title为腾讯微视，weishi://feed?feed_id=76sQaLbUp1KHtLMSf
                 //url含有collectionid=导致的
                 if(elements2.isEmpty()) {
                     CrashHandler.getInstance().saveCrashInfo(html2);
