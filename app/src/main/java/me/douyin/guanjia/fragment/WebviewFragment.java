@@ -208,12 +208,29 @@ public class WebviewFragment extends BaseFragment {
                 handler1.sendMessage(message);
             }
             if(html2.contains("v.weishi.qq.com")
-                ||html2.contains("q.weishi.qq.com")){
+                ||html2.contains("q.weishi.qq.com")
+                ||html2.contains("h5.weishi.qq.com")){
                 Elements elements1 =Jsoup.parse(html2).select(".desc");
-                Elements elements2 =Jsoup.parse(html2).select("video[src]");
+                final Elements elements2 =Jsoup.parse(html2).select("video[src],video");
+                Elements elements5 =Jsoup.parse(html2).select(".figure-img");
+                Elements elementsAuthor =Jsoup.parse(html2).select(".user-name");
                 if(!elements1.isEmpty()){
                     currentMusic.setTitle(elements1.get(0).text());
                 }
+                if(!elements5.isEmpty() && !elementsAuthor.isEmpty()){
+                    elements5 = elements5.get(0).children();
+                    String url="";
+                    if(!elements5.isEmpty()) {
+                        url = elements5.get(0).attr("src");
+                    }
+                    Matcher m =Pattern.compile("\\/([\\S-][^\\/]+)\\.jpg").matcher(url);
+                    if(m.find()){
+                        url = m.group(1);
+                    }
+                    String author = elementsAuthor.get(0).text();
+                    currentMusic.setAlbum(StringUtil.join(Arrays.asList(url.trim(),author)," "));
+                }
+                //部分封面图和视频地址拿不到？
                 Matcher m =Pattern.compile("background:url\\(([\\S-]+)\\)").matcher(html2);
                 doBundle(m,elements2);
                 return;
