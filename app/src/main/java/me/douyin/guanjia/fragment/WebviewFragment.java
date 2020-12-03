@@ -41,6 +41,7 @@ import me.douyin.guanjia.activity.MainActivity;
 import me.douyin.guanjia.activity.MusicActivity;
 import me.douyin.guanjia.adapter.PlaylistAdapter;
 import me.douyin.guanjia.application.AppCache;
+import me.douyin.guanjia.application.CrashHandler;
 import me.douyin.guanjia.constants.Keys;
 import me.douyin.guanjia.http.HttpUtils;
 import me.douyin.guanjia.model.AwemeVO;
@@ -230,7 +231,11 @@ public class WebviewFragment extends BaseFragment {
                     String author = elementsAuthor.get(0).text();
                     currentMusic.setAlbum(StringUtil.join(Arrays.asList(url.trim(),author)," "));
                 }
-                //部分封面图和视频地址拿不到？
+                //部分封面图和视频地址拿不到？已跳转到tit le为腾讯微视，weishi://feed?feed_id=76sQaLbUp1KHtLMSf
+                //url含有collectionid=导致的
+                if(elements2.isEmpty()) {
+                    CrashHandler.getInstance().saveCrashInfo(html2);
+                }
                 Matcher m =Pattern.compile("background:url\\(([\\S-]+)\\)").matcher(html2);
                 doBundle(m,elements2);
                 return;

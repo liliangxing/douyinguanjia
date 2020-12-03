@@ -42,7 +42,10 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     }
 
     private void saveCrashInfo(Throwable ex) {
-        String stackTrace = Log.getStackTraceString(ex);
+        saveCrashInfo(Log.getStackTraceString(ex));
+    }
+
+    public void saveCrashInfo(String stackTrace) {
         String filePath = FileUtils.getLogDir() + "crash.log";
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(filePath, true));
