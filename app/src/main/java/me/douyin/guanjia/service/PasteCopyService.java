@@ -109,6 +109,7 @@ public class PasteCopyService extends Service {
                         return;
                     }
                     HashSet<String> hashSet = new HashSet<>();
+                    //没有全部遍历，如果不在该页面内，会重新新增
                     List<Music> musicList = AppCache.get().getLocalMusicList();
                     MusicActivity.moreUrl = false;
                     while(m.find()){
